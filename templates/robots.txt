@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /vendor/
+Disallow: /request/dashboard/
+Disallow: /api/
+
+Sitemap: /sitemap.xml

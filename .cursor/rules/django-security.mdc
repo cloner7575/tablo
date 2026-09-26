@@ -1,0 +1,14 @@
+---
+description: Django security defaults for secrets, CSRF, and SQL
+alwaysApply: true
+---
+
+# Django Security
+
+- Never commit secrets. `SECRET_KEY`, DB passwords, and API tokens come from the environment.
+- POST forms include `{% csrf_token %}`. HTMX requests must send the CSRF header.
+- Use the ORM. Do not build SQL with f-strings or `%` interpolation.
+- Validate at the boundary (forms, serializers). Do not trust hidden fields for `user_id`.
+- `DEBUG` stays False in production. Do not log passwords or tokens.
+
+See skills: `django-auth`, `django-rest-framework`.

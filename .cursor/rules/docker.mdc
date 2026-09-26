@@ -1,0 +1,14 @@
+---
+description: Docker and Compose conventions for Django
+globs: "Dockerfile*,**/docker-compose*.yml,**/compose*.yml"
+alwaysApply: false
+---
+
+# Docker
+
+- Multi-stage, non-root user, no secrets in the image.
+- Production CMD is gunicorn/uvicorn, never `runserver`.
+- Secrets and `SECRET_KEY` from env/compose secrets.
+- Do not copy `.venv` or `db.sqlite3` into the image.
+
+See skill: `docker-django`.

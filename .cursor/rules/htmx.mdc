@@ -1,0 +1,18 @@
+---
+description: HTMX fragment conventions
+globs: "**/templates/**/_*.html,**/static/js/**"
+alwaysApply: false
+---
+
+# HTMX
+
+- Fragments are `_name.html` and extend nothing. Full pages extend `base.html`.
+- Detect with `apps.common.htmx.is_htmx(request)`, not a raw header string.
+- Every trigger has `hx-indicator` and `hx-disabled-elt="this"`.
+- Return real status codes and still render a readable fragment; `app.js`
+  already enables swapping 400/422/503.
+- A direct, non-HTMX hit on a fragment URL must degrade (usually a redirect).
+- CSRF comes from `hx-headers` on `<body>`; keep `{% csrf_token %}` in forms.
+- Swapped regions announce themselves (`role="status"`, errors `role="alert"`).
+
+See skills: `htmx-patterns`, `django-templates`, `ui-ux`.

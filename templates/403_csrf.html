@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Session expired" %} · {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+  <section class="stack error-page">
+    <span class="error-page__mark">{% include "components/_icon.html" with name="clock" size="lg" %}</span>
+    <p class="error-page__code">403</p>
+    <h1>{% translate "Your session expired before the form was sent." %}</h1>
+    <p class="lede">
+      {% translate "This protects you against cross-site request forgery. Reload the page and submit the form again." %}
+    </p>
+    {% include "components/_button.html" with text=_("Back to home") href="/" %}
+  </section>
+{% endblock %}

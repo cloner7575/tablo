@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ page.meta_description|default:page.title }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="hero__content">
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.body|truncatewords:40 }}</p>
+    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">قیمت بگیر</a>
+  </div>
+</section>
+<section class="section">
+  <article class="prose">{{ page.body|linebreaks }}</article>
+</section>
+<section class="section section--muted">
+  <div class="section__head">
+    <h2>تابلو‌سازان مرتبط</h2>
+  </div>
+  <div class="card-grid">
+    {% for v in vendors %}
+      <a class="vendor-card" href="{% url 'vendors:public' slug=v.slug %}">
+        <h3>{{ v.business_name }}</h3>
+        <p>{{ v.city.name }}</p>
+      </a>
+    {% empty %}
+      <p class="empty">فعلاً تابلو‌سازی برای این ترکیب ثبت نشده است.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

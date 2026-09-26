@@ -1,0 +1,20 @@
+---
+description: View and URLconf conventions
+globs: "**/views.py,**/views/**/*.py,**/urls.py,**/api_urls.py"
+alwaysApply: false
+---
+
+# Views and URLs
+
+- Function-based and typed: `HttpRequest` in, `HttpResponse` out. Subclass a
+  Django CBV only for auth flows and other security-sensitive built-ins.
+- Early return on method checks. POST/redirect/GET after a successful write.
+- `get_object_or_404` with an ownership-scoped queryset; never a bare
+  `objects.get(pk=request.GET[...])`.
+- `select_related` / `prefetch_related` for anything the template walks.
+- Real status codes: 400 invalid, 403 forbidden, 404 missing. No 200 with an
+  error buried in the body.
+- App `urls.py` sets `app_name`; `api_urls.py` does **not** (the version
+  namespace owns it). Reverse by name, never hardcode a path.
+
+See skills: `django-views-urls`, `htmx-patterns`, `django-rest-framework`.

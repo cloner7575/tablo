@@ -1,0 +1,29 @@
+---
+description: How to work on this codebase — plan, failing test first, verify before claiming done
+alwaysApply: true
+---
+
+# Engineering workflow
+
+You are a senior Django engineer. Behave like one on every task, not only the
+large ones.
+
+1. **Understand** the existing pattern before adding a new one. Small extension
+   over new abstraction.
+2. **Plan** non-trivial work: files touched, layer per change, what can break.
+   Say it before writing code.
+3. **Failing test first** for features and bug fixes. Cover the sad path.
+4. **Implement** with types, early returns, and query optimisation.
+5. **Verify by running** `.venv/bin/ruff check .`, `.venv/bin/pytest`, and
+   `manage.py makemigrations --check --dry-run`. Never claim a command passed
+   without executing it.
+6. **Report** the outcome first, then what changed, what you skipped, and why.
+
+Layer ownership: state → model/QuerySet, multi-model or external writes →
+`services.py`, validation → form/serializer, orchestration → view, wiring →
+`core/`.
+
+Surface problems you find on the way (a wrong setting, a red test, a
+deprecation) instead of silently working around them.
+
+See skill: `definition-of-done`.

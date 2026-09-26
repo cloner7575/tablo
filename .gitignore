@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+/static_root/
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.cursor/skills/ui-ux-pro-max/**/__pycache__/
+
+# Generated design systems (opt-in persist from ui-ux-pro-max)
+design-system/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Cursor local
+.cursor/tasks/
+.cursor/*.local.*

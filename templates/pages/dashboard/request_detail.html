@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}{{ project_request.title }} | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-request{% endblock %}
+
+{% block content %}
+<article class="req-detail section">
+  <header class="req-hero">
+    <div class="req-hero__copy">
+      <p class="section__eyebrow">درخواست #{{ project_request.pk|fa_digits }}</p>
+      <h1>{{ project_request.title }}</h1>
+      <p class="req-hero__meta">
+        <span class="status-pill status-pill--{{ project_request.status }}">{{ project_request.get_status_display }}</span>
+        <span>{{ project_request.service.title }}</span>
+        <span>{{ project_request.city.name }}</span>
+        <span>{{ project_request.created_at|jalali }}</span>
+      </p>
+    </div>
+    <div class="req-hero__stat">
+      <strong>{{ quotes_count|fa_digits }}</strong>
+      <span>پیشنهاد دریافتی</span>
+    </div>
+  </header>
+
+  <div class="req-layout">
+    <div class="req-main">
+      <section class="req-card" aria-labelledby="req-specs-title">
+        <h2 id="req-specs-title">جزئیات پروژه</h2>
+        <div class="req-specs">
+          <div>
+            <span class="req-specs__label">ابعاد</span>
+            <strong>{{ project_request.dimensions_display }}</strong>
+          </div>
+          <div>
+            <span class="req-specs__label">نورپردازی</span>
+            <strong>{{ project_request.get_lighting_type_display|default:"—" }}</strong>
+          </div>
+          <div>
+            <span class="req-specs__label">بودجه</span>
+            <strong>
+              {% if project_request.budget_min or project_request.budget_max %}
+                {{ project_request.budget_min|default:0|toman|fa_digits }}
+                تا
+                {{ project_request.budget_max|default:0|toman|fa_digits }}
+              {% else %}—{% endif %}
+            </strong>
+          </div>
+          <div>
+            <span class="req-specs__label">محله</span>
+            <strong>{{ project_request.district|default:"—" }}</strong>
+          </div>
+          <div>
+            <span class="req-specs__label">نوع کسب‌وکار</span>
+            <strong>{{ project_request.business_type|default:"—" }}</strong>
+          </div>
+          <div>
+            <span class="req-specs__label">متن تابلو</span>
+            <strong>{{ project_request.text_content|default:"—" }}</strong>
+          </div>
+        </div>
+        {% if project_request.description %}
+          <div class="req-desc">
+            <h3>توضیحات</h3>
+            <p>{{ project_request.description|linebreaksbr }}</p>
+          </div>
+        {% endif %}
+        {% if project_request.image %}
+          <div class="req-photo">
+            <h3>عکس محل نصب</h3>
+            <img src="{{ project_request.image.url }}" alt="عکس محل نصب" loading="lazy" width="800" height="500">
+          </div>
+        {% endif %}
+      </section>
+
+      {% if project_request.order %}
+        <section class="req-card req-card--order" aria-labelledby="req-order-title">
+          <h2 id="req-order-title">سفارش فعال</h2>
+          <p>سفارش #{{ project_request.order.pk|fa_digits }} — {{ project_request.order.get_status_display }}</p>
+          {% if project_request.order.status == "active" %}
+            <form method="post" action="{% url 'requests:order_complete' pk=project_request.order.pk %}">
+              {% csrf_token %}
+              <button class="btn btn--secondary" type="submit">علامت‌گذاری به‌عنوان تکمیل‌شده</button>
+            </form>
+          {% elif project_request.status == "completed" and not project_request.review %}
+            <a class="btn btn--primary" href="{% url 'requests:review_create' pk=project_request.pk %}">ثبت نظر</a>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      <section class="req-quotes" aria-labelledby="quotes-title">
+        <div class="section__head section__head--row">
+          <div>
+            <p class="section__eyebrow">مقایسه کنید و انتخاب کنید</p>
+            <h2 id="quotes-title">پیشنهادهای دریافتی</h2>
+          </div>
+        </div>
+
+        <div class="req-quote-grid">
+          {% for q in quotes %}
+            <article class="req-quote">
+              <header>
+                <h3>{{ q.vendor.business_name }}</h3>
+                <p>★ {{ q.vendor.rating|fa_digits }} · {{ q.vendor.city.name }}</p>
+              </header>
+              <p class="req-quote__price">{{ q.price|toman|fa_digits }}</p>
+              <ul class="req-quote__facts">
+                <li>زمان اجرا: {{ q.estimated_delivery_days|fa_digits }} روز</li>
+                <li>گارانتی: {{ q.warranty|default:"—" }}</li>
+                {% if q.installation_cost %}
+                  <li>نصب: {{ q.installation_cost|toman|fa_digits }}</li>
+                {% endif %}
+              </ul>
+              <a class="btn btn--primary btn--sm" href="{% url 'requests:quote_detail' pk=q.pk %}">مشاهده و پذیرش</a>
+            </article>
+          {% empty %}
+            <div class="empty req-empty">
+              <strong>هنوز پیشنهادی نرسیده</strong>
+              <p>تابلو‌سازهای مرتبط به‌زودی پاسخ می‌دهند. این صفحه را دوباره چک کنید.</p>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+
+    <aside class="req-side">
+      <div class="req-side__card">
+        <h2>قدم بعدی</h2>
+        {% if quotes_count == 0 %}
+          <p>منتظر پیشنهاد تابلو‌سازها بمانید. معمولاً ظرف چند ساعت اولین پاسخ می‌رسد.</p>
+        {% elif project_request.status == "accepted" or project_request.status == "completed" %}
+          <p>یک پیشنهاد پذیرفته شده. جزئیات سفارش را در همین صفحه پیگیری کنید.</p>
+        {% else %}
+          <p>{{ quotes_count|fa_digits }} پیشنهاد دارید. قیمت، زمان و گارانتی را مقایسه و یکی را بپذیرید.</p>
+        {% endif %}
+        <a class="btn btn--ghost-outline btn--block" href="{% url 'requests:dashboard' %}">بازگشت به داشبورد</a>
+        <a class="btn btn--primary btn--block" href="{% url 'requests:wizard_start' %}">درخواست جدید</a>
+      </div>
+    </aside>
+  </div>
+</article>
+{% endblock %}

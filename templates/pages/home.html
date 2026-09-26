@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% load persian static %}
+
+{% block title %}برای تابلوی مغازه‌ات از چند تابلو‌ساز قیمت بگیر | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}نوع تابلو، ابعاد و شهر را وارد کن؛ تابلو‌سازهای مرتبط پیشنهادشان را برایت ارسال می‌کنند.{% endblock %}
+{% block og_title %}{{ SITE_NAME }} — قیمت بگیر از چند تابلو‌ساز{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<section class="sp-hero" aria-labelledby="home-hero-title">
+  <div class="sp-hero__copy">
+    <h1 id="home-hero-title">تابلو دات کام</h1>
+    <p class="sp-hero__tag">تبدیل تابلو مغازه به ماشین جذب مشتری — با مقایسه چند پیشنهاد قیمت</p>
+    <div class="sp-hero__actions">
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">دریافت پیشنهاد قیمت</a>
+      <a class="btn btn--ghost-outline btn--lg" href="#features">ویژگی‌های یک تابلو خوب</a>
+    </div>
+  </div>
+  <div class="sp-hero__visual">
+    <img
+      src="{% static 'img/demo/hero-signage.png' %}"
+      alt="نمونه تابلو فروشگاهی"
+      width="1200"
+      height="800"
+      fetchpriority="high"
+      decoding="async"
+    >
+  </div>
+</section>
+
+<section class="sp-vip" aria-labelledby="vip-title">
+  <h2 id="vip-title" class="sp-vip__title">تابلو‌سازها و کسب‌وکارهای فعال روی پلتفرم</h2>
+  <div class="sp-vip__rail" role="list">
+    {% for v in vendors|slice:":8" %}
+      <a class="sp-vip__item" href="{% url 'vendors:public' slug=v.slug %}" role="listitem">{{ v.business_name }}</a>
+    {% empty %}
+      <span class="sp-vip__item">تهران</span>
+      <span class="sp-vip__item">کرج</span>
+      <span class="sp-vip__item">چلنیوم</span>
+      <span class="sp-vip__item">نئون</span>
+      <span class="sp-vip__item">LED</span>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="sp-duo section" aria-label="معرفی و مشاوره">
+  <article class="sp-card-dark">
+    <h2>یک تابلو خوب چه ویژگی‌هایی باید داشته باشد؟</h2>
+    <p>از انتخاب متریال تا نورپردازی و نصب؛ همه چیز روی دیده شدن مغازه‌ات اثر دارد. نوع تابلو را انتخاب کن و از چند متخصص قیمت بگیر.</p>
+    <div class="sp-card-dark__media">
+      <img src="{% static 'img/demo/service-neon.png' %}" alt="" loading="lazy" width="800" height="500">
+    </div>
+  </article>
+  <article class="sp-card-dark">
+    <h2>درخواست قیمت و مقایسه پیشنهادها</h2>
+    <p>ابعاد، شهر و عکس محل را بفرست؛ تابلو‌سازهای مرتبط پیشنهاد قیمت، زمان اجرا و گارانتی می‌دهند.</p>
+    <div class="sp-card-dark__media sp-card-dark__media--stack">
+      <img src="{% static 'img/demo/portfolio-cafe.png' %}" alt="" loading="lazy" width="400" height="500">
+      <img src="{% static 'img/demo/portfolio-boutique.png' %}" alt="" loading="lazy" width="400" height="500">
+      <img src="{% static 'img/demo/portfolio-office.png' %}" alt="" loading="lazy" width="400" height="500">
+    </div>
+    <a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">دریافت مشاوره قیمت</a>
+  </article>
+</section>
+
+<section class="section" id="services" aria-labelledby="services-title">
+  <div class="section__head section__head--center">
+    <p class="section__eyebrow">خدمات</p>
+    <h2 id="services-title">محبوب‌ترین انواع تابلو</h2>
+  </div>
+  <div class="sp-services">
+    {% for s in services %}
+      <a class="sp-service" href="{% url 'catalog:service' slug=s.slug %}">
+        <img src="{% static s.demo_image %}" alt="" loading="lazy" width="600" height="450">
+        <strong>{{ s.title }}</strong>
+      </a>
+    {% empty %}
+      <p class="empty">هنوز خدمتی ثبت نشده است.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" id="portfolio" aria-labelledby="portfolio-title">
+  <div class="section__head section__head--row">
+    <div>
+      <p class="section__eyebrow">بخشی از پروژه‌ها</p>
+      <h2 id="portfolio-title">پروژه‌ها</h2>
+    </div>
+    <a class="btn btn--ghost-outline btn--sm" href="#portfolio">مشاهده همه</a>
+  </div>
+  <div class="sp-projects">
+    {% for item in portfolio|slice:":6" %}
+      <a class="sp-project" href="{% url 'portfolio:detail' slug=item.slug %}">
+        {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="800" height="600">
+        {% else %}
+          <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="800" height="600">
+        {% endif %}
+        <div class="sp-project__body">
+          <h3>{{ item.title }}</h3>
+          <span class="btn btn--primary btn--sm">مشاهده / قیمت بگیر</span>
+        </div>
+      </a>
+    {% empty %}
+      <p class="empty">به‌زودی نمونه‌کارها اینجا نمایش داده می‌شوند.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" id="features" aria-labelledby="features-title">
+  <div class="section__head section__head--center">
+    <h2 id="features-title">چرا تابلو دات کام؟</h2>
+  </div>
+  <div class="sp-features">
+    <article>
+      <h3>جلب توجه بالا</h3>
+      <p>با مقایسه چند پیشنهاد، تابلویی انتخاب می‌کنی که واقعاً دیده شود.</p>
+    </article>
+    <article>
+      <h3>خوانایی واضح</h3>
+      <p>نوع نور و متریال را در درخواست مشخص کن تا پیشنهادها دقیق‌تر باشند.</p>
+    </article>
+    <article>
+      <h3>هماهنگی با برند</h3>
+      <p>از چند تابلو‌ساز طرح و قیمت بگیر و با هویت کسب‌وکارت هماهنگ کن.</p>
+    </article>
+    <article>
+      <h3>شفافیت قیمت</h3>
+      <p>قیمت، زمان اجرا و گارانتی را کنار هم ببین و با اطمینان انتخاب کن.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section section--muted" aria-labelledby="vendors-title">
+  <div class="section__head section__head--row">
+    <div>
+      <p class="section__eyebrow">شبکه متخصصان</p>
+      <h2 id="vendors-title">تابلو‌سازهای منتخب</h2>
+    </div>
+    <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:list' %}">مشاهده همه</a>
+  </div>
+  <div class="sp-vendors">
+    {% for v in vendors %}
+      <a class="sp-vendor" href="{% url 'vendors:public' slug=v.slug %}">
+        {% if v.cover_image %}
+          <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="700" height="440">
+        {% else %}
+          <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="700" height="440">
+        {% endif %}
+        <div>
+          <h3>{{ v.business_name }}</h3>
+          <p>★ {{ v.rating|fa_digits }} · {{ v.city.name }} · {{ v.completed_projects|fa_digits }} پروژه</p>
+        </div>
+      </a>
+    {% empty %}
+      <p class="empty">تابلو‌سازی ثبت نشده است.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="sp-consult section" aria-labelledby="consult-title">
+  <div class="sp-consult__inner">
+    <div>
+      <h2 id="consult-title">به پیشنهاد قیمت نیاز دارید؟</h2>
+      <p>قبل از هر تصمیم، جزئیات پروژه‌ات را ثبت کن تا تابلو‌سازهای مرتبط پیشنهاد بفرستند.</p>
+    </div>
+    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">شروع درخواست رایگان</a>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="reviews-title">
+  <div class="section__head section__head--center">
+    <p class="section__eyebrow">منتظر شنیدن نظرات شما هستیم</p>
+    <h2 id="reviews-title">اعتماد همراهان</h2>
+  </div>
+  <div class="sp-reviews">
+    {% for r in reviews %}
+      <blockquote class="sp-review">
+        <p>«{{ r.comment|default:"کار تمیز و حرفه‌ای بود." }}»</p>
+        <footer>★ {{ r.rating|fa_digits }} — {{ r.vendor.business_name }}</footer>
+      </blockquote>
+    {% empty %}
+      <p class="empty">هنوز نظری ثبت نشده است.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section section--muted" id="faq" aria-labelledby="faq-title">
+  <div class="section__head section__head--center">
+    <h2 id="faq-title">سوالات پرتکرار</h2>
+  </div>
+  <div class="sp-faq">
+    <details>
+      <summary><span>قیمت تابلو چطور حساب می‌شود؟</span><span aria-hidden="true">+</span></summary>
+      <p>به نوع تابلو، متراژ، متریال، نورپردازی و محل نصب بستگی دارد. با ثبت درخواست، چند پیشنهاد واقعی می‌گیری.</p>
+    </details>
+    <details>
+      <summary><span>ثبت درخواست رایگان است؟</span><span aria-hidden="true">+</span></summary>
+      <p>بله. برای مشتری ثبت درخواست و دریافت پیشنهاد رایگان است.</p>
+    </details>
+    <details>
+      <summary><span>چطور تابلو‌ساز مناسب را انتخاب کنم؟</span><span aria-hidden="true">+</span></summary>
+      <p>امتیاز، نمونه‌کار، گارانتی، زمان اجرا و قیمت را مقایسه کن و بهترین پیشنهاد را بپذیر.</p>
+    </details>
+    <details>
+      <summary><span>چلنیوم بهتر است یا فلکسی؟</span><span aria-hidden="true">+</span></summary>
+      <p>چلنیوم معمولاً ظاهر لوکس‌تری دارد؛ فلکسی اقتصادی‌تر است. در درخواست نوع مدنظرت را مشخص کن تا پیشنهادها دقیق باشند.</p>
+    </details>
+  </div>
+</section>
+
+<section class="sp-final">
+  <div class="sp-final__copy">
+    <h2>کاتالوگ ذهنی از چند پیشنهاد واقعی</h2>
+    <p>به‌جای جست‌وجوی پراکنده در اینستاگرام، یک بار درخواست بده و پیشنهاد چند تابلو‌ساز را کنار هم ببین.</p>
+    <div class="sp-hero__actions">
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">ثبت درخواست</a>
+      <a class="btn btn--ghost-outline btn--lg" href="{% url 'vendors:list' %}">مشاهده تابلو‌سازها</a>
+    </div>
+  </div>
+  <img src="{% static 'img/demo/service-chalnium.png' %}" alt="" loading="lazy" width="700" height="520">
+</section>
+{% endblock %}

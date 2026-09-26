@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}تأیید ثبت‌نام | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section section--narrow">
+  <h1>تأیید شماره</h1>
+  <form method="post" class="stack-form">
+    {% csrf_token %}
+    {% for field in form %}
+      {% include "components/_field.html" with field=field %}
+    {% endfor %}
+    <button class="btn btn--primary" type="submit">تأیید و ادامه</button>
+  </form>
+</section>
+{% endblock %}

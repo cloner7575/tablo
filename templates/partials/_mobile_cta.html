@@ -1,0 +1,10 @@
+<nav class="mobile-cta" aria-label="اقدام سریع موبایل">
+  <a class="mobile-cta__link" href="{% url 'vendors:list' %}">
+    {% include "components/_icon.html" with name="layers" size="sm" %}
+    <span>تابلو‌سازها</span>
+  </a>
+  <a class="mobile-cta__primary" href="{% url 'requests:wizard_start' %}">
+    {% include "components/_icon.html" with name="phone" size="sm" %}
+    <span>قیمت بگیر</span>
+  </a>
+</nav>

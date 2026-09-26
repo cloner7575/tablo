@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}پروفایل کسب‌وکار | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div>
+          <p class="section__eyebrow">هویت برند</p>
+          <h1>ویرایش پروفایل</h1>
+          <p class="muted">اطلاعات کامل، اعتماد مشتری و مچ شدن با درخواست‌ها را بهتر می‌کند.</p>
+        </div>
+        {% if vendor.is_approved %}
+          <a class="btn btn--ghost-outline" href="{% url 'vendors:public' slug=vendor.slug %}">مشاهده عمومی</a>
+        {% endif %}
+      </header>
+
+      <div class="vp-detail-grid">
+        <section class="vp-card">
+          <h2>اطلاعات کسب‌وکار</h2>
+          <form method="post" enctype="multipart/form-data" class="stack-form">
+            {% csrf_token %}
+            {% include "partials/_form_errors.html" %}
+            {% for field in form %}
+              {% include "components/_field.html" with field=field %}
+            {% endfor %}
+            <button class="btn btn--primary" type="submit">ذخیره تغییرات</button>
+          </form>
+        </section>
+
+        <section class="vp-card">
+          <div class="vp-card__head">
+            <div>
+              <p class="vp-card__eyebrow">آمادگی فروش</p>
+              <h2>چک‌لیست پروفایل</h2>
+            </div>
+          </div>
+          <ul class="vp-check">
+            {% for item in checklist %}
+              <li class="{% if item.done %}is-done{% endif %}">
+                <span class="vp-check__mark" aria-hidden="true">
+                  {% if item.done %}{% include "components/_icon.html" with name="check-circle" size="sm" %}{% else %}{% include "components/_icon.html" with name="alert-circle" size="sm" %}{% endif %}
+                </span>
+                <span>
+                  <strong>{{ item.label }}</strong>
+                  {% if not item.done %}<small>{{ item.hint }}</small>{% endif %}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

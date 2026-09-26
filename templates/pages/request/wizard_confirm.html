@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}تأیید و ثبت درخواست | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-wizard{% endblock %}
+
+{% block content %}
+<section class="wz-shell section">
+  <div class="wz-layout">
+    <aside class="wz-aside" aria-label="مراحل درخواست">
+      <p class="section__eyebrow">آخرین قدم</p>
+      <h2 class="wz-aside__title">خلاصه را چک کنید</h2>
+      <p class="wz-aside__lead">اگر چیزی کم است، برگردید و اصلاح کنید؛ بعد درخواست را ثبت کنید.</p>
+      <ol class="wz-steps">
+        {% for s in wizard_steps %}
+          <li class="wz-steps__item{% if s.number == step %} is-current{% elif s.number < step %} is-done{% endif %}">
+            <span class="wz-steps__num" aria-hidden="true">{{ s.number|fa_digits }}</span>
+            <span class="wz-steps__label">{{ s.label }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </aside>
+
+    <div class="wz-panel">
+      <div class="wizard-progress" role="status" aria-label="مرحله {{ step|fa_digits }} از {{ total|fa_digits }}">
+        <div class="wizard-progress__track" aria-hidden="true">
+          <div class="wizard-progress__bar" style="width: 100%"></div>
+        </div>
+        <p>مرحله {{ step|fa_digits }} از {{ total|fa_digits }} — {{ step_label }}</p>
+      </div>
+
+      <header class="wz-panel__head">
+        <h1>{{ step_title }}</h1>
+        <p class="wz-panel__hint">{{ step_hint }}</p>
+      </header>
+
+      <dl class="wz-summary">
+        <div><dt>نوع تابلو</dt><dd>{{ summary.service }}</dd></div>
+        <div><dt>شهر</dt><dd>{{ summary.city }}</dd></div>
+        <div><dt>ابعاد</dt><dd>{{ summary.dimensions }}</dd></div>
+        <div><dt>نورپردازی</dt><dd>{{ summary.lighting }}</dd></div>
+        <div><dt>متن تابلو</dt><dd>{{ summary.text_content }}</dd></div>
+        <div><dt>نوع کسب‌وکار</dt><dd>{{ summary.business_type }}</dd></div>
+        <div><dt>محله</dt><dd>{{ summary.district }}</dd></div>
+        <div><dt>بودجه</dt><dd>{{ summary.budget }}</dd></div>
+        <div><dt>عکس محل</dt><dd>{{ summary.has_image }}</dd></div>
+        <div class="wz-summary__wide"><dt>توضیحات</dt><dd>{{ summary.description }}</dd></div>
+      </dl>
+
+      <form method="post" class="form-actions wz-actions">
+        {% csrf_token %}
+        {% if back_url_name %}
+          <a class="btn btn--ghost-outline" href="{% url back_url_name %}">بازگشت</a>
+        {% endif %}
+        <button class="btn btn--primary btn--lg" type="submit">ثبت درخواست و دریافت پیشنهاد</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

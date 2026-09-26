@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load persian static %}
+
+{% block title %}مدیریت نمونه‌کارها | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div>
+          <p class="section__eyebrow">گالری فروش</p>
+          <h1>نمونه‌کارهای من</h1>
+          <p class="muted">{{ items|length|fa_digits }} مورد — نمونه‌کار خوب، پیشنهاد شما را باورپذیرتر می‌کند.</p>
+        </div>
+      </header>
+
+      <div class="vp-detail-grid">
+        <section class="vp-card">
+          <h2>لیست نمونه‌کارها</h2>
+          <div class="vp-feed">
+            {% for item in items %}
+              <div class="vp-feed__item vp-feed__item--static">
+                <div>
+                  <strong>{{ item.title }}</strong>
+                  <span>{% if item.is_published %}منتشر شده{% else %}پیش‌نویس{% endif %} · {{ item.created_at|jalali }}</span>
+                </div>
+                <div class="vp-card__actions">
+                  {% if item.is_published %}
+                    <a class="btn btn--ghost-outline btn--sm" href="{% url 'portfolio:detail' slug=item.slug %}">مشاهده</a>
+                  {% endif %}
+                  <form method="post" action="{% url 'portfolio:delete' pk=item.pk %}">
+                    {% csrf_token %}
+                    <button class="btn btn--ghost btn--sm" type="submit">حذف</button>
+                  </form>
+                </div>
+              </div>
+            {% empty %}
+              <div class="vp-empty vp-empty--compact">
+                <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="image" %}</span>
+                <strong>هنوز نمونه‌کاری ندارید</strong>
+                <p>اولین کار واقعی را با عکس و توضیح کوتاه اضافه کنید.</p>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="vp-card">
+          <h2>افزودن نمونه‌کار</h2>
+          <p class="muted">عنوان واضح + توضیح کوتاه + تصویر واقعی بهتر دیده می‌شود.</p>
+          <form method="post" enctype="multipart/form-data" class="stack-form">
+            {% csrf_token %}
+            {% for field in form %}
+              {% include "components/_field.html" with field=field %}
+            {% endfor %}
+            <button class="btn btn--primary" type="submit">افزودن</button>
+          </form>
+        </section>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

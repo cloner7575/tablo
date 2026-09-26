@@ -1,0 +1,14 @@
+---
+description: Form validation conventions
+globs: "**/forms.py,**/forms/**/*.py"
+alwaysApply: false
+---
+
+# Django Forms
+
+- Prefer ModelForm for model-backed input.
+- Validate in `clean_<field>` and `clean()`, not in the view.
+- Call `is_valid()` before `save()`. Use `commit=False` to set `request.user` and similar.
+- Always re-render and show `form.errors` / `non_field_errors` on failure.
+
+See skill: `django-forms`.

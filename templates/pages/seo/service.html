@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ service.title }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ service.description|default:service.title }} — سفارش و مقایسه قیمت{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="hero__content">
+    <h1>{{ service.title }}</h1>
+    <p>{{ service.description }}</p>
+    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">برای این نوع تابلو قیمت بگیر</a>
+  </div>
+</section>
+<section class="section">
+  <h2>تابلو‌سازان این خدمت</h2>
+  <div class="card-grid">
+    {% for v in vendors %}
+      <a class="vendor-card" href="{% url 'vendors:public' slug=v.slug %}">
+        <h3>{{ v.business_name }}</h3>
+        <p>{{ v.city.name }}</p>
+      </a>
+    {% empty %}
+      <p class="empty">تابلو‌سازی برای این خدمت یافت نشد.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

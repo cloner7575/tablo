@@ -1,0 +1,21 @@
+---
+description: Settings and environment conventions
+globs: "core/settings/*.py,.env.example"
+alwaysApply: false
+---
+
+# Settings
+
+- Shared values in `base.py`; only differences in `development` / `test` /
+  `production`. No fourth settings module, no `config/` package.
+- Every environment-dependent value is read through `core/settings/env.py`
+  (`get_bool` / `get_int` / `get_list` / `build_mailer`) and documented in
+  `.env.example`. No secret literals.
+- `test.py` stays hermetic: anything `.env` can change must be pinned there.
+- `production.py` keeps its fail-fast guards (secret key, allowed hosts) and
+  the secure cookie / HSTS / WhiteNoise block.
+- Email uses `MAILERS` (Django 6.1); `EMAIL_*` is deprecated and removed in 7.0.
+- Adding a setting means updating `.env.example` and, when behaviour depends on
+  it, a test in `tests/test_settings.py`.
+
+See skills: `starter-architecture`, `django-logging`, `django-caching`.

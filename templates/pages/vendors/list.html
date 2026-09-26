@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load persian static %}
+
+{% block title %}تابلو‌سازها | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}فهرست تابلو‌سازهای تأییدشده — امتیاز، نمونه‌کار و درخواست قیمت{% endblock %}
+{% block body_class %}page-vendors{% endblock %}
+
+{% block content %}
+<section class="vn-list">
+  <header class="vn-list__hero section">
+    <div class="vn-list__hero-copy">
+      <p class="section__eyebrow">شبکه متخصصان</p>
+      <h1>تابلو‌سازهای تأییدشده</h1>
+      <p>
+        {{ vendors_count|fa_digits }} مجموعه فعال؛ امتیاز، نمونه‌کار و زمان پاسخ را ببینید
+        و مستقیم درخواست قیمت بدهید.
+      </p>
+    </div>
+    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">شروع درخواست رایگان</a>
+  </header>
+
+  <section class="section" aria-label="فهرست تابلو‌سازها">
+    <div class="vn-grid">
+      {% for v in vendors %}
+        <article class="vn-card">
+          <a class="vn-card__media" href="{% url 'vendors:public' slug=v.slug %}">
+            {% if v.cover_image %}
+              <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="700" height="440">
+            {% else %}
+              <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="700" height="440">
+            {% endif %}
+            {% if v.is_featured %}
+              <span class="vn-badge">منتخب</span>
+            {% endif %}
+          </a>
+          <div class="vn-card__body">
+            <div class="vn-card__top">
+              <h2><a href="{% url 'vendors:public' slug=v.slug %}">{{ v.business_name }}</a></h2>
+              <p class="vn-card__meta">
+                ★ {{ v.rating|fa_digits }}
+                · {{ v.city.name }}
+                · {{ v.completed_projects|fa_digits }} پروژه
+              </p>
+            </div>
+            {% if v.services.all %}
+              <p class="chip-row">
+                {% for s in v.services.all|slice:":3" %}
+                  <span class="chip chip--sm">{{ s.title }}</span>
+                {% endfor %}
+              </p>
+            {% endif %}
+            <div class="vn-card__actions">
+              <a class="btn btn--primary btn--sm" href="{% url 'requests:from_vendor' slug=v.slug %}">درخواست قیمت</a>
+              <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:public' slug=v.slug %}">پروفایل</a>
+            </div>
+          </div>
+        </article>
+      {% empty %}
+        <p class="empty">هنوز تابلو‌سازی تأیید نشده است.</p>
+      {% endfor %}
+    </div>
+  </section>
+</section>
+{% endblock %}

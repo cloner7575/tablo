@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}پنل تابلو‌ساز | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-welcome">
+        <div class="vp-welcome__copy">
+          <p class="vp-welcome__eyebrow">میز کار امروز</p>
+          <h1>سلام {{ vendor.business_name }}</h1>
+          <p>
+            {% if new_requests_count %}
+              {{ new_requests_count|fa_digits }} درخواست منتظر پیشنهاد شماست — زودتر پاسخ بدهید شانس پذیرش بالاتر می‌رود.
+            {% else %}
+              فعلاً درخواست بازی ندارید. پروفایل و نمونه‌کارها را کامل نگه دارید تا مچ بهتری بخورید.
+            {% endif %}
+          </p>
+        </div>
+        <div class="vp-welcome__cta">
+          {% if not vendor.is_approved %}
+            <div class="vp-alert" role="status">
+              {% include "components/_icon.html" with name="alert-triangle" size="sm" %}
+              <span>در انتظار تأیید مدیریت — بعد از تأیید، درخواست‌های عمومی می‌آید.</span>
+            </div>
+          {% elif new_requests_count %}
+            <a class="btn btn--primary btn--lg" href="{% url 'vendors:requests' %}?open=1">
+              {% include "components/_icon.html" with name="inbox" size="sm" %}
+              پاسخ به درخواست‌های باز
+            </a>
+          {% else %}
+            <a class="btn btn--primary btn--lg" href="{% url 'portfolio:manage' %}">
+              {% include "components/_icon.html" with name="image" size="sm" %}
+              مدیریت نمونه‌کارها
+            </a>
+          {% endif %}
+        </div>
+      </header>
+
+      <section class="vp-kpi" aria-label="شاخص‌های کلیدی">
+        <a class="vp-kpi__hero" href="{% url 'vendors:requests' %}?open=1">
+          <span class="vp-kpi__label">درخواست بدون پیشنهاد</span>
+          <strong>{{ new_requests_count|fa_digits }}</strong>
+          <span class="vp-kpi__hint">اولویت امروز شما</span>
+        </a>
+        <div class="vp-kpi__stack">
+          <div class="vp-kpi__item">
+            <span>پیشنهاد در انتظار</span>
+            <strong>{{ pending_quotes_count|fa_digits }}</strong>
+          </div>
+          <div class="vp-kpi__item">
+            <span>پذیرفته‌شده</span>
+            <strong>{{ accepted_count|fa_digits }}</strong>
+          </div>
+          <div class="vp-kpi__item">
+            <span>امتیاز</span>
+            <strong>{{ rating|fa_digits }}</strong>
+          </div>
+          <div class="vp-kpi__item">
+            <span>زمان پاسخ</span>
+            <strong>{{ response_time|fa_digits }}س</strong>
+          </div>
+          <div class="vp-kpi__item">
+            <span>نمونه‌کار</span>
+            <strong>{{ portfolio_count|fa_digits }}</strong>
+          </div>
+          <div class="vp-kpi__item">
+            <span>کل پیشنهادها</span>
+            <strong>{{ quotes_count|fa_digits }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <div class="vp-grid">
+        <section class="vp-card vp-card--queue" aria-labelledby="open-req-title">
+          <div class="vp-card__head">
+            <div>
+              <p class="vp-card__eyebrow">صف کار</p>
+              <h2 id="open-req-title">درخواست‌های باز</h2>
+            </div>
+            <a class="vp-card__link" href="{% url 'vendors:requests' %}?open=1">مشاهده همه</a>
+          </div>
+          <div class="vp-queue">
+            {% for r in recent_requests %}
+              <article class="vp-queue__item">
+                <div class="vp-queue__body">
+                  <h3>{{ r.title }}</h3>
+                  <p>{{ r.service.title }} · {{ r.city.name }} · {{ r.created_at|jalali }}</p>
+                  <ul>
+                    <li>{{ r.dimensions_display }}</li>
+                    <li>
+                      {% if r.budget_min or r.budget_max %}
+                        تا {{ r.budget_max|default:r.budget_min|toman|fa_digits }}
+                      {% else %}بودجه توافقی{% endif %}
+                    </li>
+                  </ul>
+                </div>
+                <a class="btn btn--primary btn--sm" href="{% url 'vendors:request_detail' pk=r.pk %}">ارسال پیشنهاد</a>
+              </article>
+            {% empty %}
+              <div class="vp-empty">
+                <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="inbox" %}</span>
+                <strong>صف کار خالی است</strong>
+                <p>وقتی درخواست هم‌خدمت و هم‌شهر بیاید اینجا نشان داده می‌شود.</p>
+                <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:profile' %}">بررسی خدمات پروفایل</a>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <div class="vp-side-col">
+          <section class="vp-card" aria-labelledby="check-title">
+            <div class="vp-card__head">
+              <div>
+                <p class="vp-card__eyebrow">آمادگی فروش</p>
+                <h2 id="check-title">پروفایل</h2>
+              </div>
+              <span class="vp-card__meta">{{ checklist_done|fa_digits }}/{{ checklist_total|fa_digits }}</span>
+            </div>
+            <div class="vp-progress" role="progressbar" aria-valuemin="0" aria-valuemax="{{ checklist_total }}" aria-valuenow="{{ checklist_done }}" aria-label="پیشرفت پروفایل">
+              <span style="width: {% widthratio checklist_done checklist_total 100 %}%"></span>
+            </div>
+            <ul class="vp-check">
+              {% for item in checklist %}
+                <li class="{% if item.done %}is-done{% endif %}">
+                  <span class="vp-check__mark" aria-hidden="true">
+                    {% if item.done %}{% include "components/_icon.html" with name="check-circle" size="sm" %}{% else %}{% include "components/_icon.html" with name="alert-circle" size="sm" %}{% endif %}
+                  </span>
+                  <span>
+                    <strong>{{ item.label }}</strong>
+                    {% if not item.done %}<small>{{ item.hint }}</small>{% endif %}
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+            <a class="btn btn--ghost-outline btn--sm btn--block" href="{% url 'vendors:profile' %}">تکمیل پروفایل</a>
+          </section>
+
+          <section class="vp-card" aria-labelledby="quotes-title">
+            <div class="vp-card__head">
+              <div>
+                <p class="vp-card__eyebrow">پیگیری</p>
+                <h2 id="quotes-title">آخرین پیشنهادها</h2>
+              </div>
+              <a class="vp-card__link" href="{% url 'vendors:my_quotes' %}">همه</a>
+            </div>
+            <div class="vp-mini-list">
+              {% for q in recent_quotes %}
+                <div class="vp-mini-list__item">
+                  <div>
+                    <strong>{{ q.request.title }}</strong>
+                    <span>{{ q.price|toman|fa_digits }}</span>
+                  </div>
+                  <span class="status-pill status-pill--{{ q.status }}">{{ q.get_status_display }}</span>
+                </div>
+              {% empty %}
+                <div class="vp-empty vp-empty--compact">
+                  <strong>پیشنهادی ثبت نشده</strong>
+                  <p>از صف کار یک درخواست را انتخاب کنید.</p>
+                </div>
+              {% endfor %}
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

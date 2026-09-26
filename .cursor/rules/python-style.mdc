@@ -1,0 +1,27 @@
+---
+description: Core Python style for this Django project
+alwaysApply: true
+---
+
+# Python Style
+
+- Type hints on public functions and methods. Do not use `Any`; prefer precise types or `object`.
+- Early returns. Avoid nested `if` pyramids.
+- snake_case functions, PascalCase classes.
+- Ruff is the formatter and linter: `.venv/bin/ruff check` / `ruff format`.
+- Never swallow exceptions. Log with context, then re-raise or show user feedback.
+
+```python
+# BAD
+try:
+    do_work()
+except Exception:
+    pass
+
+# GOOD
+try:
+    do_work()
+except LookupError:
+    logger.exception("do_work failed")
+    raise
+```

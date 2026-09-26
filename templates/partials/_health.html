@@ -1,0 +1,21 @@
+{% load i18n %}
+{% comment %}
+HTMX fragment. Underscore prefix marks a partial: it never extends base.html.
+{% endcomment %}
+<div id="health-panel" class="status status--{% if reachable %}ok{% else %}error{% endif %}" role="status">
+  <span class="status__dot" aria-hidden="true"></span>
+  <div class="status__body">
+    <p class="status__headline">
+      {% if reachable %}{% translate "All systems reachable." %}{% else %}{% translate "A dependency is down." %}{% endif %}
+    </p>
+    <dl class="status__list">
+      <div>
+        <dt>{% translate "Database" %}</dt>
+        <dd>{{ database }}</dd>
+      </div>
+    </dl>
+    {% if not reachable %}
+      <p class="text-muted">{% translate "Check the database container and the credentials in the environment." %}</p>
+    {% endif %}
+  </div>
+</div>

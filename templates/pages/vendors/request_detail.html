@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}{{ project_request.title }} | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div>
+          <p class="section__eyebrow">جزئیات درخواست #{{ project_request.pk|fa_digits }}</p>
+          <h1>{{ project_request.title }}</h1>
+          <p class="muted">{{ project_request.service.title }} · {{ project_request.city.name }} · {{ project_request.created_at|jalali }}</p>
+        </div>
+        <a class="btn btn--ghost-outline" href="{% url 'vendors:requests' %}">بازگشت به لیست</a>
+      </header>
+
+      <div class="vp-detail-grid">
+        <section class="vp-card">
+          <h2>مشخصات پروژه</h2>
+          <div class="req-specs">
+            <div>
+              <span class="req-specs__label">ابعاد</span>
+              <strong>{{ project_request.dimensions_display }}</strong>
+            </div>
+            <div>
+              <span class="req-specs__label">نورپردازی</span>
+              <strong>{{ project_request.get_lighting_type_display|default:"—" }}</strong>
+            </div>
+            <div>
+              <span class="req-specs__label">بودجه</span>
+              <strong>
+                {% if project_request.budget_min or project_request.budget_max %}
+                  {{ project_request.budget_min|default:0|toman|fa_digits }}
+                  تا
+                  {{ project_request.budget_max|default:0|toman|fa_digits }}
+                {% else %}توافقی{% endif %}
+              </strong>
+            </div>
+            <div>
+              <span class="req-specs__label">محله</span>
+              <strong>{{ project_request.district|default:"—" }}</strong>
+            </div>
+            <div>
+              <span class="req-specs__label">نوع کسب‌وکار</span>
+              <strong>{{ project_request.business_type|default:"—" }}</strong>
+            </div>
+            <div>
+              <span class="req-specs__label">متن تابلو</span>
+              <strong>{{ project_request.text_content|default:"—" }}</strong>
+            </div>
+          </div>
+          {% if project_request.description %}
+            <div class="req-desc">
+              <h3>توضیحات مشتری</h3>
+              <p>{{ project_request.description|linebreaksbr }}</p>
+            </div>
+          {% endif %}
+          {% if project_request.image %}
+            <div class="req-photo">
+              <h3>عکس محل نصب</h3>
+              <img src="{{ project_request.image.url }}" alt="عکس محل" loading="lazy" width="800" height="500">
+            </div>
+          {% endif %}
+        </section>
+
+        <section class="vp-card">
+          {% if existing %}
+            <h2>پیشنهاد شما ثبت شده</h2>
+            <p class="req-quote__price">{{ existing.price|toman|fa_digits }}</p>
+            <ul class="req-quote__facts">
+              <li>زمان اجرا: {{ existing.estimated_delivery_days|fa_digits }} روز</li>
+              <li>گارانتی: {{ existing.warranty|default:"—" }}</li>
+              <li>وضعیت: {{ existing.get_status_display }}</li>
+            </ul>
+            <a class="btn btn--ghost-outline" href="{% url 'vendors:my_quotes' %}">مشاهده همه پیشنهادها</a>
+          {% else %}
+            <h2>ارسال پیشنهاد قیمت</h2>
+            <p class="muted">قیمت شفاف، زمان واقعی و گارانتی مشخص شانس پذیرش را بالا می‌برد.</p>
+            <form method="post" class="stack-form">
+              {% csrf_token %}
+              {% include "partials/_form_errors.html" %}
+              {% for field in form %}
+                {% include "components/_field.html" with field=field %}
+              {% endfor %}
+              <button class="btn btn--primary btn--lg" type="submit">ارسال پیشنهاد</button>
+            </form>
+          {% endif %}
+        </section>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

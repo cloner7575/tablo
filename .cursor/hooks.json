@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/protect-main.sh",
+        "matcher": "Write|StrReplace",
+        "timeout": 5
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/guard-shell.sh",
+        "timeout": 5
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/format-python.sh",
+        "timeout": 30
+      },
+      {
+        "command": ".cursor/hooks/lint-python.sh",
+        "timeout": 30
+      },
+      {
+        "command": "python3 .cursor/hooks/scan-secrets.py",
+        "timeout": 15
+      },
+      {
+        "command": "python3 .cursor/hooks/check-migrations.py",
+        "timeout": 60
+      },
+      {
+        "command": ".cursor/hooks/run-tests.sh",
+        "timeout": 90
+      }
+    ],
+    "stop": [
+      {
+        "command": ".cursor/hooks/quality-gate.sh",
+        "timeout": 180,
+        "loop_limit": 1
+      }
+    ]
+  }
+}

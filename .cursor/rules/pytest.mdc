@@ -1,0 +1,19 @@
+---
+description: pytest-django TDD conventions
+globs: "**/test_*.py,**/tests/**/*.py,**/conftest.py,*_test.py"
+alwaysApply: false
+---
+
+# Pytest
+
+- TDD: failing test before production code. Cover the sad path.
+- `@pytest.mark.django_db` (or module `pytestmark`) when touching the database.
+- Shared fixtures in `tests/conftest.py` (`user`, `staff_user`, `auth_client`).
+  Factory Boy is not installed — add it per product if a model needs it.
+- List views and endpoints get a `django_assert_num_queries` guard.
+- Test behavior and HTTP/status/side effects, not Django internals.
+- Keep tests hermetic: no `.env`, no clock, no network. Settings module is
+  `core.settings.test`; Django deprecation warnings are errors.
+- Run with `.venv/bin/pytest`.
+
+See skill: `pytest-django-patterns`.

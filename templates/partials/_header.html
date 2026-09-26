@@ -1,0 +1,73 @@
+<header class="site-header site-header--sepeh">
+  <div class="site-header__bar">
+    <button
+      type="button"
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="mobile-drawer"
+      data-nav-toggle
+    >
+      <span class="nav-toggle__open" aria-hidden="true">{% include "components/_icon.html" with name="menu" %}</span>
+      <span class="nav-toggle__close" aria-hidden="true">{% include "components/_icon.html" with name="x" %}</span>
+      <span class="visually-hidden">منوی اصلی</span>
+    </button>
+
+    <nav class="nav nav--start nav--desktop" aria-label="منوی اصلی">
+      <a class="nav__link" href="{% url 'common:home' %}">خانه</a>
+      <a class="nav__link" href="{% url 'catalog:service' slug='chalnium' %}">خدمات</a>
+      <a class="nav__link" href="{% url 'requests:wizard_start' %}">سفارش سریع</a>
+      <a class="nav__link" href="{% url 'vendors:list' %}">تابلو‌سازها</a>
+    </nav>
+
+    <a class="brand brand--badge" href="{% url 'common:home' %}">
+      <span class="brand__mark" aria-hidden="true">{% include "components/_icon.html" with name="zap" %}</span>
+      <span class="brand__text">{{ SITE_NAME }}</span>
+    </a>
+
+    <div class="nav nav--end">
+      <div class="nav--desktop nav--end-links">
+        {% if user.is_authenticated %}
+          {% if user.is_vendor_user %}
+            <a class="nav__link" href="{% url 'vendors:dashboard' %}">پنل تابلو‌ساز</a>
+          {% else %}
+            <a class="nav__link" href="{% url 'requests:dashboard' %}">درخواست‌های من</a>
+          {% endif %}
+          <form class="nav__form" action="{% url 'accounts:logout' %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn--ghost btn--sm header-ghost" type="submit">خروج</button>
+          </form>
+        {% else %}
+          <a class="nav__link" href="{% url 'accounts:login' %}">ورود</a>
+          <a class="nav__link" href="{% url 'accounts:vendor_register' %}">ثبت‌نام تابلو‌ساز</a>
+        {% endif %}
+      </div>
+      <a class="btn btn--accent-phone" href="{% url 'requests:wizard_start' %}">
+        {% include "components/_icon.html" with name="phone" size="sm" %}
+        <span>قیمت بگیر</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="mobile-drawer" id="mobile-drawer" hidden data-nav-drawer>
+    <nav class="mobile-drawer__nav" aria-label="منوی موبایل">
+      <a href="{% url 'common:home' %}">خانه</a>
+      <a href="{% url 'catalog:service' slug='chalnium' %}">خدمات</a>
+      <a href="{% url 'requests:wizard_start' %}">سفارش سریع</a>
+      <a href="{% url 'vendors:list' %}">تابلو‌سازها</a>
+      {% if user.is_authenticated %}
+        {% if user.is_vendor_user %}
+          <a href="{% url 'vendors:dashboard' %}">پنل تابلو‌ساز</a>
+        {% else %}
+          <a href="{% url 'requests:dashboard' %}">درخواست‌های من</a>
+        {% endif %}
+        <form action="{% url 'accounts:logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit">خروج</button>
+        </form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">ورود</a>
+        <a href="{% url 'accounts:vendor_register' %}">ثبت‌نام تابلو‌ساز</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>

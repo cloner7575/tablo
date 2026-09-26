@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}درخواست ثبت شد | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-wizard{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="wz-success">
+    <div class="wz-success__badge" aria-hidden="true">✓</div>
+    <h1>درخواست شما ثبت شد</h1>
+    <p class="wz-success__lead">
+      «{{ project_request.title }}» برای تابلو‌سازهای مرتبط در
+      {{ project_request.city.name }} ارسال شد. به‌زودی پیشنهاد قیمت می‌گیرید.
+    </p>
+    <div class="wz-success__meta">
+      <span>{{ project_request.service.title }}</span>
+      <span>{{ project_request.city.name }}</span>
+      <span>{{ project_request.get_status_display }}</span>
+    </div>
+    <ol class="wz-success__next">
+      <li>تابلو‌سازها درخواست را می‌بینند</li>
+      <li>پیشنهاد قیمت، زمان و گارانتی می‌فرستند</li>
+      <li>شما مقایسه می‌کنید و بهترین را می‌پذیرید</li>
+    </ol>
+    <div class="hero__actions">
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:request_detail' pk=project_request.pk %}">مشاهده درخواست</a>
+      <a class="btn btn--ghost-outline btn--lg" href="{% url 'requests:dashboard' %}">داشبورد من</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

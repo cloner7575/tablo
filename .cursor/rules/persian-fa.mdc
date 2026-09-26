@@ -1,0 +1,40 @@
+---
+description: Persian (fa) locale — Jalali, Toman, and Persian UI quality for Iranian products
+globs: "**/*.html,**/static/css/**,**/templates/**"
+alwaysApply: false
+---
+
+# Persian locale for fa products
+
+## Calendar
+
+- User-facing dates are **Jalali (شمسی)**.
+- DB stores Gregorian timezone-aware datetimes.
+- Use `{% load persian %}{{ dt|jalali }}` or `apps.common.persian.format_jalali`.
+
+## Money (shops)
+
+- Default currency label: **تومان**.
+- Always thousand-separate: `{{ price|toman }}` → `185,000 تومان`.
+- Convert ×10 to ریال only at payment gateway calls.
+
+## Numerals and bidi
+
+- Persian digits are display only: `{{ price|toman|fa_digits }}`. Never store,
+  post, or parse them — normalise input with `str.translate` first.
+- Phones, codes and any Latin value inside Persian copy go in `<bdi>`
+  (`<bdi dir="ltr">{{ phone }}</bdi>`).
+- Persian spelling needs نیم‌فاصله (می‌شود، کتاب‌ها) and Persian punctuation
+  (`،` `؟` «…» `٪`).
+
+## UI (mandatory for fa screens)
+
+- Follow skill **`persian-ui`**: complete RTL compositions, self-hosted
+  Vazirmatn/Estedad, Persian chrome, no starter English, no Latin deco heroes.
+- Self-host fonts and scripts — foreign CDNs are unreliable from Iran.
+- The `[dir="rtl"]` layer in `tokens.css` / `base.css` handles tracking,
+  leading, icon mirroring and input direction. Write logical CSS so it keeps
+  working; details in `persian-ui/rtl-engineering.md`.
+- Pair with `ui-ux` quality bar before calling a page done.
+
+See skills: `persian-ui`, `persian-locale`, `persian-ecommerce`, `ui-ux`.

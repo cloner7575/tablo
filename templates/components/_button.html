@@ -1,0 +1,24 @@
+{% comment %}
+Button or link with the same visual weight.
+
+    {% include "components/_button.html" with text="Save" %}
+    {% include "components/_button.html" with text="Cancel" href=back_url variant="secondary" %}
+    {% include "components/_button.html" with text="Delete" variant="danger" size="sm" icon="alert-triangle" %}
+
+variant: primary (default) · secondary · ghost · danger
+size:    default · sm        full: stretch to the container width
+
+`full` is deliberately not called `block`: Django binds `block` to the current
+BlockNode inside every {% block %}, so that name is always truthy in a page.
+{% endcomment %}
+{% with variant=variant|default:"primary" %}
+  {% if href %}
+    <a class="btn btn--{{ variant }}{% if size %} btn--{{ size }}{% endif %}{% if full %} btn--block{% endif %}" href="{{ href }}">
+      {% if icon %}{% include "components/_icon.html" with name=icon size="sm" %}{% endif %}{{ text }}
+    </a>
+  {% else %}
+    <button class="btn btn--{{ variant }}{% if size %} btn--{{ size }}{% endif %}{% if full %} btn--block{% endif %}" type="{{ type|default:'submit' }}">
+      {% if icon %}{% include "components/_icon.html" with name=icon size="sm" %}{% endif %}{{ text }}
+    </button>
+  {% endif %}
+{% endwith %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}داشبورد مشتری | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-request{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="section__head section__head--row">
+    <div>
+      <p class="section__eyebrow">پنل مشتری</p>
+      <h1>درخواست‌های من</h1>
+      <p class="muted">وضعیت پروژه‌ها و پیشنهادهای رسیده را از اینجا پیگیری کنید.</p>
+    </div>
+    <a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">درخواست جدید</a>
+  </div>
+
+  <h2 class="req-section-title">پروژه‌های فعال</h2>
+  <div class="req-list">
+    {% for r in active %}
+      <a class="req-list__item" href="{% url 'requests:request_detail' pk=r.pk %}">
+        <div>
+          <strong>{{ r.title }}</strong>
+          <span>{{ r.service.title }} · {{ r.city.name }} · {{ r.created_at|jalali }}</span>
+        </div>
+        <span class="status-pill status-pill--{{ r.status }}">{{ r.get_status_display }}</span>
+      </a>
+    {% empty %}
+      <div class="empty">
+        <strong>پروژه فعالی ندارید</strong>
+        <p><a href="{% url 'requests:wizard_start' %}">اولین درخواست را ثبت کنید</a> و چند پیشنهاد قیمت بگیرید.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h2 class="req-section-title">تکمیل‌شده</h2>
+  <div class="req-list">
+    {% for r in completed %}
+      <a class="req-list__item" href="{% url 'requests:request_detail' pk=r.pk %}">
+        <div>
+          <strong>{{ r.title }}</strong>
+          <span>{{ r.get_status_display }}</span>
+        </div>
+        <span class="status-pill status-pill--completed">{{ r.get_status_display }}</span>
+      </a>
+    {% empty %}
+      <p class="empty">هنوز پروژه تکمیل‌شده‌ای ندارید.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

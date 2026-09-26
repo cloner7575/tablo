@@ -1,0 +1,52 @@
+{% load persian %}
+<aside class="vp-nav" aria-label="منوی پنل تابلو‌ساز">
+  <div class="vp-nav__brand">
+    <span class="vp-nav__mark" aria-hidden="true">{% include "components/_icon.html" with name="zap" %}</span>
+    <div>
+      <p class="vp-nav__eyebrow">میز کار تابلو‌ساز</p>
+      <strong>{{ vendor.business_name }}</strong>
+    </div>
+  </div>
+
+  <span class="status-pill status-pill--{{ vendor.verification_status }} vp-nav__status">
+    {{ vendor.get_verification_status_display }}
+  </span>
+
+  <nav class="vp-nav__links">
+    <a href="{% url 'vendors:dashboard' %}" {% if panel_active == "dashboard" %}aria-current="page"{% endif %}>
+      {% include "components/_icon.html" with name="layout-dashboard" size="sm" %}
+      <span>داشبورد</span>
+    </a>
+    <a href="{% url 'vendors:requests' %}?open=1" {% if panel_active == "requests" %}aria-current="page"{% endif %}>
+      {% include "components/_icon.html" with name="inbox" size="sm" %}
+      <span>درخواست‌ها</span>
+      {% if new_requests_count %}
+        <em class="vp-nav__badge">{{ new_requests_count|fa_digits }}</em>
+      {% endif %}
+    </a>
+    <a href="{% url 'vendors:my_quotes' %}" {% if panel_active == "quotes" %}aria-current="page"{% endif %}>
+      {% include "components/_icon.html" with name="file-text" size="sm" %}
+      <span>پیشنهادها</span>
+    </a>
+    <a href="{% url 'portfolio:manage' %}" {% if panel_active == "portfolio" %}aria-current="page"{% endif %}>
+      {% include "components/_icon.html" with name="image" size="sm" %}
+      <span>نمونه‌کارها</span>
+    </a>
+    <a href="{% url 'vendors:profile' %}" {% if panel_active == "profile" %}aria-current="page"{% endif %}>
+      {% include "components/_icon.html" with name="user" size="sm" %}
+      <span>پروفایل</span>
+    </a>
+  </nav>
+
+  <div class="vp-nav__footer">
+    {% if vendor.is_approved %}
+      <a class="vp-nav__ghost" href="{% url 'vendors:public' slug=vendor.slug %}">
+        {% include "components/_icon.html" with name="external-link" size="sm" %}
+        پروفایل عمومی
+      </a>
+    {% endif %}
+    <a class="btn btn--primary btn--sm btn--block" href="{% url 'vendors:requests' %}?open=1">
+      پاسخ سریع
+    </a>
+  </div>
+</aside>

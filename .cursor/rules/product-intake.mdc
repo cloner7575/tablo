@@ -1,0 +1,16 @@
+---
+description: Ask product-intake questions before building or planning a new product
+alwaysApply: true
+---
+
+# Product intake
+
+If the user is starting a **new product** from this starter (bootstrap, first plan, first features) and `PRODUCT.md` is missing or still empty:
+
+1. Run the `product-intake` skill.
+2. Ask brand, language, RTL/LTR, database, color/mood, and extras **before** writing a plan or code.
+3. Write `PRODUCT.md` and wait for confirmation.
+
+Do not invent a brand name, locale, or database. Skip intake when `PRODUCT.md` is already filled and they are continuing that product.
+
+See skill: `product-intake`.

@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load persian static %}
+
+{% block title %}{{ vendor.business_name }} | تابلو‌ساز در {{ vendor.city.name }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ vendor.business_name }} — امتیاز {{ vendor.rating }}، {{ vendor.completed_projects }} پروژه در {{ vendor.city.name }}{% endblock %}
+{% block og_title %}{{ vendor.business_name }}{% endblock %}
+{% block body_class %}page-vendor{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{ vendor.business_name|escapejs }}",
+  "description": "{{ vendor.description|truncatechars:160|escapejs }}",
+  "address": {"@type": "PostalAddress", "addressLocality": "{{ vendor.city.name|escapejs }}"},
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ vendor.rating }}",
+    "reviewCount": "{{ vendor.review_count }}"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<article class="vn-profile">
+  <section class="vn-hero" aria-labelledby="vn-title">
+    <div class="vn-hero__media" aria-hidden="true">
+      {% if vendor.cover_image %}
+        <img src="{{ vendor.cover_image.url }}" alt="" width="1600" height="900" fetchpriority="high">
+      {% else %}
+        <img src="{% static vendor.demo_cover %}" alt="" width="1600" height="900" fetchpriority="high">
+      {% endif %}
+    </div>
+    <div class="vn-hero__shade" aria-hidden="true"></div>
+    <div class="vn-hero__content">
+      <div class="vn-hero__badges">
+        <span class="vn-badge vn-badge--light">تأییدشده</span>
+        {% if vendor.is_featured %}<span class="vn-badge vn-badge--accent">منتخب</span>{% endif %}
+        <span class="vn-badge vn-badge--light">{{ vendor.city.name }}</span>
+      </div>
+      <h1 id="vn-title">{{ vendor.business_name }}</h1>
+      <p class="vn-hero__lead">
+        ★ {{ vendor.rating|fa_digits }}
+        ({{ vendor.review_count|fa_digits }} نظر)
+        · {{ vendor.completed_projects|fa_digits }} پروژه تکمیل‌شده
+        · پاسخ حدود {{ vendor.response_time_hours|fa_digits }} ساعت
+      </p>
+      <div class="vn-hero__actions">
+        <a class="btn btn--primary btn--lg" href="{% url 'requests:from_vendor' slug=vendor.slug %}">
+          درخواست قیمت از این تابلو‌ساز
+        </a>
+        <a class="btn btn--ghost-light btn--lg" href="#portfolio">مشاهده نمونه‌کارها</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="vn-stats section" aria-label="آمار تابلو‌ساز">
+    <div class="vn-stats__grid">
+      <div>
+        <strong>{{ vendor.rating|fa_digits }}</strong>
+        <span>امتیاز</span>
+      </div>
+      <div>
+        <strong>{{ vendor.completed_projects|fa_digits }}</strong>
+        <span>پروژه موفق</span>
+      </div>
+      <div>
+        <strong>{{ vendor.response_time_hours|fa_digits }}س</strong>
+        <span>میانگین پاسخ</span>
+      </div>
+      <div>
+        <strong>{% if vendor.years_of_experience %}{{ vendor.years_of_experience|fa_digits }}{% else %}—{% endif %}</strong>
+        <span>سال تجربه</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="vn-layout">
+      <div class="vn-main">
+        <section class="vn-block" aria-labelledby="about-title">
+          <h2 id="about-title">درباره مجموعه</h2>
+          {% if vendor.description %}
+            <div class="prose">{{ vendor.description|linebreaks }}</div>
+          {% else %}
+            <p class="muted">توضیحات تکمیلی هنوز ثبت نشده است.</p>
+          {% endif %}
+          {% if services %}
+            <p class="chip-row" aria-label="خدمات">
+              {% for s in services %}
+                <a class="chip" href="{% url 'catalog:service' slug=s.slug %}">{{ s.title }}</a>
+              {% endfor %}
+            </p>
+          {% endif %}
+        </section>
+
+        <section class="vn-block" id="portfolio" aria-labelledby="portfolio-title">
+          <div class="section__head section__head--row">
+            <div>
+              <p class="section__eyebrow">گالری اجرا</p>
+              <h2 id="portfolio-title">نمونه‌کارها</h2>
+            </div>
+          </div>
+          <div class="vn-gallery">
+            {% for item in portfolio %}
+              <a class="vn-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
+                {% if item.image %}
+                  <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+                {% else %}
+                  <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+                {% endif %}
+                <span>{{ item.title }}</span>
+              </a>
+            {% empty %}
+              <p class="empty">نمونه‌کاری ثبت نشده است.</p>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="vn-block" aria-labelledby="reviews-title">
+          <div class="section__head">
+            <p class="section__eyebrow">اعتماد مشتریان</p>
+            <h2 id="reviews-title">نظرات</h2>
+          </div>
+          <div class="vn-reviews">
+            {% for r in reviews %}
+              <blockquote class="vn-review">
+                <p class="vn-review__stars">★ {{ r.rating|fa_digits }}</p>
+                <p>«{{ r.comment|default:"کار تمیز و حرفه‌ای بود." }}»</p>
+              </blockquote>
+            {% empty %}
+              <p class="empty">هنوز نظری ثبت نشده است.</p>
+            {% endfor %}
+          </div>
+        </section>
+      </div>
+
+      <aside class="vn-side" aria-labelledby="cta-title">
+        <div class="vn-side__card">
+          <p class="section__eyebrow">شروع همکاری</p>
+          <h2 id="cta-title">درخواست قیمت بگیرید</h2>
+          <p class="muted">ابعاد، شهر و عکس محل را بفرستید؛ این تابلو‌ساز پیشنهاد می‌دهد.</p>
+          <ul class="vn-side__facts">
+            <li>شهر: {{ vendor.city.name }}</li>
+            <li>پاسخ: حدود {{ vendor.response_time_hours|fa_digits }} ساعت</li>
+            {% if vendor.instagram %}
+              <li>اینستاگرام: <bdi dir="ltr">@{{ vendor.instagram }}</bdi></li>
+            {% endif %}
+            <li>آدرس: {{ vendor.address|default:vendor.city.name }}</li>
+          </ul>
+          <a class="btn btn--primary btn--block" href="{% url 'requests:from_vendor' slug=vendor.slug %}">
+            درخواست قیمت از این تابلو‌ساز
+          </a>
+          <a class="btn btn--ghost-outline btn--block" href="{% url 'requests:wizard_start' %}">
+            مقایسه با چند تابلو‌ساز
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {% if related_vendors %}
+  <section class="section section--muted" aria-labelledby="related-vendors-title">
+    <div class="section__head section__head--row">
+      <div>
+        <p class="section__eyebrow">در همین شهر</p>
+        <h2 id="related-vendors-title">تابلو‌سازهای مرتبط</h2>
+      </div>
+      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:list' %}">مشاهده همه</a>
+    </div>
+    <div class="vn-grid vn-grid--compact">
+      {% for v in related_vendors %}
+        <a class="vn-card vn-card--link" href="{% url 'vendors:public' slug=v.slug %}">
+          <div class="vn-card__media">
+            {% if v.cover_image %}
+              <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="700" height="440">
+            {% else %}
+              <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="700" height="440">
+            {% endif %}
+          </div>
+          <div class="vn-card__body">
+            <h3>{{ v.business_name }}</h3>
+            <p>★ {{ v.rating|fa_digits }} · {{ v.city.name }}</p>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="sp-consult section" aria-labelledby="vn-final-cta">
+    <div class="sp-consult__inner">
+      <div>
+        <h2 id="vn-final-cta">همین تابلو‌ساز را انتخاب کردید؟</h2>
+        <p>درخواست را ثبت کنید تا پیشنهاد قیمت، زمان اجرا و گارانتی را دریافت کنید.</p>
+      </div>
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:from_vendor' slug=vendor.slug %}">شروع درخواست</a>
+    </div>
+  </section>
+</article>
+{% endblock %}

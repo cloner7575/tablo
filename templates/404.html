@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Page not found" %} · {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+  <section class="stack error-page">
+    <span class="error-page__mark">{% include "components/_icon.html" with name="search-x" size="lg" %}</span>
+    <p class="error-page__code">404</p>
+    <h1>{% translate "We could not find that page." %}</h1>
+    <p class="lede">
+      {% translate "The link may be outdated, or the page may have moved." %}
+    </p>
+    {% include "components/_button.html" with text=_("Back to home") href="/" %}
+  </section>
+{% endblock %}

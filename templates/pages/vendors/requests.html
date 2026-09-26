@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}درخواست‌های مناسب | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div>
+          <p class="section__eyebrow">فرصت‌های فروش</p>
+          <h1>درخواست‌های مناسب شما</h1>
+          <p class="muted">{{ open_count|fa_digits }} درخواست بدون پیشنهاد شما — زودتر پاسخ دهید شانس بیشتری دارید.</p>
+        </div>
+      </header>
+
+      <form method="get" class="vp-filters">
+        <label>
+          خدمت
+          <select name="service">
+            <option value="">همه</option>
+            {% for s in services %}
+              <option value="{{ s.slug }}" {% if request.GET.service == s.slug %}selected{% endif %}>{{ s.title }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="vp-filters__check">
+          <input type="checkbox" name="open" value="1" {% if only_open %}checked{% endif %}>
+          فقط بدون پیشنهاد من
+        </label>
+        <button class="btn btn--secondary btn--sm" type="submit">اعمال فیلتر</button>
+        {% if request.GET %}
+          <a class="btn btn--ghost btn--sm" href="{% url 'vendors:requests' %}">پاک کردن</a>
+        {% endif %}
+      </form>
+
+      <div class="vp-feed vp-feed--cards">
+        {% for r in requests %}
+          <article class="vp-req">
+            <div class="vp-req__main">
+              <div class="vp-req__top">
+                <h2>{{ r.title }}</h2>
+                {% if r.pk in quoted_ids %}
+                  <span class="status-pill status-pill--accepted">پیشنهاد داده‌اید</span>
+                {% else %}
+                  <span class="status-pill status-pill--receiving_quotes">جدید برای شما</span>
+                {% endif %}
+              </div>
+              <p class="vp-req__meta">
+                {{ r.service.title }} · {{ r.city.name }} · {{ r.created_at|jalali }}
+              </p>
+              <ul class="vp-req__facts">
+                <li>ابعاد: {{ r.dimensions_display }}</li>
+                <li>نور: {{ r.get_lighting_type_display|default:"—" }}</li>
+                <li>بودجه:
+                  {% if r.budget_min or r.budget_max %}
+                    {{ r.budget_min|default:0|toman|fa_digits }} تا {{ r.budget_max|default:0|toman|fa_digits }}
+                  {% else %}توافقی{% endif %}
+                </li>
+              </ul>
+              {% if r.description %}
+                <p class="vp-req__desc">{{ r.description|truncatechars:140 }}</p>
+              {% endif %}
+            </div>
+            <div class="vp-req__actions">
+              <a class="btn btn--primary" href="{% url 'vendors:request_detail' pk=r.pk %}">
+                {% if r.pk in quoted_ids %}مشاهده{% else %}ارسال پیشنهاد{% endif %}
+              </a>
+            </div>
+          </article>
+        {% empty %}
+          <div class="vp-empty">
+            <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="inbox" %}</span>
+            <strong>درخواستی با این فیلتر پیدا نشد</strong>
+            <p>فیلتر را عوض کنید یا پروفایل خدمات و شهر را بررسی کنید.</p>
+            <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:profile' %}">ویرایش پروفایل</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

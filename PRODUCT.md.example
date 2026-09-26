@@ -1,0 +1,43 @@
+# Product
+
+Fill this during **product-intake**. The agent must not invent these values.
+
+## Identity
+
+- Brand name:
+- Project slug:
+- Pitch (one sentence):
+- Audience:
+- Industry / product type:
+
+## Locale
+
+- UI language code: (`fa`, `en-us`, …)
+- Text direction: (`rtl` | `ltr`)
+- Time zone:
+
+## Look
+
+- Color / mood:
+- Pro Max query (if used):
+- Notes:
+
+## Platform
+
+- Database: (`sqlite` | `postgres`)
+- REST API: DRF is already wired at `/api/v1/` — list the resources it exposes,
+  or note "internal only" if the product has no public API
+- Public signup: (`no` — staff-created accounts | `yes` — needs a signup view)
+- Background jobs: (`no` | `celery`)
+- Cache / Redis: (`no` | `yes`)
+- Docker: (`no` | `yes`)
+- Deploy target:
+
+## MVP
+
+- First screens / features:
+
+## Confirmed
+
+- Date:
+- By:

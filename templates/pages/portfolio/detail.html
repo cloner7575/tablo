@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load persian static %}
+
+{% block title %}{{ item.title }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ item.description|default:item.title|truncatechars:150 }}{% endblock %}
+{% block og_title %}{{ item.title }}{% endblock %}
+{% block body_class %}page-portfolio{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": "{{ item.title|escapejs }}",
+  "description": "{{ item.description|default:item.title|truncatechars:160|escapejs }}",
+  "creator": {"@type": "Organization", "name": "{{ item.vendor.business_name|escapejs }}"}
+  {% if item.city %},"contentLocation": {"@type": "Place", "name": "{{ item.city.name|escapejs }}"}{% endif %}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<article class="pf-detail">
+  <section class="pf-hero" aria-labelledby="pf-title">
+    <div class="pf-hero__media">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" width="1400" height="900" fetchpriority="high">
+      {% else %}
+        <img src="{% static item.demo_image %}" alt="{{ item.title }}" width="1400" height="900" fetchpriority="high">
+      {% endif %}
+    </div>
+    <div class="pf-hero__overlay">
+      <nav class="pf-breadcrumb" aria-label="مسیر صفحه">
+        <a href="{% url 'common:home' %}">خانه</a>
+        <span aria-hidden="true">/</span>
+        {% if item.service %}
+          <a href="{% url 'catalog:service' slug=item.service.slug %}">{{ item.service.title }}</a>
+          <span aria-hidden="true">/</span>
+        {% endif %}
+        <span aria-current="page">نمونه‌کار</span>
+      </nav>
+      <h1 id="pf-title">{{ item.title }}</h1>
+      <p class="pf-hero__meta">
+        {% if item.service %}<span>{{ item.service.title }}</span>{% endif %}
+        {% if item.city %}<span>{{ item.city.name }}</span>{% endif %}
+        <span>{{ item.vendor.business_name }}</span>
+      </p>
+    </div>
+  </section>
+
+  <section class="pf-body section">
+    <div class="pf-layout">
+      <div class="pf-main">
+        <div class="pf-chip-row" aria-label="برچسب‌ها">
+          {% if item.service %}
+            <a class="chip" href="{% url 'catalog:service' slug=item.service.slug %}">{{ item.service.title }}</a>
+          {% endif %}
+          {% if item.city %}
+            <a class="chip" href="{% url 'catalog:city' slug=item.city.slug %}">{{ item.city.name }}</a>
+          {% endif %}
+          <span class="chip chip--quiet">اجرای {{ item.created_at|jalali }}</span>
+        </div>
+
+        <h2>درباره این پروژه</h2>
+        {% if item.description %}
+          <div class="prose">{{ item.description|linebreaks }}</div>
+        {% else %}
+          <p class="muted">توضیحات تکمیلی برای این نمونه‌کار ثبت نشده است. برای جزئیات اجرا با تابلو‌ساز گفتگو کنید.</p>
+        {% endif %}
+
+        <div class="pf-highlights" aria-label="نکات پروژه">
+          <article>
+            <h3>نوع تابلو</h3>
+            <p>{{ item.service.title|default:"عمومی" }}</p>
+          </article>
+          <article>
+            <h3>شهر اجرا</h3>
+            <p>{{ item.city.name|default:item.vendor.city.name }}</p>
+          </article>
+          <article>
+            <h3>تابلو‌ساز</h3>
+            <p>{{ item.vendor.business_name }}</p>
+          </article>
+        </div>
+      </div>
+
+      <aside class="pf-side" aria-labelledby="pf-vendor-title">
+        <p class="section__eyebrow">تابلو‌ساز این پروژه</p>
+        <h2 id="pf-vendor-title">{{ item.vendor.business_name }}</h2>
+        <p class="pf-side__rating">
+          ★ {{ item.vendor.rating|fa_digits }}
+          · {{ item.vendor.review_count|fa_digits }} نظر
+          · {{ item.vendor.completed_projects|fa_digits }} پروژه
+        </p>
+        <p class="muted">{{ item.vendor.city.name }}{% if item.vendor.response_time_hours %} · پاسخ حدود {{ item.vendor.response_time_hours|fa_digits }} ساعت{% endif %}</p>
+        <div class="pf-side__actions">
+          <a class="btn btn--primary btn--block" href="{% url 'requests:from_vendor' slug=item.vendor.slug %}">
+            درخواست قیمت مشابه
+          </a>
+          <a class="btn btn--ghost-outline btn--block" href="{% url 'vendors:public' slug=item.vendor.slug %}">
+            پروفایل تابلو‌ساز
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {% if related %}
+  <section class="section section--muted" aria-labelledby="related-title">
+    <div class="section__head section__head--row">
+      <div>
+        <p class="section__eyebrow">پروژه‌های مرتبط</p>
+        <h2 id="related-title">نمونه‌کارهای مشابه</h2>
+      </div>
+      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:public' slug=item.vendor.slug %}">همه کارهای این تابلو‌ساز</a>
+    </div>
+    <div class="sp-projects">
+      {% for rel in related %}
+        <a class="sp-project" href="{% url 'portfolio:detail' slug=rel.slug %}">
+          {% if rel.image %}
+            <img src="{{ rel.image.url }}" alt="{{ rel.title }}" loading="lazy" width="800" height="600">
+          {% else %}
+            <img src="{% static rel.demo_image %}" alt="{{ rel.title }}" loading="lazy" width="800" height="600">
+          {% endif %}
+          <div class="sp-project__body">
+            <h3>{{ rel.title }}</h3>
+            <p class="muted">{{ rel.vendor.business_name }}{% if rel.city %} · {{ rel.city.name }}{% endif %}</p>
+            <span class="btn btn--primary btn--sm">مشاهده</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="sp-consult section" aria-labelledby="pf-cta-title">
+    <div class="sp-consult__inner">
+      <div>
+        <h2 id="pf-cta-title">پروژه‌ای شبیه این می‌خواهید؟</h2>
+        <p>نوع تابلو، ابعاد و عکس محل را بفرستید تا چند تابلو‌ساز پیشنهاد قیمت بدهند.</p>
+      </div>
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">شروع درخواست رایگان</a>
+    </div>
+  </section>
+</article>
+{% endblock %}

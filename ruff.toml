@@ -1,0 +1,18 @@
+target-version = "py312"
+line-length = 88
+src = [".", "apps"]
+extend-exclude = [".cursor/skills/ui-ux-pro-max"]
+
+[lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[lint.per-file-ignores]
+"**/migrations/*.py" = ["E501"]
+"**/settings/*.py" = ["E501", "F403", "F405"]
+
+[format]
+quote-style = "preserve"
+indent-style = "space"
+# Migrations are generated artifacts: reformatting them fights makemigrations
+# on every future run and adds noise to reviews.
+exclude = ["**/migrations/*.py"]

@@ -1,0 +1,21 @@
+{% extends "registration/base_auth.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Sign in" %} · {{ SITE_NAME }}{% endblock %}
+{% block auth_heading %}{% translate "Sign in" %}{% endblock %}
+{% block auth_intro %}
+  <p class="auth-card__aside">{% translate "Use the account that was created with the project." %}</p>
+{% endblock %}
+
+{% block auth_body %}
+  <form method="post" action="{% url 'accounts:password_login' %}" novalidate>
+    {% csrf_token %}
+    {% include "partials/_form_errors.html" %}
+    {% for field in form %}{% include "components/_field.html" %}{% endfor %}
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+    {% include "components/_button.html" with text=_("Sign in") full=True %}
+  </form>
+  <p class="auth-card__aside">
+    <a href="{% url 'accounts:password_reset' %}">{% translate "Forgot your password?" %}</a>
+  </p>
+{% endblock %}

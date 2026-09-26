@@ -1,0 +1,36 @@
+{% load static i18n persian %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{{ TEXT_DIRECTION }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#f4f4f5">
+    <meta name="description" content="{% block meta_description %}برای تابلوی مغازه‌ات از چند تابلو‌ساز قیمت بگیر — {{ SITE_NAME }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% block meta_description_og %}برای تابلوی مغازه‌ات از چند تابلو‌ساز قیمت بگیر{% endblock %}{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fa_IR">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    <link rel="preload" href="{% static 'fonts/vazirmatn-arabic.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tablo.css' %}">
+    {% block extra_css %}{% endblock %}
+    {% block structured_data %}{% endblock %}
+  </head>
+  <body class="has-mobile-chrome {% block body_class %}{% endblock %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <a class="skip-link" href="#main">{% translate "Skip to content" %}</a>
+    {% include "partials/_header.html" %}
+    <main id="main" class="site-main" tabindex="-1">
+      {% include "partials/_messages.html" %}
+      {% block content %}{% endblock %}
+    </main>
+    {% include "partials/_footer.html" %}
+    {% include "partials/_mobile_cta.html" %}
+    <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
+    <script src="{% static 'js/app.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

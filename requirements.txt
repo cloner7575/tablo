@@ -1,0 +1,13 @@
+Django>=6.1,<6.2
+djangorestframework>=3.15
+drf-spectacular>=0.28
+psycopg[binary]>=3.2
+Pillow>=11.0
+whitenoise>=6.9
+jdatetime>=5.0
+gunicorn>=23.0
+redis>=5.0
+
+# Optional per product — install only when the feature is actually used:
+#   celery[redis]>=5.4    background jobs   (skill: celery-patterns)
+#   django-extensions>=3  dev introspection (skill: django-extensions)

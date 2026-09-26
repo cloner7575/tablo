@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}ثبت‌نام تابلو‌ساز | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section section--narrow">
+  <h1>ثبت‌نام تابلو‌ساز</h1>
+  <p>شماره موبایل خود را وارد کنید تا کد تأیید دریافت کنید.</p>
+  <form method="post" class="stack-form">
+    {% csrf_token %}
+    {% for field in form %}
+      {% include "components/_field.html" with field=field %}
+    {% endfor %}
+    <button class="btn btn--primary" type="submit">ادامه</button>
+  </form>
+</section>
+{% endblock %}

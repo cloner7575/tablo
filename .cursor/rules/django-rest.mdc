@@ -1,0 +1,21 @@
+---
+description: DRF serializer and ViewSet conventions
+globs: "**/serializers.py,**/api.py,**/viewsets.py,**/api/**/*.py,core/api_urls.py"
+alwaysApply: false
+---
+
+# Django REST Framework
+
+DRF is already wired at `/api/v1/` — reuse that surface, do not build a second.
+
+- Validate in serializers. Stamp `request.user` in `create` / `perform_create`.
+- Override `get_queryset()` and scope it to the current user.
+- Always `select_related` / `prefetch_related` on API querysets.
+- Paginate list endpoints. Authenticated by default; `AllowAny` must be
+  deliberate.
+- One error shape: `apps.common.api.api_exception_handler`. Do not hand-roll a
+  second envelope, and let unhandled exceptions reach the logs as 500s.
+- A breaking change is a new version namespace in `core/api_urls.py`.
+- Reverse endpoints as `api:v1:<name>`.
+
+See skill: `django-rest-framework`.

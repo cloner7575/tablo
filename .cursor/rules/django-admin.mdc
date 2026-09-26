@@ -1,0 +1,14 @@
+---
+description: Django Admin changelist and inline conventions
+globs: "**/admin.py"
+alwaysApply: false
+---
+
+# Django Admin
+
+- Set `list_display`, `list_filter`, `search_fields`.
+- `list_select_related` / `get_queryset()` with `select_related` to avoid N+1.
+- `autocomplete_fields` or `raw_id_fields` for FKs with many rows.
+- Domain writes go through model methods, not only `save_model`.
+
+See skill: `django-admin`.

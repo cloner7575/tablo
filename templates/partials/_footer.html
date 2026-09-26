@@ -1,0 +1,36 @@
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__brand">
+      <a class="brand" href="{% url 'common:home' %}">
+        <span class="brand__mark" aria-hidden="true">{% include "components/_icon.html" with name="zap" %}</span>
+        <span>{{ SITE_NAME }}</span>
+      </a>
+      <p>پلتفرم تخصصی سفارش و مقایسه خدمات تابلوسازی برای کسب‌وکارهای ایران.</p>
+    </div>
+
+    <nav aria-labelledby="footer-product">
+      <h2 id="footer-product">محصول</h2>
+      <ul>
+        <li><a href="{% url 'requests:wizard_start' %}">قیمت بگیر</a></li>
+        <li><a href="{% url 'vendors:list' %}">تابلو‌سازها</a></li>
+        <li><a href="{% url 'catalog:service' slug='chalnium' %}">تابلو چلنیوم</a></li>
+        <li><a href="{% url 'catalog:service' slug='neon' %}">تابلو نئون</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-labelledby="footer-cities">
+      <h2 id="footer-cities">شهرها</h2>
+      <ul>
+        <li><a href="{% url 'catalog:city' slug='tehran' %}">تهران</a></li>
+        <li><a href="{% url 'catalog:city' slug='karaj' %}">کرج</a></li>
+        <li><a href="{% url 'accounts:vendor_register' %}">عضویت تابلو‌ساز</a></li>
+        <li><a href="{% url 'accounts:login' %}">ورود</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="site-footer__bar">
+    <p>© {{ SITE_NAME }} — ساخته‌شده برای کسب‌وکارهای واقعی</p>
+    <p>نماد اعتماد الکترونیکی و ساماندهی به‌زودی</p>
+  </div>
+</footer>

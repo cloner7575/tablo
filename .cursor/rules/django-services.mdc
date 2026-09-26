@@ -1,0 +1,19 @@
+---
+description: Service layer and selector conventions
+globs: "**/services.py,**/selectors.py,**/tasks.py"
+alwaysApply: false
+---
+
+# Services, selectors, tasks
+
+- A service exists only for work spanning several models or an external system.
+  One-model state changes stay model methods.
+- Keyword-only arguments, explicit return types.
+- `transaction.atomic()` around writes that must succeed together.
+- Side effects (email, tasks, webhooks, cache busts) go in
+  `transaction.on_commit` so a rollback cannot fire them.
+- Celery tasks receive **ids**, never model instances, and must be idempotent.
+- Raise a domain exception the caller can translate; log with context and
+  re-raise anything unexpected.
+
+See skills: `django-services`, `celery-patterns`, `django-logging`.

@@ -1,0 +1,22 @@
+{% comment %}
+Django sets aria-invalid and aria-describedby on the widget itself, pointing at
+`<auto_id>_helptext` and `<auto_id>_error`. Keep those ids exactly as they are.
+{% endcomment %}
+<div class="field{% if field.errors %} field--invalid{% endif %}">
+  <label for="{{ field.id_for_label }}">
+    {{ field.label }}{% if field.field.required %} <span class="field__required" title="required">*</span>{% endif %}
+  </label>
+  {{ field }}
+  {% if field.help_text %}
+    {% comment %}
+    A div, not a p: password help text is a list, and the parser would hoist a
+    <ul> out of a paragraph, stripping its styling.
+    {% endcomment %}
+    <div class="field__help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>
+  {% endif %}
+  {% if field.errors %}
+    <div class="field__error" id="{{ field.auto_id }}_error">
+      {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+  {% endif %}
+</div>

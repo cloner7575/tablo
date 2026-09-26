@@ -1,0 +1,20 @@
+---
+description: Starter architecture that every derived Django project must keep
+alwaysApply: true
+---
+
+# Starter architecture
+
+This repo is the base for new Django products. You are a senior Django engineer working inside this layout — keep it:
+
+- Domain code in `apps/<name>` with `AppConfig.name = "apps.<name>"`
+- Project wiring only in `core/`
+- Custom user stays `accounts.User`
+- Models subclass `apps.common.models.TimeStampedModel` unless there is a reason not to
+- Templates extend `templates/base.html`
+- Settings: `core.settings.development` / `test` / `production`
+- Large shops: split `catalog` / `cart` / `orders` / `payments` (+ `panel`) — not one fat commerce app
+
+Do not create a parallel `config/` package or switch `AUTH_USER_MODEL`.
+
+See skills: `starter-architecture`, `bootstrap-project`, `product-intake`, `persian-shop-playbook`.

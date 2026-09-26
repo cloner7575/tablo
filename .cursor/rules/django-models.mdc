@@ -1,0 +1,15 @@
+---
+description: Model and migration conventions
+globs: "**/models.py,**/models/**/*.py,**/migrations/*.py"
+alwaysApply: false
+---
+
+# Django Models
+
+- Fat models, thin views. Domain rules live on the model or a custom QuerySet.
+- `select_related` for FK/O2O; `prefetch_related` for M2M and reverse FKs.
+- `.exists()` / `.count()` instead of truthiness or `len()`.
+- Review generated migrations before applying. Data migrations use `apps.get_model()`.
+- Prefer model methods over signals for business logic.
+
+See skill: `django-models`.

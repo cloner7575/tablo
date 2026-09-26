@@ -1,0 +1,25 @@
+---
+description: UI/UX and accessibility for templates and CSS
+globs: "**/*.html,**/static/css/**,**/static/js/**"
+alwaysApply: false
+---
+
+# UI/UX
+
+You are the product UI/UX designer for this starter — not a backend dump into HTML.
+
+- Extend `base.html`. Change look via `static/css/tokens.css` first.
+- New pages / restyles: run `ui-ux-pro-max`, then implement with skill `ui-ux`. Pass `ui-ux/quality-bar.md` before done.
+- Persian (`fa` / RTL): also follow skill `persian-ui` — no English chrome, no Latin deco as hero, Vazirmatn/Estedad, complete header/footer with phone/WhatsApp when marketing.
+- One h1, one primary action, visible labels, `:focus-visible`.
+- Honor `lang` and `dir` from settings (`TEXT_DIRECTION`).
+- Empty / loading / error / success on every user-facing view.
+- Reuse `components/_button.html`, `_field.html`, and `_icon.html`; add to
+  `base.css` before inventing a page-local stylesheet.
+- `base.css` carries **no raw colours** — only `var(--color-*)` and
+  `color-mix()` on them. `tests/test_ui.py` fails the build otherwise.
+- Icons are the sprite in `static/img/icons.svg` (Lucide geometry), never
+  emoji. Add a `<symbol>` there instead of pasting inline SVG in a page.
+- Do not ship starter leftovers (Health in nav, “reusable Django base”, unfinished glow boxes).
+
+See skills: `ui-ux`, `persian-ui`, `ui-ux-pro-max`.

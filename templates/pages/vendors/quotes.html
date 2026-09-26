@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}پیشنهادهای من | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div>
+          <p class="section__eyebrow">پیگیری فروش</p>
+          <h1>پیشنهادهای ارسال‌شده</h1>
+          <p class="muted">
+            {{ pending_count|fa_digits }} در انتظار ·
+            {{ accepted_count|fa_digits }} پذیرفته‌شده ·
+            {{ quotes|length|fa_digits }} کل
+          </p>
+        </div>
+        <a class="btn btn--primary" href="{% url 'vendors:requests' %}?open=1">پیشنهاد جدید</a>
+      </header>
+
+      <div class="vp-feed vp-feed--cards">
+        {% for q in quotes %}
+          <article class="vp-req">
+            <div class="vp-req__main">
+              <div class="vp-req__top">
+                <h2>{{ q.request.title }}</h2>
+                <span class="status-pill status-pill--{{ q.status }}">{{ q.get_status_display }}</span>
+              </div>
+              <p class="vp-req__meta">
+                {{ q.request.service.title }} · {{ q.request.city.name }} · {{ q.created_at|jalali }}
+              </p>
+              <p class="req-quote__price">{{ q.price|toman|fa_digits }}</p>
+              <ul class="vp-req__facts">
+                <li>زمان اجرا: {{ q.estimated_delivery_days|fa_digits }} روز</li>
+                <li>گارانتی: {{ q.warranty|default:"—" }}</li>
+              </ul>
+            </div>
+            <div class="vp-req__actions">
+              <a class="btn btn--ghost-outline" href="{% url 'vendors:request_detail' pk=q.request_id %}">جزئیات درخواست</a>
+            </div>
+          </article>
+        {% empty %}
+          <div class="vp-empty">
+            <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="file-text" %}</span>
+            <strong>هنوز پیشنهادی ندارید</strong>
+            <p>از صف درخواست‌های باز شروع کنید — پاسخ سریع شانس پذیرش را بالا می‌برد.</p>
+            <a class="btn btn--primary btn--sm" href="{% url 'vendors:requests' %}?open=1">مشاهده درخواست‌های باز</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

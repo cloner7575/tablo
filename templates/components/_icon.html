@@ -1,0 +1,14 @@
+{% load static %}{% comment %}
+Inline icon from the sprite in static/img/icons.svg.
+
+    {% include "components/_icon.html" with name="database" %}
+    {% include "components/_icon.html" with name="check-circle" size="lg" %}
+
+Decorative by default. When an icon carries meaning on its own, pass
+`label` and it is exposed to assistive tech instead of being hidden.
+
+Pass `flip=True` for a direction-bearing icon that the RTL rules in base.css
+do not already mirror.
+{% endcomment %}<svg class="icon{% if size %} icon--{{ size }}{% endif %}{% if flip %} icon--flip{% endif %}"
+  {% if label %}role="img" aria-label="{{ label }}"{% else %}aria-hidden="true"{% endif %}
+  focusable="false"><use href="{% static 'img/icons.svg' %}#{{ name }}"></use></svg>
