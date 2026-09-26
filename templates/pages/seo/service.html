@@ -14,10 +14,31 @@
       <p class="svc-hero__lead">{{ service.description }}</p>
       <div class="svc-hero__actions">
         <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">برای این نوع تابلو قیمت بگیر</a>
-        <a class="btn btn--ghost-outline btn--lg" href="{% url 'vendors:list' %}">مشاهده تابلو‌سازها</a>
+        <a class="btn btn--ghost-outline" href="{% url 'vendors:list' %}">مشاهده تابلو‌سازها</a>
       </div>
     </div>
+    <div class="svc-hero__visual">
+      {% if service.icon %}
+        <img src="{{ service.icon.url }}" alt="" width="900" height="640" decoding="async">
+      {% else %}
+        <img src="{% static service.demo_image %}" alt="" width="900" height="640" decoding="async">
+      {% endif %}
+    </div>
   </section>
+
+  {% if related_services %}
+  <nav class="svc-related section" aria-label="سایر انواع تابلو">
+    <p class="svc-related__label">سایر خدمات</p>
+    <div class="svc-related__rail" role="list">
+      {% for s in related_services %}
+        <a class="svc-related__item" href="{% url 'catalog:service' slug=s.slug %}" role="listitem">
+          <img src="{% static s.demo_image %}" alt="" loading="lazy" width="120" height="80">
+          <span>{{ s.title }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </nav>
+  {% endif %}
 
   {% if service.suitable_for or service.materials %}
   <section class="section" aria-label="جزئیات خدمت">
@@ -43,12 +64,30 @@
       <div>
         <p class="section__eyebrow">شبکه متخصصان</p>
         <h2 id="svc-vendors-title">تابلو‌سازان این خدمت</h2>
+        {% if vendors_count %}
+          <p class="svc-count">{{ vendors_count|fa_digits }} تابلو‌ساز تأییدشده</p>
+        {% endif %}
       </div>
       <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:list' %}">همه تابلو‌سازها</a>
     </div>
-    <div class="vn-grid">
+    <div class="svc-vendors">
       {% for v in vendors %}
-        {% include "partials/_vendor_card.html" with v=v %}
+        <a class="svc-vendor" href="{% url 'requests:from_vendor' slug=v.slug %}">
+          {% if v.cover_image %}
+            <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="160" height="160">
+          {% else %}
+            <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="160" height="160">
+          {% endif %}
+          <div class="svc-vendor__body">
+            <h3>{{ v.business_name }}</h3>
+            <p>
+              {% if v.review_count %}★ {{ v.rating|fa_digits }} · {% endif %}
+              {{ v.city.name }}
+              {% if v.completed_projects %} · {{ v.completed_projects|fa_digits }} پروژه{% endif %}
+            </p>
+            <span class="btn btn--primary btn--sm">درخواست قیمت</span>
+          </div>
+        </a>
       {% empty %}
         <div class="empty">
           <strong>هنوز تابلو‌ساز تأییدشده‌ای برای این خدمت نیست</strong>
@@ -60,17 +99,19 @@
   </section>
 
   <section class="section section--muted" aria-labelledby="svc-portfolio-title">
-    <div class="section__head">
-      <p class="section__eyebrow">گالری اجرا</p>
-      <h2 id="svc-portfolio-title">نمونه‌کارهای {{ service.title }}</h2>
+    <div class="section__head section__head--row">
+      <div>
+        <p class="section__eyebrow">گالری اجرا</p>
+        <h2 id="svc-portfolio-title">نمونه‌کارهای {{ service.title }}</h2>
+      </div>
     </div>
-    <div class="vn-gallery">
+    <div class="svc-gallery">
       {% for item in portfolio %}
-        <a class="vn-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
+        <a class="svc-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
           {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="600" height="400">
           {% else %}
-            <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+            <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="400">
           {% endif %}
           <span>{{ item.title }}</span>
         </a>
@@ -82,7 +123,7 @@
 
   {% if faq %}
   <section class="section" aria-labelledby="svc-faq-title">
-    <div class="section__head">
+    <div class="section__head section__head--center">
       <p class="section__eyebrow">راهنما</p>
       <h2 id="svc-faq-title">سوالات پرتکرار</h2>
     </div>

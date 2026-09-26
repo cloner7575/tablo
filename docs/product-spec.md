@@ -16,8 +16,8 @@
 
 | Role | Capabilities |
 |------|----------------|
-| Customer | ثبت درخواست، مشاهده پیشنهادها، Accept، Review |
-| Vendor | مشاهده Requestهای منطبق، ارسال Quote، مدیریت Portfolio و پروفایل |
+| Customer | ثبت درخواست، مشاهده پیشنهادها، گفتگو، Accept، Review |
+| Vendor | مشاهده Requestهای منطبق، ارسال Quote، گفتگو، مدیریت Portfolio و پروفایل |
 | Admin | تأیید/تعلیق Vendor، مدیریت محتوا، بررسی Request/Review |
 
 ## Core flows
@@ -32,7 +32,12 @@ Signup → Pending verification → Admin approve → Dashboard → Matched requ
 
 ## Non-goals (MVP)
 
-Chat، payment gateway، AI، قیمت‌گذاری قطعی، اپ موبایل، blog، حسابداری، حمل‌ونقل
+payment gateway، AI، قیمت‌گذاری قطعی، اپ موبایل، blog، حسابداری، حمل‌ونقل
+
+## Chat (MVP)
+
+گفتگوی ۱:۱ وابسته به هر `Quote` با Django Channels + WebSocket (Redis channel layer).
+باز شدن بعد از ثبت پیشنهاد؛ مذاکره قبل از Accept؛ ادامه بعد از پذیرش؛ بستن thread پیشنهادهای بازنده.
 
 ## Success criteria
 

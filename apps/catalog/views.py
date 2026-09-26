@@ -5,6 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_http_methods
 
+from apps.catalog.demo import attach_demo_image as attach_service_demo
 from apps.catalog.models import CityServicePage, Service
 from apps.locations.models import City
 from apps.portfolio.demo import attach_demo_image
@@ -33,6 +34,7 @@ def _approved_vendors():
 @require_http_methods(["GET"])
 def service_detail(request: HttpRequest, slug: str) -> HttpResponse:
     service = get_object_or_404(Service, slug=slug, is_active=True)
+    attach_service_demo(service)
     vendors = list(_approved_vendors().filter(services=service).distinct()[:12])
     for vendor in vendors:
         attach_demo_cover(vendor)
@@ -43,6 +45,11 @@ def service_detail(request: HttpRequest, slug: str) -> HttpResponse:
     )
     for item in portfolio:
         attach_demo_image(item)
+    related_services = list(
+        Service.objects.filter(is_active=True).exclude(pk=service.pk)[:6]
+    )
+    for related in related_services:
+        attach_service_demo(related)
     faq = service.faq if isinstance(service.faq, list) else []
     return render(
         request,
@@ -50,7 +57,9 @@ def service_detail(request: HttpRequest, slug: str) -> HttpResponse:
         {
             "service": service,
             "vendors": vendors,
+            "vendors_count": len(vendors),
             "portfolio": portfolio,
+            "related_services": related_services,
             "faq": faq,
         },
     )

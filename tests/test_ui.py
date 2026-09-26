@@ -111,6 +111,22 @@ def test_wizard_mobile_css_hides_aside_and_clips_overflow() -> None:
     assert ".wz-layout" in css and "flex-direction: column" in css
 
 
+def test_mobile_css_avoids_page_level_horizontal_scroll() -> None:
+    """Panel tabs and chat must not force sideways page scroll on phones."""
+    css = (STATIC / "css" / "tablo.css").read_text(encoding="utf-8")
+    assert "overflow-x: clip" in css
+    assert ".chat-room" in css and "max-width: 100%" in css
+    assert "grid-template-columns: repeat(3, minmax(0, 1fr))" in css
+    # Inspect the mobile panel-nav override, not the desktop definition.
+    mobile = css[css.index("@media (max-width: 960px)") :]
+    nav = mobile[
+        mobile.index(".vp-nav__links {") : mobile.index(".vp-nav__links {") + 220
+    ]
+    assert "overflow-x: auto" not in nav
+    assert "grid-template-columns: repeat(3, minmax(0, 1fr))" in nav
+    assert "overflow: visible" in nav
+
+
 @pytest.mark.django_db
 def test_shell_flips_direction_from_settings(client, settings) -> None:
     settings.TEXT_DIRECTION = "rtl"

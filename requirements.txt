@@ -7,6 +7,9 @@ whitenoise>=6.9
 jdatetime>=5.0
 gunicorn>=23.0
 redis>=5.0
+channels>=4
+channels-redis>=4
+daphne>=4
 
 # Optional per product — install only when the feature is actually used:
 #   celery[redis]>=5.4    background jobs   (skill: celery-patterns)

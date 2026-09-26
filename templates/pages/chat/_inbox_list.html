@@ -1,0 +1,58 @@
+{% load persian %}
+<div class="chat-inbox" role="list">
+  {% for c in conversations %}
+    <a
+      class="chat-inbox__row{% if c.unread_count %} is-unread{% endif %}"
+      role="listitem"
+      href="{% url 'chat:thread' quote_id=c.quote_id %}"
+    >
+      <div class="chat-inbox__avatar" aria-hidden="true">
+        {% include "components/_icon.html" with name="message-square" size="sm" %}
+      </div>
+      <div class="chat-inbox__body">
+        <div class="chat-inbox__top">
+          <strong>
+            {% if role == "vendor" %}
+              {{ c.quote.request.title }}
+            {% else %}
+              {{ c.quote.vendor.business_name }}
+            {% endif %}
+          </strong>
+          {% if c.last_message_at %}
+            <time datetime="{{ c.last_message_at|date:'c' }}">{{ c.last_message_at|jalali }}</time>
+          {% endif %}
+        </div>
+        <p class="chat-inbox__preview">
+          {% if c.last_body %}
+            {{ c.last_body|truncatechars:72 }}
+          {% else %}
+            {% if role == "vendor" %}
+              {{ c.quote.request.city.name }} · {{ c.quote.price|toman|fa_digits }}
+            {% else %}
+              {{ c.quote.price|toman|fa_digits }} · {{ c.quote.request.title }}
+            {% endif %}
+          {% endif %}
+        </p>
+      </div>
+      <div class="chat-inbox__end">
+        <span class="status-pill status-pill--{{ c.status }}">{{ c.get_status_display }}</span>
+        {% if c.unread_count %}
+          <em class="chat-inbox__badge" aria-label="{{ c.unread_count|fa_digits }} پیام خوانده‌نشده">
+            {{ c.unread_count|fa_digits }}
+          </em>
+        {% endif %}
+      </div>
+    </a>
+  {% empty %}
+    <div class="empty chat-inbox__empty">
+      <strong>هنوز گفتگویی ندارید</strong>
+      <p>
+        {% if role == "vendor" %}
+          بعد از ارسال پیشنهاد، از صفحهٔ پیشنهادها گفتگو را شروع کنید.
+        {% else %}
+          وقتی پیشنهادی رسید، از جزئیات پیشنهاد وارد گفتگو شوید.
+        {% endif %}
+      </p>
+    </div>
+  {% endfor %}
+</div>

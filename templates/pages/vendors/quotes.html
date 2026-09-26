@@ -40,6 +40,11 @@
               </ul>
             </div>
             <div class="vp-req__actions">
+              {% if q.has_chat %}
+                <a class="btn btn--primary" href="{% url 'chat:thread' quote_id=q.pk %}">ادامه گفتگو</a>
+              {% else %}
+                <p class="muted vp-req__chat-wait">گفتگو را مشتری شروع می‌کند</p>
+              {% endif %}
               <a class="btn btn--ghost-outline" href="{% url 'vendors:request_detail' pk=q.request_id %}">جزئیات درخواست</a>
             </div>
           </article>

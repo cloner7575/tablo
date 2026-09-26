@@ -25,7 +25,7 @@
 
 {% block content %}
 <article class="vn-profile">
-  <section class="vn-hero" aria-labelledby="vn-title">
+  <section class="vn-hero vn-hero--compact" aria-labelledby="vn-title">
     <div class="vn-hero__media" aria-hidden="true">
       {% if vendor.cover_image %}
         <img src="{{ vendor.cover_image.url }}" alt="" width="1600" height="900" fetchpriority="high">
@@ -60,7 +60,7 @@
         <a class="btn btn--primary btn--lg" href="{% url 'requests:from_vendor' slug=vendor.slug %}">
           درخواست قیمت از این تابلو‌ساز
         </a>
-        <a class="btn btn--ghost-light btn--lg" href="#portfolio">مشاهده نمونه‌کارها</a>
+        <a class="btn btn--ghost-light" href="#portfolio">مشاهده نمونه‌کارها</a>
       </div>
     </div>
   </section>
@@ -197,9 +197,24 @@
       </div>
       <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:list' %}">مشاهده همه</a>
     </div>
-    <div class="vn-grid vn-grid--compact">
+    <div class="svc-vendors">
       {% for v in related_vendors %}
-        {% include "partials/_vendor_card.html" with v=v %}
+        <a class="svc-vendor" href="{% url 'requests:from_vendor' slug=v.slug %}">
+          {% if v.cover_image %}
+            <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="160" height="160">
+          {% else %}
+            <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="160" height="160">
+          {% endif %}
+          <div class="svc-vendor__body">
+            <h3>{{ v.business_name }}</h3>
+            <p>
+              {% if v.review_count %}★ {{ v.rating|fa_digits }} · {% endif %}
+              {{ v.city.name }}
+              {% if v.completed_projects %} · {{ v.completed_projects|fa_digits }} پروژه{% endif %}
+            </p>
+            <span class="btn btn--primary btn--sm">درخواست قیمت</span>
+          </div>
+        </a>
       {% endfor %}
     </div>
   </section>

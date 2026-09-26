@@ -12,7 +12,10 @@
       <h1>درخواست‌های من</h1>
       <p class="muted">وضعیت پروژه‌ها و پیشنهادهای رسیده را از اینجا پیگیری کنید.</p>
     </div>
-    <a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">درخواست جدید</a>
+    <div class="cluster">
+      <a class="btn btn--ghost-outline" href="{% url 'chat:inbox' %}">گفتگوها</a>
+      <a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">درخواست جدید</a>
+    </div>
   </div>
 
   <h2 class="req-section-title">پروژه‌های فعال</h2>

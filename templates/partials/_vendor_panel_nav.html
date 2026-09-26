@@ -28,6 +28,15 @@
       {% include "components/_icon.html" with name="file-text" size="sm" %}
       <span>پیشنهادها</span>
     </a>
+    <a href="{% url 'vendors:chats' %}" {% if panel_active == "chats" %}aria-current="page"{% endif %}>
+      {% include "components/_icon.html" with name="message-square" size="sm" %}
+      <span>گفتگوها</span>
+      {% if unread_chat_count %}
+        <em class="vp-nav__badge" aria-label="{{ unread_chat_count|fa_digits }} پیام خوانده‌نشده">
+          {{ unread_chat_count|fa_digits }}
+        </em>
+      {% endif %}
+    </a>
     <a href="{% url 'portfolio:manage' %}" {% if panel_active == "portfolio" %}aria-current="page"{% endif %}>
       {% include "components/_icon.html" with name="image" size="sm" %}
       <span>نمونه‌کارها</span>

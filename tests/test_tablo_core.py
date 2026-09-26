@@ -211,6 +211,7 @@ def test_portfolio_detail_shows_hero_vendor_and_cta(
     assert vendor.business_name in body
     assert "درخواست قیمت مشابه" in body
     assert 'class="pf-detail"' in body
+    assert "pf-hero--compact" in body
     assert "img/demo/" in body or "portfolio/" in body
 
 
@@ -438,6 +439,7 @@ def test_vendor_public_shows_rich_profile(client: Client, vendor, service):
     assert response.status_code == 200
     body = response.content.decode()
     assert "vn-profile" in body
+    assert "vn-hero--compact" in body
     assert vendor.business_name in body
     assert "درخواست قیمت از این تابلو‌ساز" in body
     assert service.title in body
@@ -496,16 +498,20 @@ def test_service_page_shows_catalog_content(client: Client, service, vendor):
         {"question": "چلنیوم برای کجا مناسب است؟", "answer": "سردر مغازه و برندینگ."}
     ]
     service.save()
+    Service.objects.create(title="نئون", slug="neon-related", is_active=True)
 
     response = client.get(reverse("catalog:service", kwargs={"slug": service.slug}))
     assert response.status_code == 200
     body = response.content.decode()
     assert "svc-page" in body
+    assert "svc-hero__visual" in body
     assert "مغازه، بوتیک و سردر فروشگاهی" in body
     assert "چلنیوم، پلکسی، نورپردازی LED" in body
     assert "چلنیوم برای کجا مناسب است؟" in body
     assert vendor.business_name in body
     assert "برای این نوع تابلو قیمت بگیر" in body
+    assert "svc-related" in body
+    assert "نئون" in body
 
 
 @pytest.mark.django_db

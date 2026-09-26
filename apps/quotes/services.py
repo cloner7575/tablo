@@ -108,6 +108,10 @@ def accept_quote(*, quote: Quote, user) -> Order:
         status=OrderStatus.ACTIVE,
     )
 
+    from apps.chat.services import close_losing_conversations
+
+    close_losing_conversations(winning_quote=quote)
+
     notify(
         event=NotificationEvent.QUOTE_ACCEPTED,
         recipient=quote.vendor.phone or quote.vendor.user.phone or "",

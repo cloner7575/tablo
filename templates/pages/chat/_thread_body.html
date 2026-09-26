@@ -1,0 +1,84 @@
+{% load persian %}
+<section
+  class="chat-room"
+  data-chat-thread
+  data-ws-path="{{ ws_path }}"
+  data-user-id="{{ request.user.id }}"
+  data-can-send="{% if can_send %}1{% else %}0{% endif %}"
+>
+  <header class="chat-room__head">
+    <div class="chat-room__identity">
+      <a
+        class="chat-room__back"
+        href="{% if is_vendor %}{% url 'vendors:chats' %}{% else %}{% url 'chat:inbox' %}{% endif %}"
+      >
+        {% include "components/_icon.html" with name="arrow-right" size="sm" %}
+        <span>بازگشت</span>
+      </a>
+      <div>
+        <p class="section__eyebrow">گفتگوی پیشنهاد</p>
+        <h1>{{ counterpart_name }}</h1>
+        <p class="chat-room__meta">
+          <span>{{ quote.price|toman|fa_digits }}</span>
+          <span aria-hidden="true">·</span>
+          <span>{{ quote.estimated_delivery_days|fa_digits }} روز</span>
+          <span aria-hidden="true">·</span>
+          <span>{{ quote.request.title }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="chat-room__tools">
+      <span class="chat-room__live" data-chat-status aria-live="polite">در حال اتصال…</span>
+      {% if is_customer and quote.status != "accepted" and quote.request.status != "accepted" and quote.request.status != "completed" %}
+        <a class="btn btn--primary btn--sm" href="{% url 'requests:quote_detail' pk=quote.pk %}">پذیرش پیشنهاد</a>
+      {% endif %}
+      {% if is_vendor %}
+        <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:request_detail' pk=quote.request_id %}">جزئیات درخواست</a>
+      {% else %}
+        <a class="btn btn--ghost-outline btn--sm" href="{% url 'requests:quote_detail' pk=quote.pk %}">مشاهده پیشنهاد</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="chat-room__stream" data-chat-messages role="log" aria-relevant="additions" aria-label="پیام‌ها">
+    {% for m in chat_messages %}
+      {% include "pages/chat/_message.html" with message=m %}
+    {% empty %}
+      <div class="chat-room__empty" data-chat-empty>
+        <strong>هنوز پیامی نیست</strong>
+        <p>ابعاد، متریال یا عکس سردر را بفرستید تا پیشنهاد دقیق‌تر شود.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if can_send %}
+    <form class="chat-room__composer" data-chat-composer method="post" action="{% url 'chat:thread' quote_id=quote.pk %}">
+      {% csrf_token %}
+      <label class="visually-hidden" for="chat-body">متن پیام</label>
+      <input
+        id="chat-body"
+        class="chat-room__input"
+        type="text"
+        name="body"
+        data-chat-input
+        maxlength="4000"
+        placeholder="پیام خود را بنویسید…"
+        autocomplete="off"
+        required
+      >
+      <label class="chat-room__attach" title="ارسال عکس">
+        <span class="visually-hidden">ارسال عکس</span>
+        {% include "components/_icon.html" with name="image" size="sm" %}
+        <input type="file" name="image" accept="image/*" data-chat-file hidden>
+      </label>
+      <button class="btn btn--primary chat-room__send" type="submit" data-chat-send>ارسال</button>
+    </form>
+    <form class="visually-hidden" data-chat-upload-form method="post" enctype="multipart/form-data" action="{% url 'chat:upload' quote_id=quote.pk %}">
+      {% csrf_token %}
+      <input type="text" name="body" data-chat-upload-body>
+      <input type="file" name="image" data-chat-upload-file>
+    </form>
+  {% else %}
+    <p class="chat-room__closed" role="status">این گفتگو بسته شده و فقط قابل مشاهده است.</p>
+  {% endif %}
+</section>

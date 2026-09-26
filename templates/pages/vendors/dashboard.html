@@ -14,7 +14,9 @@
           <p class="vp-welcome__eyebrow">میز کار امروز</p>
           <h1>سلام {{ vendor.business_name }}</h1>
           <p>
-            {% if new_requests_count %}
+            {% if unread_chat_count %}
+              {{ unread_chat_count|fa_digits }} پیام خوانده‌نشده دارید — مشتری منتظر پاسخ شماست.
+            {% elif new_requests_count %}
               {{ new_requests_count|fa_digits }} درخواست منتظر پیشنهاد شماست — زودتر پاسخ بدهید شانس پذیرش بالاتر می‌رود.
             {% else %}
               فعلاً درخواست بازی ندارید. پروفایل و نمونه‌کارها را کامل نگه دارید تا مچ بهتری بخورید.
@@ -27,6 +29,11 @@
               {% include "components/_icon.html" with name="alert-triangle" size="sm" %}
               <span>در انتظار تأیید مدیریت — بعد از تأیید، درخواست‌های عمومی می‌آید.</span>
             </div>
+          {% elif unread_chat_count %}
+            <a class="btn btn--primary btn--lg" href="{% url 'vendors:chats' %}">
+              {% include "components/_icon.html" with name="message-square" size="sm" %}
+              {{ unread_chat_count|fa_digits }} پیام خوانده‌نشده
+            </a>
           {% elif new_requests_count %}
             <a class="btn btn--primary btn--lg" href="{% url 'vendors:requests' %}?open=1">
               {% include "components/_icon.html" with name="inbox" size="sm" %}
@@ -48,6 +55,10 @@
           <span class="vp-kpi__hint">اولویت امروز شما</span>
         </a>
         <div class="vp-kpi__stack">
+          <a class="vp-kpi__item" href="{% url 'vendors:chats' %}">
+            <span>پیام خوانده‌نشده</span>
+            <strong>{{ unread_chat_count|default:0|fa_digits }}</strong>
+          </a>
           <div class="vp-kpi__item">
             <span>پیشنهاد در انتظار</span>
             <strong>{{ pending_quotes_count|fa_digits }}</strong>

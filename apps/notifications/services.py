@@ -17,6 +17,7 @@ class NotificationEvent:
     QUOTE_ACCEPTED = "QuoteAccepted"
     PROJECT_COMPLETED = "ProjectCompleted"
     REVIEW_REQUESTED = "ReviewRequested"
+    NEW_CHAT_MESSAGE = "NewChatMessage"
 
 
 class NotificationProvider(Protocol):

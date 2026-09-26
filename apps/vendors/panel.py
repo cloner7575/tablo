@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from apps.chat.selectors import unread_chat_count_for_vendor
 from apps.requests.selectors import matched_requests_for_vendor
 from apps.vendors.models import Vendor, VerificationStatus
 
@@ -58,5 +59,6 @@ def panel_context(vendor: Vendor, active: str, **extra: object) -> dict[str, obj
         "vendor": vendor,
         "panel_active": active,
         "new_requests_count": open_requests_count(vendor),
+        "unread_chat_count": unread_chat_count_for_vendor(vendor=vendor),
         **extra,
     }

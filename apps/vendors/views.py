@@ -254,10 +254,14 @@ def request_quote(request: HttpRequest, pk: int) -> HttpResponse:
 @require_http_methods(["GET"])
 def my_quotes(request: HttpRequest) -> HttpResponse:
     vendor = _require_vendor(request)
+    from django.db.models import Exists, OuterRef
+
+    from apps.chat.models import Conversation
+
     quotes = list(
-        vendor.quotes.select_related(
-            "request__service", "request__city", "request"
-        ).order_by("-created_at")
+        vendor.quotes.select_related("request__service", "request__city", "request")
+        .annotate(has_chat=Exists(Conversation.objects.filter(quote_id=OuterRef("pk"))))
+        .order_by("-created_at")
     )
     return render(
         request,

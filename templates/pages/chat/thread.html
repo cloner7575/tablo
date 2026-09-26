@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load persian static %}
+
+{% block title %}گفتگو با {{ counterpart_name }} | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}{% if is_vendor %}page-vendor-panel page-chat-thread{% else %}page-chat page-chat-thread{% endif %}{% endblock %}
+
+{% block content %}
+{% if is_vendor %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main vp-main--chat">
+      {% include "pages/chat/_thread_body.html" %}
+    </div>
+  </section>
+</div>
+{% else %}
+<section class="section chat-shell">
+  {% include "pages/chat/_thread_body.html" %}
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/chat.js' %}" defer></script>
+{% endblock %}

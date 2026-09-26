@@ -2,10 +2,16 @@
 {% load persian %}
 
 {% block title %}{{ project_request.title }} | {{ SITE_NAME }}{% endblock %}
-{% block body_class %}page-request{% endblock %}
+{% block body_class %}page-request page-request-detail{% endblock %}
 
 {% block content %}
 <article class="req-detail section">
+  <nav class="req-crumb" aria-label="مسیر">
+    <a href="{% url 'requests:dashboard' %}">درخواست‌های من</a>
+    <span aria-hidden="true">/</span>
+    <span>درخواست {{ project_request.pk|fa_digits }}</span>
+  </nav>
+
   <header class="req-hero">
     <div class="req-hero__copy">
       <p class="section__eyebrow">درخواست #{{ project_request.pk|fa_digits }}</p>
@@ -17,80 +23,167 @@
         <span>{{ project_request.created_at|jalali }}</span>
       </p>
     </div>
-    <div class="req-hero__stat">
-      <strong>{{ quotes_count|fa_digits }}</strong>
-      <span>پیشنهاد دریافتی</span>
+    <div class="req-hero__stats" role="group" aria-label="خلاصه وضعیت">
+      <div class="req-hero__stat">
+        <strong>{{ quotes_count|fa_digits }}</strong>
+        <span>پیشنهاد</span>
+      </div>
+      {% if best_price %}
+        <div class="req-hero__stat">
+          <strong class="req-hero__stat-price">{{ best_price|toman|fa_digits }}</strong>
+          <span>کمترین قیمت</span>
+        </div>
+      {% endif %}
     </div>
   </header>
 
+  <ol class="req-journey" aria-label="مسیر درخواست">
+    <li class="req-journey__step{% if journey_step >= 1 %} is-done{% endif %}{% if journey_step == 1 %} is-current{% endif %}">
+      <span class="req-journey__num" aria-hidden="true">۱</span>
+      <span>ثبت</span>
+    </li>
+    <li class="req-journey__step{% if journey_step >= 2 %} is-done{% endif %}{% if journey_step == 2 %} is-current{% endif %}">
+      <span class="req-journey__num" aria-hidden="true">۲</span>
+      <span>پیشنهادها</span>
+    </li>
+    <li class="req-journey__step{% if journey_step >= 3 %} is-done{% endif %}{% if journey_step == 3 %} is-current{% endif %}">
+      <span class="req-journey__num" aria-hidden="true">۳</span>
+      <span>انتخاب</span>
+    </li>
+    <li class="req-journey__step{% if journey_step >= 4 %} is-done{% endif %}{% if journey_step == 4 %} is-current{% endif %}">
+      <span class="req-journey__num" aria-hidden="true">۴</span>
+      <span>اجرا</span>
+    </li>
+  </ol>
+
   <div class="req-layout">
     <div class="req-main">
-      <div class="req-card">
-        {% include "partials/_request_brief.html" with brief_title="جزئیات درخواست شما" brief_lead="همین خلاصه برای تابلو‌سازها نمایش داده می‌شود." %}
-      </div>
-
-      {% if project_request.order %}
-        <section class="req-card req-card--order" aria-labelledby="req-order-title">
-          <h2 id="req-order-title">سفارش فعال</h2>
-          <p>سفارش #{{ project_request.order.pk|fa_digits }} — {{ project_request.order.get_status_display }}</p>
-          {% if project_request.order.status == "active" %}
-            <form method="post" action="{% url 'requests:order_complete' pk=project_request.order.pk %}">
-              {% csrf_token %}
-              <button class="btn btn--secondary" type="submit">علامت‌گذاری به‌عنوان تکمیل‌شده</button>
-            </form>
-          {% elif project_request.status == "completed" and not project_request.review %}
-            <a class="btn btn--primary" href="{% url 'requests:review_create' pk=project_request.pk %}">ثبت نظر</a>
-          {% endif %}
+      {% if order %}
+        <section class="req-banner req-banner--order" aria-labelledby="req-order-title">
+          <div class="req-banner__copy">
+            <p class="section__eyebrow">سفارش شما</p>
+            <h2 id="req-order-title">سفارش #{{ order.pk|fa_digits }}</h2>
+            <p>
+              {{ order.get_status_display }}
+              · با {{ order.vendor.business_name }}
+              · {{ order.agreed_price|toman|fa_digits }}
+            </p>
+          </div>
+          <div class="req-banner__actions">
+            {% if order.status == "active" %}
+              <a class="btn btn--ghost-outline" href="{% url 'chat:thread' quote_id=order.quote_id %}">گفتگو با تابلو‌ساز</a>
+              <form method="post" action="{% url 'requests:order_complete' pk=order.pk %}">
+                {% csrf_token %}
+                <button class="btn btn--primary" type="submit">کار تمام شد — تکمیل سفارش</button>
+              </form>
+            {% elif project_request.status == "completed" and not project_request.review %}
+              <a class="btn btn--primary" href="{% url 'requests:review_create' pk=project_request.pk %}">ثبت نظر و امتیاز</a>
+            {% endif %}
+          </div>
         </section>
       {% endif %}
 
       <section class="req-quotes" aria-labelledby="quotes-title">
         <div class="section__head section__head--row">
           <div>
-            <p class="section__eyebrow">مقایسه کنید و انتخاب کنید</p>
+            <p class="section__eyebrow">قلب تصمیم شما</p>
             <h2 id="quotes-title">پیشنهادهای دریافتی</h2>
+            {% if quotes_count %}
+              <p class="muted req-quotes__hint">قیمت، زمان اجرا و گارانتی را مقایسه کنید؛ قبل از پذیرش می‌توانید گفتگو کنید.</p>
+            {% endif %}
           </div>
         </div>
 
         <div class="req-quote-grid">
           {% for q in quotes %}
-            <article class="req-quote">
-              <header>
-                <h3>{{ q.vendor.business_name }}</h3>
-                <p>★ {{ q.vendor.rating|fa_digits }} · {{ q.vendor.city.name }}</p>
+            <article class="req-quote{% if q.status == 'accepted' %} req-quote--won{% elif best_price and q.price == best_price %} req-quote--best{% endif %}">
+              {% if q.status == "accepted" %}
+                <p class="req-quote__ribbon">پذیرفته‌شده</p>
+              {% elif best_price and q.price == best_price and quotes_count > 1 %}
+                <p class="req-quote__ribbon req-quote__ribbon--soft">به‌صرفه‌ترین</p>
+              {% endif %}
+              <header class="req-quote__head">
+                <div>
+                  <h3>{{ q.vendor.business_name }}</h3>
+                  <p>
+                    ★ {{ q.vendor.rating|fa_digits }}
+                    · {{ q.vendor.city.name }}
+                    · {{ q.vendor.completed_projects|fa_digits }} پروژه
+                  </p>
+                </div>
+                <span class="status-pill status-pill--{{ q.status }}">{{ q.get_status_display }}</span>
               </header>
               <p class="req-quote__price">{{ q.price|toman|fa_digits }}</p>
               <ul class="req-quote__facts">
-                <li>زمان اجرا: {{ q.estimated_delivery_days|fa_digits }} روز</li>
-                <li>گارانتی: {{ q.warranty|default:"—" }}</li>
+                <li>
+                  <span>زمان اجرا</span>
+                  <strong>{{ q.estimated_delivery_days|fa_digits }} روز</strong>
+                </li>
+                <li>
+                  <span>گارانتی</span>
+                  <strong>{{ q.warranty|default:"—" }}</strong>
+                </li>
                 {% if q.installation_cost %}
-                  <li>نصب: {{ q.installation_cost|toman|fa_digits }}</li>
+                  <li>
+                    <span>هزینه نصب</span>
+                    <strong>{{ q.installation_cost|toman|fa_digits }}</strong>
+                  </li>
                 {% endif %}
               </ul>
-              <a class="btn btn--primary btn--sm" href="{% url 'requests:quote_detail' pk=q.pk %}">مشاهده و پذیرش</a>
+              {% if q.description %}
+                <p class="req-quote__blurb">{{ q.description|truncatechars:110 }}</p>
+              {% endif %}
+              <div class="req-quote__actions">
+                {% if q.status == "accepted" %}
+                  <a class="btn btn--primary btn--sm" href="{% url 'chat:thread' quote_id=q.pk %}">ادامه گفتگو</a>
+                  <a class="btn btn--ghost-outline btn--sm" href="{% url 'requests:quote_detail' pk=q.pk %}">جزئیات پیشنهاد</a>
+                {% elif project_request.status == "accepted" or project_request.status == "completed" %}
+                  <a class="btn btn--ghost-outline btn--sm" href="{% url 'requests:quote_detail' pk=q.pk %}">مشاهده پیشنهاد</a>
+                {% else %}
+                  <a class="btn btn--primary btn--sm" href="{% url 'requests:quote_detail' pk=q.pk %}">مشاهده و پذیرش</a>
+                  <a class="btn btn--ghost-outline btn--sm" href="{% url 'chat:thread' quote_id=q.pk %}">گفتگو درباره قیمت</a>
+                {% endif %}
+              </div>
             </article>
           {% empty %}
             <div class="empty req-empty">
+              <span class="req-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="clock" %}</span>
               <strong>هنوز پیشنهادی نرسیده</strong>
-              <p>تابلو‌سازهای مرتبط به‌زودی پاسخ می‌دهند. این صفحه را دوباره چک کنید.</p>
+              <p>تابلو‌سازهای مرتبط درخواست شما را می‌بینند. معمولاً ظرف چند ساعت اولین پاسخ می‌آید — این صفحه را بعداً باز کنید.</p>
+              <ul class="req-empty__tips">
+                <li>عکس محل و توضیح شفاف، پیشنهاد دقیق‌تری می‌آورد</li>
+                <li>می‌توانید هم‌زمان چند پیشنهاد بگیرید و مقایسه کنید</li>
+              </ul>
             </div>
           {% endfor %}
         </div>
       </section>
+
+      <details class="req-card req-card--brief"{% if quotes_count == 0 %} open{% endif %}>
+        <summary class="req-brief-toggle">
+          <span>
+            <strong>جزئیات درخواست شما</strong>
+            <em>همان خلاصه‌ای که تابلو‌سازها می‌بینند</em>
+          </span>
+        </summary>
+        <div class="req-card__body">
+          {% include "partials/_request_brief.html" with brief_title="" brief_lead="" %}
+        </div>
+      </details>
     </div>
 
     <aside class="req-side">
       <div class="req-side__card">
-        <h2>قدم بعدی</h2>
-        {% if quotes_count == 0 %}
-          <p>منتظر پیشنهاد تابلو‌سازها بمانید. معمولاً ظرف چند ساعت اولین پاسخ می‌رسد.</p>
-        {% elif project_request.status == "accepted" or project_request.status == "completed" %}
-          <p>یک پیشنهاد پذیرفته شده. جزئیات سفارش را در همین صفحه پیگیری کنید.</p>
-        {% else %}
-          <p>{{ quotes_count|fa_digits }} پیشنهاد دارید. قیمت، زمان و گارانتی را مقایسه و یکی را بپذیرید.</p>
+        <p class="section__eyebrow">قدم بعدی</p>
+        <h2>{{ next_title }}</h2>
+        <p>{{ next_lead }}</p>
+        {% if next_primary_url %}
+          <a class="btn btn--primary btn--block" href="{{ next_primary_url }}">{{ next_primary_label }}</a>
         {% endif %}
-        <a class="btn btn--ghost-outline btn--block" href="{% url 'requests:dashboard' %}">بازگشت به داشبورد</a>
-        <a class="btn btn--primary btn--block" href="{% url 'requests:wizard_start' %}">درخواست جدید</a>
+        <a class="req-side__link" href="{% url 'requests:dashboard' %}">بازگشت به داشبورد</a>
+        {% if project_request.status != "accepted" and project_request.status != "completed" %}
+          <a class="req-side__link req-side__link--muted" href="{% url 'requests:wizard_start' %}">ثبت درخواست جدید</a>
+        {% endif %}
       </div>
     </aside>
   </div>

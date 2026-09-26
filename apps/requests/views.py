@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from apps.accounts.forms import PhoneRequestOTPForm, PhoneVerifyOTPForm
@@ -13,8 +14,9 @@ from apps.accounts.services import request_otp, verify_otp_and_login
 from apps.analytics.services import track
 from apps.catalog.models import Service
 from apps.locations.models import City
+from apps.orders.models import Order
 from apps.orders.services import complete_order, create_review
-from apps.quotes.models import Quote
+from apps.quotes.models import Quote, QuoteStatus
 from apps.quotes.services import accept_quote, mark_quote_viewed
 from apps.requests.forms import (
     SERVICE_UNSURE,
@@ -418,12 +420,81 @@ def customer_dashboard(request: HttpRequest) -> HttpResponse:
 def request_detail(request: HttpRequest, pk: int) -> HttpResponse:
     project_request = get_object_or_404(
         ProjectRequest.objects.select_related(
-            "service", "city", "order", "preferred_vendor"
+            "service",
+            "city",
+            "preferred_vendor",
+            "review",
         ).prefetch_related("images", "quotes__vendor__city"),
         pk=pk,
         customer=request.user,
     )
-    quotes = list(project_request.quotes.select_related("vendor", "vendor__city"))
+    quotes = list(
+        project_request.quotes.select_related("vendor", "vendor__city").order_by(
+            "price", "-created_at"
+        )
+    )
+    quotes_count = len(quotes)
+    best_price = min((q.price for q in quotes), default=None)
+    accepted = next((q for q in quotes if q.status == QuoteStatus.ACCEPTED), None)
+    order = (
+        Order.objects.select_related("vendor", "quote")
+        .filter(request=project_request)
+        .first()
+    )
+
+    status = project_request.status
+    if status == RequestStatus.COMPLETED:
+        journey_step = 4
+    elif status == RequestStatus.ACCEPTED:
+        journey_step = 4
+    elif status in {RequestStatus.QUOTED, RequestStatus.NEGOTIATING}:
+        journey_step = 3 if quotes_count else 2
+    elif status in {
+        RequestStatus.SUBMITTED,
+        RequestStatus.REVIEWING,
+        RequestStatus.RECEIVING_QUOTES,
+    }:
+        journey_step = 2 if quotes_count else 1
+    else:
+        journey_step = 1
+
+    if order is not None and order.status == "active":
+        next_title = "هماهنگی اجرا"
+        next_lead = (
+            "با تابلو‌ساز برنده هماهنگ کنید؛ وقتی کار تمام شد سفارش را تکمیل کنید."
+        )
+        next_primary_url = reverse("chat:thread", kwargs={"quote_id": order.quote_id})
+        next_primary_label = "گفتگو با تابلو‌ساز"
+    elif status == RequestStatus.COMPLETED and not getattr(
+        project_request, "review", None
+    ):
+        next_title = "ثبت نظر"
+        next_lead = "با یک نظر کوتاه به بقیه کمک کنید تابلو‌ساز مناسب را پیدا کنند."
+        next_primary_url = reverse(
+            "requests:review_create", kwargs={"pk": project_request.pk}
+        )
+        next_primary_label = "ثبت نظر و امتیاز"
+    elif quotes_count == 0:
+        next_title = "منتظر پیشنهادها بمانید"
+        next_lead = (
+            "تابلو‌سازهای هم‌شهر در حال بررسی‌اند. معمولاً ظرف چند ساعت اولین قیمت می‌رسد."
+        )
+        next_primary_url = ""
+        next_primary_label = ""
+    elif accepted:
+        next_title = "پیشنهاد پذیرفته شد"
+        next_lead = "جزئیات سفارش را در بنر بالای صفحه پیگیری کنید."
+        next_primary_url = reverse("chat:thread", kwargs={"quote_id": accepted.pk})
+        next_primary_label = "گفتگو با تابلو‌ساز"
+    else:
+        next_title = "مقایسه و انتخاب"
+        next_lead = (
+            f"{quotes_count} پیشنهاد دارید. قبل از پذیرش می‌توانید درباره قیمت "
+            "و جزئیات گفتگو کنید."
+        )
+        next_primary_url = reverse("requests:quote_detail", kwargs={"pk": quotes[0].pk})
+        next_primary_label = "شروع از ارزان‌ترین پیشنهاد"
+
     return render(
         request,
         "pages/dashboard/request_detail.html",
@@ -431,7 +502,14 @@ def request_detail(request: HttpRequest, pk: int) -> HttpResponse:
             "project_request": project_request,
             "photos": project_request.photo_urls(),
             "quotes": quotes,
-            "quotes_count": len(quotes),
+            "quotes_count": quotes_count,
+            "best_price": best_price,
+            "journey_step": journey_step,
+            "order": order,
+            "next_title": next_title,
+            "next_lead": next_lead,
+            "next_primary_url": next_primary_url,
+            "next_primary_label": next_primary_label,
         },
     )
 

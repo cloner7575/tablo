@@ -22,6 +22,7 @@
     <div class="form-actions wz-actions">
       <a class="btn btn--ghost-outline" href="{% url 'requests:request_detail' pk=quote.request_id %}">بازگشت</a>
       <a class="btn btn--ghost-outline" href="{% url 'vendors:public' slug=quote.vendor.slug %}">پروفایل تابلو‌ساز</a>
+      <a class="btn btn--secondary btn--lg" href="{% url 'chat:thread' quote_id=quote.pk %}">گفتگو درباره این پیشنهاد</a>
       {% if quote.status != "accepted" and quote.request.status != "accepted" and quote.request.status != "completed" %}
         <form method="post">
           {% csrf_token %}

@@ -10,6 +10,8 @@ from core.settings.base import *  # noqa: F403
 
 DEBUG = False
 
+ALLOWED_HOSTS = ["testserver", "localhost", "127.0.0.1"]
+
 SITE_NAME = "Core"
 LANGUAGE_CODE = "en-us"
 LANGUAGES = [("en-us", "English")]
@@ -26,6 +28,12 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "core-test",
+    },
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 

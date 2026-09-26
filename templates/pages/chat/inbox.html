@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}گفتگوها | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}{% if role == "vendor" %}page-vendor-panel{% else %}page-chat{% endif %}{% endblock %}
+
+{% block content %}
+{% if role == "vendor" %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div>
+          <p class="section__eyebrow">مذاکره</p>
+          <h1>گفتگو با مشتری‌ها</h1>
+          <p class="muted">بعد از ارسال پیشنهاد می‌توانید جزئیات را همین‌جا هماهنگ کنید.</p>
+        </div>
+      </header>
+      {% include "pages/chat/_inbox_list.html" %}
+    </div>
+  </section>
+</div>
+{% else %}
+<section class="section chat-inbox">
+  <header class="section__head">
+    <p class="section__eyebrow">مذاکره با تابلو‌سازها</p>
+    <h1>گفتگوها</h1>
+    <p class="muted">برای هر پیشنهاد یک گفتگوی جدا دارید تا مقایسه شفاف بماند.</p>
+  </header>
+  {% include "pages/chat/_inbox_list.html" %}
+</section>
+{% endif %}
+{% endblock %}

@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET
 
 from apps.analytics.services import track
+from apps.catalog.demo import attach_demo_image as attach_service_demo
 from apps.catalog.models import Service
 from apps.common.htmx import is_htmx
 from apps.common.services import database_status
@@ -15,15 +16,6 @@ from apps.reviews.models import Review
 from apps.vendors.demo import VENDOR_DEMO_COVERS, attach_demo_cover
 from apps.vendors.models import Vendor, VerificationStatus
 
-SERVICE_IMAGES = {
-    "chalnium": "img/demo/service-chalnium.png",
-    "neon": "img/demo/service-neon.png",
-    "composite": "img/demo/service-composite.png",
-    "steel": "img/demo/service-steel.png",
-    "flexi": "img/demo/service-flexi.png",
-    "led": "img/demo/service-led.png",
-}
-
 PORTFOLIO_IMAGES = PORTFOLIO_DEMO_IMAGES
 VENDOR_COVERS = VENDOR_DEMO_COVERS
 
@@ -33,9 +25,7 @@ def home(request: HttpRequest) -> HttpResponse:
     track("homepage_view", {})
     services = list(Service.objects.filter(is_active=True)[:6])
     for service in services:
-        service.demo_image = SERVICE_IMAGES.get(  # type: ignore[attr-defined]
-            service.slug, "img/demo/service-chalnium.png"
-        )
+        attach_service_demo(service)
 
     cities = list(City.objects.filter(is_active=True))
     vendors = list(

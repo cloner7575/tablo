@@ -34,10 +34,11 @@
 
 - First screens / features:
   - Homepage conversion + request wizard
-  - Customer dashboard (requests, quotes, accept, review)
-  - Vendor dashboard (matched requests, quotes, portfolio, profile)
+  - Customer dashboard (requests, quotes, chat, accept, review)
+  - Vendor dashboard (matched requests, quotes, chat, portfolio, profile)
   - Public vendor / service / city / portfolio SEO pages
   - Admin management
+  - Quote-linked WebSocket chat (Django Channels)
   - Notifications + analytics stubs
   - Monetization + pricing scaffolds (no real payment)
 

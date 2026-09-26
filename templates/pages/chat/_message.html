@@ -1,0 +1,19 @@
+{% load persian %}
+<article
+  class="chat-msg{% if message.sender_id == request.user.id %} chat-msg--mine{% else %} chat-msg--theirs{% endif %}"
+  data-message-id="{{ message.id }}"
+>
+  <div class="chat-msg__bubble">
+    {% if message.image %}
+      <a class="chat-msg__image" href="{{ message.image.url }}" target="_blank" rel="noopener">
+        <img src="{{ message.image.url }}" alt="تصویر پیوست" loading="lazy">
+      </a>
+    {% endif %}
+    {% if message.body %}
+      <p class="chat-msg__body">{{ message.body }}</p>
+    {% endif %}
+    <time class="chat-msg__time" datetime="{{ message.created_at|date:'c' }}">
+      {{ message.created_at|time:"H:i" }}
+    </time>
+  </div>
+</article>
