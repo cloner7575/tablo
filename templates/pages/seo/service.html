@@ -1,27 +1,110 @@
 {% extends "base.html" %}
+{% load persian static %}
 
-{% block title %}{{ service.title }} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}{{ service.description|default:service.title }} — سفارش و مقایسه قیمت{% endblock %}
+{% block title %}{{ service.title }} | سفارش و مقایسه قیمت | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ service.description|default:service.title }} — درخواست بدهید و از تابلو‌سازهای تأییدشده پیشنهاد بگیرید{% endblock %}
+{% block body_class %}page-service{% endblock %}
 
 {% block content %}
-<section class="page-hero">
-  <div class="hero__content">
-    <h1>{{ service.title }}</h1>
-    <p>{{ service.description }}</p>
-    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">برای این نوع تابلو قیمت بگیر</a>
-  </div>
-</section>
-<section class="section">
-  <h2>تابلو‌سازان این خدمت</h2>
-  <div class="card-grid">
-    {% for v in vendors %}
-      <a class="vendor-card" href="{% url 'vendors:public' slug=v.slug %}">
-        <h3>{{ v.business_name }}</h3>
-        <p>{{ v.city.name }}</p>
-      </a>
-    {% empty %}
-      <p class="empty">تابلو‌سازی برای این خدمت یافت نشد.</p>
-    {% endfor %}
-  </div>
-</section>
+<article class="svc-page">
+  <section class="svc-hero section" aria-labelledby="svc-title">
+    <div class="svc-hero__copy">
+      <p class="section__eyebrow">نوع تابلو</p>
+      <h1 id="svc-title">{{ service.title }}</h1>
+      <p class="svc-hero__lead">{{ service.description }}</p>
+      <div class="svc-hero__actions">
+        <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">برای این نوع تابلو قیمت بگیر</a>
+        <a class="btn btn--ghost-outline btn--lg" href="{% url 'vendors:list' %}">مشاهده تابلو‌سازها</a>
+      </div>
+    </div>
+  </section>
+
+  {% if service.suitable_for or service.materials %}
+  <section class="section" aria-label="جزئیات خدمت">
+    <div class="svc-facts">
+      {% if service.suitable_for %}
+        <article class="svc-facts__card">
+          <h2>مناسب برای</h2>
+          <p>{{ service.suitable_for }}</p>
+        </article>
+      {% endif %}
+      {% if service.materials %}
+        <article class="svc-facts__card">
+          <h2>متریال رایج</h2>
+          <p>{{ service.materials }}</p>
+        </article>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="section" aria-labelledby="svc-vendors-title">
+    <div class="section__head section__head--row">
+      <div>
+        <p class="section__eyebrow">شبکه متخصصان</p>
+        <h2 id="svc-vendors-title">تابلو‌سازان این خدمت</h2>
+      </div>
+      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:list' %}">همه تابلو‌سازها</a>
+    </div>
+    <div class="vn-grid">
+      {% for v in vendors %}
+        {% include "partials/_vendor_card.html" with v=v %}
+      {% empty %}
+        <div class="empty">
+          <strong>هنوز تابلو‌ساز تأییدشده‌ای برای این خدمت نیست</strong>
+          <p>درخواست را ثبت کنید؛ به‌محض فعال شدن متخصصان مرتبط، پیشنهاد می‌رسد.</p>
+          <a class="btn btn--primary btn--sm" href="{% url 'requests:wizard_start' %}">ثبت درخواست</a>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="section section--muted" aria-labelledby="svc-portfolio-title">
+    <div class="section__head">
+      <p class="section__eyebrow">گالری اجرا</p>
+      <h2 id="svc-portfolio-title">نمونه‌کارهای {{ service.title }}</h2>
+    </div>
+    <div class="vn-gallery">
+      {% for item in portfolio %}
+        <a class="vn-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+          {% else %}
+            <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+          {% endif %}
+          <span>{{ item.title }}</span>
+        </a>
+      {% empty %}
+        <p class="empty">نمونه‌کار منتشرشده‌ای برای این خدمت نیست.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if faq %}
+  <section class="section" aria-labelledby="svc-faq-title">
+    <div class="section__head">
+      <p class="section__eyebrow">راهنما</p>
+      <h2 id="svc-faq-title">سوالات پرتکرار</h2>
+    </div>
+    <div class="svc-faq">
+      {% for item in faq %}
+        <details class="svc-faq__item">
+          <summary>{{ item.question }}</summary>
+          <p>{{ item.answer }}</p>
+        </details>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="sp-consult section" aria-labelledby="svc-cta">
+    <div class="sp-consult__inner">
+      <div>
+        <h2 id="svc-cta">برای {{ service.title }} آماده سفارشید؟</h2>
+        <p>ابعاد و شهر را بفرستید؛ چند تابلو‌ساز تأییدشده پیشنهاد قیمت می‌دهند.</p>
+      </div>
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">دریافت پیشنهاد قیمت</a>
+    </div>
+  </section>
+</article>
 {% endblock %}

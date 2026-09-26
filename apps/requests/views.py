@@ -17,6 +17,7 @@ from apps.orders.services import complete_order, create_review
 from apps.quotes.models import Quote
 from apps.quotes.services import accept_quote, mark_quote_viewed
 from apps.requests.forms import (
+    SERVICE_UNSURE,
     RequestWizardBudgetForm,
     RequestWizardCityForm,
     RequestWizardDescriptionForm,
@@ -28,7 +29,7 @@ from apps.requests.forms import (
 )
 from apps.requests.models import LightingType, ProjectRequest, RequestStatus
 from apps.requests.selectors import customer_requests
-from apps.requests.services import submit_project_request
+from apps.requests.services import replace_request_images, submit_project_request
 from apps.requests.wizard_meta import wizard_shell
 
 WIZARD_SESSION_KEY = "request_wizard"
@@ -47,6 +48,10 @@ def _clear_wizard(request: HttpRequest) -> None:
     request.session.pop(WIZARD_SESSION_KEY, None)
 
 
+def _has_service_choice(data: dict) -> bool:
+    return bool(data.get("service_id") or data.get("needs_guidance"))
+
+
 def _render_wizard(
     request: HttpRequest,
     *,
@@ -59,6 +64,12 @@ def _render_wizard(
 ) -> HttpResponse:
     context = wizard_shell(step, step_title=step_title, step_hint=step_hint)
     context.update({"form": form, "enctype": enctype})
+    data = _wizard_data(request)
+    if data.get("needs_guidance"):
+        context["beginner_banner"] = (
+            "اشکالی ندارد که جزئیات را ندانید — "
+            "تابلو‌سازها با عکس و توضیح ساده راهنمایی‌تان می‌کنند."
+        )
     if extra:
         context.update(extra)
     return render(request, "pages/request/wizard.html", context)
@@ -69,11 +80,20 @@ def _wizard_summary(data: dict) -> dict[str, str]:
     city = City.objects.filter(pk=data.get("city_id")).first()
     lighting = data.get("lighting_type") or ""
     lighting_label = dict(LightingType.choices).get(lighting, "—")
-    width = data.get("width_cm")
-    height = data.get("height_cm")
-    dims = "—"
-    if width and height:
-        dims = f"{width} × {height} سانتی‌متر"
+    size_choice = data.get("size_choice") or ""
+    size_labels = {
+        "small": "کوچک (حدود ۱ متر)",
+        "medium": "متوسط (حدود ۲٫۵ متر)",
+        "large": "بزرگ (حدود ۴ متر یا بیشتر)",
+        "unsure": "هنوز مشخص نیست",
+    }
+    dims = size_labels.get(size_choice)
+    if not dims:
+        width = data.get("width_cm")
+        height = data.get("height_cm")
+        dims = "—"
+        if width and height:
+            dims = f"{width} × {height} سانتی‌متر"
     budget_min = data.get("budget_min")
     budget_max = data.get("budget_max")
     budget = "—"
@@ -81,8 +101,12 @@ def _wizard_summary(data: dict) -> dict[str, str]:
         lo = f"{budget_min:,}" if budget_min else "—"
         hi = f"{budget_max:,}" if budget_max else "—"
         budget = f"{lo} تا {hi} تومان"
+    if data.get("needs_guidance"):
+        service_label = "هنوز مطمئن نیستم — راهنمایی می‌خواهم"
+    else:
+        service_label = service.title if service else "—"
     return {
-        "service": service.title if service else "—",
+        "service": service_label,
         "city": city.name if city else "—",
         "dimensions": dims,
         "lighting": str(lighting_label),
@@ -91,8 +115,20 @@ def _wizard_summary(data: dict) -> dict[str, str]:
         "business_type": data.get("business_type") or "—",
         "district": data.get("district") or "—",
         "budget": budget,
-        "has_image": "بله" if data.get("draft_id") else "خیر",
+        "photo_count": _draft_photo_count(data.get("draft_id")),
+        "needs_guidance": data.get("needs_guidance", False),
     }
+
+
+def _draft_photo_count(draft_id: int | None) -> int:
+    if not draft_id:
+        return 0
+    draft = (
+        ProjectRequest.objects.filter(pk=draft_id).prefetch_related("images").first()
+    )
+    if draft is None:
+        return 0
+    return draft.photo_count
 
 
 @require_http_methods(["GET", "POST"])
@@ -107,18 +143,39 @@ def wizard_start(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET", "POST"])
 def wizard_service(request: HttpRequest) -> HttpResponse:
     data = _wizard_data(request)
-    form = RequestWizardServiceForm(request.POST or None, initial=data)
+    initial = {}
+    if data.get("needs_guidance"):
+        initial["choice"] = SERVICE_UNSURE
+    elif data.get("service_id"):
+        initial["choice"] = str(data["service_id"])
+    form = RequestWizardServiceForm(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():
-        data["service_id"] = form.cleaned_data["service"].pk
+        choice = form.cleaned_data["choice"]
+        if choice == SERVICE_UNSURE:
+            data.pop("service_id", None)
+            data["needs_guidance"] = True
+        else:
+            data["service_id"] = int(choice)
+            data["needs_guidance"] = False
         _save_wizard(request, data)
         return redirect("requests:wizard_city")
-    return _render_wizard(request, form=form, step=1)
+    return _render_wizard(
+        request,
+        form=form,
+        step=1,
+        extra={
+            "choice_cards": form.service_cards,
+            "choice_field_name": "choice",
+            "choice_selected": initial.get("choice", ""),
+            "choice_legend": form.fields["choice"].label,
+        },
+    )
 
 
 @require_http_methods(["GET", "POST"])
 def wizard_city(request: HttpRequest) -> HttpResponse:
     data = _wizard_data(request)
-    if "service_id" not in data:
+    if not _has_service_choice(data):
         return redirect("requests:wizard_start")
     form = RequestWizardCityForm(request.POST or None, initial=data)
     if request.method == "POST" and form.is_valid():
@@ -135,10 +192,24 @@ def wizard_dimensions(request: HttpRequest) -> HttpResponse:
         return redirect("requests:wizard_start")
     form = RequestWizardDimensionsForm(request.POST or None, initial=data)
     if request.method == "POST" and form.is_valid():
-        data.update(form.cleaned_data)
+        size_choice = form.cleaned_data["size_choice"]
+        width, height = form.resolved_dimensions()
+        data["size_choice"] = size_choice
+        data["width_cm"] = width
+        data["height_cm"] = height
         _save_wizard(request, data)
         return redirect("requests:wizard_lighting")
-    return _render_wizard(request, form=form, step=3)
+    return _render_wizard(
+        request,
+        form=form,
+        step=3,
+        extra={
+            "choice_cards": form.size_cards,
+            "choice_field_name": "size_choice",
+            "choice_selected": data.get("size_choice") or "",
+            "choice_legend": form.fields["size_choice"].label,
+        },
+    )
 
 
 @require_http_methods(["GET", "POST"])
@@ -149,13 +220,28 @@ def wizard_lighting(request: HttpRequest) -> HttpResponse:
         data["lighting_type"] = form.cleaned_data["lighting_type"]
         _save_wizard(request, data)
         return redirect("requests:wizard_description")
-    return _render_wizard(request, form=form, step=4)
+    selected = data.get("lighting_type") or LightingType.UNSURE
+    return _render_wizard(
+        request,
+        form=form,
+        step=4,
+        extra={
+            "choice_cards": form.lighting_cards,
+            "choice_field_name": "lighting_type",
+            "choice_selected": selected,
+            "choice_legend": form.fields["lighting_type"].label,
+        },
+    )
 
 
 @require_http_methods(["GET", "POST"])
 def wizard_description(request: HttpRequest) -> HttpResponse:
     data = _wizard_data(request)
-    form = RequestWizardDescriptionForm(request.POST or None, initial=data)
+    form = RequestWizardDescriptionForm(
+        request.POST or None,
+        initial=data,
+        needs_guidance=bool(data.get("needs_guidance")),
+    )
     if request.method == "POST" and form.is_valid():
         data.update(form.cleaned_data)
         _save_wizard(request, data)
@@ -168,14 +254,24 @@ def wizard_image(request: HttpRequest) -> HttpResponse:
     data = _wizard_data(request)
     form = RequestWizardImageForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
-        if form.cleaned_data.get("image"):
-            draft = ProjectRequest.objects.create(status=RequestStatus.DRAFT)
-            draft.image = form.cleaned_data["image"]
-            draft.save()
+        images = form.cleaned_data.get("images") or []
+        if images:
+            draft_id = data.get("draft_id")
+            if draft_id:
+                draft = get_object_or_404(ProjectRequest, pk=draft_id)
+            else:
+                draft = ProjectRequest.objects.create(status=RequestStatus.DRAFT)
+            replace_request_images(project_request=draft, files=images)
             data["draft_id"] = draft.pk
         _save_wizard(request, data)
         return redirect("requests:wizard_budget")
-    return _render_wizard(request, form=form, step=6, enctype=True)
+    return _render_wizard(
+        request,
+        form=form,
+        step=6,
+        enctype=True,
+        extra={"multi_image": True},
+    )
 
 
 @require_http_methods(["GET", "POST"])
@@ -247,7 +343,7 @@ def wizard_submit(request: HttpRequest) -> HttpResponse:
         return redirect("requests:wizard_phone")
 
     data = _wizard_data(request)
-    if not data.get("service_id") or not data.get("city_id"):
+    if not data.get("city_id") or not _has_service_choice(data):
         return redirect("requests:wizard_start")
 
     if request.method == "GET":
@@ -264,8 +360,10 @@ def wizard_submit(request: HttpRequest) -> HttpResponse:
         project_request = ProjectRequest(status=RequestStatus.DRAFT)
 
     project_request.customer = request.user
-    project_request.service_id = data["service_id"]
+    project_request.needs_guidance = bool(data.get("needs_guidance"))
+    project_request.service_id = data.get("service_id")
     project_request.city_id = data["city_id"]
+    project_request.size_choice = data.get("size_choice") or ""
     project_request.width_cm = data.get("width_cm")
     project_request.height_cm = data.get("height_cm")
     project_request.lighting_type = data.get("lighting_type", "")
@@ -321,7 +419,7 @@ def request_detail(request: HttpRequest, pk: int) -> HttpResponse:
     project_request = get_object_or_404(
         ProjectRequest.objects.select_related(
             "service", "city", "order", "preferred_vendor"
-        ).prefetch_related("quotes__vendor__city"),
+        ).prefetch_related("images", "quotes__vendor__city"),
         pk=pk,
         customer=request.user,
     )
@@ -331,6 +429,7 @@ def request_detail(request: HttpRequest, pk: int) -> HttpResponse:
         "pages/dashboard/request_detail.html",
         {
             "project_request": project_request,
+            "photos": project_request.photo_urls(),
             "quotes": quotes,
             "quotes_count": len(quotes),
         },

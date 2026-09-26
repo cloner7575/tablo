@@ -68,3 +68,40 @@ document.addEventListener("keydown", (event) => {
     closeMobileNav();
   }
 });
+
+function initMultiImagePreview() {
+  const input = document.querySelector("[data-multi-preview]");
+  const box = document.querySelector("[data-image-preview]");
+  const list = document.querySelector("[data-image-preview-list]");
+  if (!input || !box || !list) {
+    return;
+  }
+
+  input.addEventListener("change", () => {
+    list.replaceChildren();
+    const files = Array.from(input.files || []).slice(0, 6);
+    if (!files.length) {
+      box.hidden = true;
+      return;
+    }
+    box.hidden = false;
+    files.forEach((file) => {
+      if (!file.type.startsWith("image/")) {
+        return;
+      }
+      const li = document.createElement("li");
+      const img = document.createElement("img");
+      img.alt = file.name;
+      img.src = URL.createObjectURL(file);
+      img.onload = () => URL.revokeObjectURL(img.src);
+      li.appendChild(img);
+      list.appendChild(li);
+    });
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initMultiImagePreview);
+} else {
+  initMultiImagePreview();
+}

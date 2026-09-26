@@ -21,12 +21,115 @@ from apps.vendors.models import Vendor, VerificationStatus
 User = get_user_model()
 
 SERVICES = [
-    ("چلنیوم", "chalnium", "تابلو حروف برجسته چلنیوم"),
-    ("نئون", "neon", "تابلو نئون و نئون فلکسی"),
-    ("کامپوزیت", "composite", "تابلو کامپوزیت سردر"),
-    ("استیل", "steel", "تابلو استیل و حروف استیل"),
-    ("فلکسی", "flexi", "تابلو فلکسی و بنر نورانی"),
-    ("LED", "led", "تابلو LED و تلویزیون شهری"),
+    {
+        "title": "چلنیوم",
+        "slug": "chalnium",
+        "description": (
+            "حروف برجسته چلنیوم با ظاهر لوکس و دوام بالا؛ انتخاب رایج برای سردر "
+            "مغازه‌ها و برندینگ فروشگاهی."
+        ),
+        "suitable_for": "فروشگاه، بوتیک، کلینیک، داروخانه، شرکت و سردرهای برندمحور",
+        "materials": "چلنیوم، پلکسی، زیرسازی فلزی، نورپردازی LED یا SMD",
+        "faq": [
+            {
+                "question": "چلنیوم برای چه فضایی مناسب است؟",
+                "answer": (
+                    "بیشتر برای سردر مغازه و تابلوهای برندینگ "
+                    "با دید از فاصله متوسط تا دور."
+                ),
+            },
+            {
+                "question": "زمان ساخت حدوداً چقدر است؟",
+                "answer": (
+                    "بسته به ابعاد و جزئیات، معمولاً چند روز تا دو هفته؛ "
+                    "در پیشنهاد تابلو‌ساز دقیق می‌آید."
+                ),
+            },
+        ],
+    },
+    {
+        "title": "نئون",
+        "slug": "neon",
+        "description": "تابلو نئون و نئون فلکسی برای جلب توجه شبانه و هویت بصری خاص.",
+        "suitable_for": "کافه، رستوران، بار، بوتیک و فضاهای تفریحی",
+        "materials": "نئون شیشه‌ای یا نئون فلکسی، ترانس/درایور، زیرسازی",
+        "faq": [
+            {
+                "question": "نئون شیشه‌ای بهتر است یا فلکسی؟",
+                "answer": (
+                    "شیشه‌ای ظاهر کلاسیک‌تری دارد؛ فلکسی انعطاف و نگهداری آسان‌تری دارد. "
+                    "در درخواست نوع مدنظرتان را بنویسید."
+                ),
+            },
+        ],
+    },
+    {
+        "title": "کامپوزیت",
+        "slug": "composite",
+        "description": "تابلو و نمای کامپوزیت برای سردرهای بزرگ و پوشش یکدست نما.",
+        "suitable_for": "هایپرمارکت، ساختمان تجاری، کلینیک و فروشگاه‌های بزرگ",
+        "materials": "ورق کامپوزیت، زیرسازی آهنی، نور مخفی یا LED",
+        "faq": [
+            {
+                "question": "کامپوزیت فقط برای نماست؟",
+                "answer": (
+                    "عمدتاً برای سردر و نما؛ گاهی با حروف برجسته "
+                    "یا باکس نوری ترکیب می‌شود."
+                ),
+            },
+        ],
+    },
+    {
+        "title": "استیل",
+        "slug": "steel",
+        "description": "حروف و لوگوی استیل برای ظاهر رسمی و ماندگار.",
+        "suitable_for": "شرکت، طلافروشی، لابی اداری و برندهای لوکس",
+        "materials": "استیل براق یا مات، زیرسازی، نورپردازی نقطه‌ای یا مخفی",
+        "faq": [
+            {
+                "question": "استیل در فضای باز دوام دارد؟",
+                "answer": (
+                    "با ورق مناسب و پوشش صحیح بله؛ تابلو‌ساز متریال مقاوم "
+                    "به شرایط محل را پیشنهاد می‌دهد."
+                ),
+            },
+        ],
+    },
+    {
+        "title": "فلکسی",
+        "slug": "flexi",
+        "description": (
+            "تابلو فلکسی و بنر نورانی؛ اقتصادی و سریع برای اطلاع‌رسانی و سردر."
+        ),
+        "suitable_for": "فروشگاه، سوپرمارکت، داروخانه و تبلیغات محلی",
+        "materials": "فلکسی، قاب فلزی، لامپ یا LED داخلی",
+        "faq": [
+            {
+                "question": "فلکسی ارزان‌تر از چلنیوم است؟",
+                "answer": (
+                    "معمولاً بله؛ برای بودجه محدود یا تعویض سریع طرح گزینه مناسبی است."
+                ),
+            },
+        ],
+    },
+    {
+        "title": "LED",
+        "slug": "led",
+        "description": (
+            "تابلو LED، تلویزیون شهری و نمایشگرهای نورانی برای دیده‌شدن در شب و روز."
+        ),
+        "suitable_for": "فروشگاه‌های پرترافیک، میدان‌ها، مجتمع‌ها و تبلیغات متحرک",
+        "materials": "ماژول LED، کنترلر، شاسی فلزی، منبع تغذیه",
+        "faq": [
+            {
+                "question": "قیمت LED چطور حساب می‌شود؟",
+                "answer": (
+                    "معمولاً بر اساس متر مربع، رزولوشن و نصب. "
+                    "با ثبت ابعاد و عکس محل، چند پیشنهاد واقعی می‌گیرید."
+                ),
+            },
+        ],
+    },
 ]
 
 VENDOR_NAMES = [
@@ -67,16 +170,39 @@ class Command(BaseCommand):
         cities = [tehran, karaj]
 
         services: list[Service] = []
-        for i, (title, slug, desc) in enumerate(SERVICES):
-            svc, _ = Service.objects.get_or_create(
-                slug=slug,
+        for i, item in enumerate(SERVICES):
+            svc, created = Service.objects.get_or_create(
+                slug=item["slug"],
                 defaults={
-                    "title": title,
-                    "description": desc,
+                    "title": item["title"],
+                    "description": item["description"],
+                    "suitable_for": item["suitable_for"],
+                    "materials": item["materials"],
+                    "faq": item["faq"],
                     "is_active": True,
                     "sort_order": i,
                 },
             )
+            if not created:
+                svc.title = item["title"]
+                svc.description = item["description"]
+                svc.suitable_for = item["suitable_for"]
+                svc.materials = item["materials"]
+                svc.faq = item["faq"]
+                svc.is_active = True
+                svc.sort_order = i
+                svc.save(
+                    update_fields=[
+                        "title",
+                        "description",
+                        "suitable_for",
+                        "materials",
+                        "faq",
+                        "is_active",
+                        "sort_order",
+                        "updated_at",
+                    ]
+                )
             services.append(svc)
 
         CityServicePage.objects.get_or_create(

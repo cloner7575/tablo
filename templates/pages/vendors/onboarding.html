@@ -9,7 +9,15 @@
     <div class="vp-onboard__copy">
       <p class="section__eyebrow">عضویت تابلو‌ساز</p>
       <h1>پروفایل کسب‌وکارتان را بسازید</h1>
-      <p class="muted">پس از ثبت، وضعیت «در انتظار تأیید» می‌شود. بعد از تأیید، درخواست‌های مرتبط را می‌بینید و پیشنهاد قیمت می‌فرستید.</p>
+      <p class="muted">
+        بعد از ثبت، وضعیت «در انتظار تأیید» می‌شود. تا وقتی مدیر تأیید نکرده باشید
+        در فهرست عمومی و صفحات سرویس دیده نمی‌شوید؛ بعد از تأیید، درخواست‌های هم‌شهر و هم‌خدمت می‌آید.
+      </p>
+      <ol class="vp-onboard__steps">
+        <li><strong>۱. اطلاعات کسب‌وکار</strong><span>نام، شهر، خدمات و توضیح کوتاه.</span></li>
+        <li><strong>۲. هویت بصری</strong><span>لوگو و کاور — اعتماد مشتری را بالا می‌برد.</span></li>
+        <li><strong>۳. تأیید مدیریت</strong><span>پس از بررسی، پروفایل عمومی فعال می‌شود.</span></li>
+      </ol>
       <ul class="vp-check">
         <li class="is-done"><strong>رایگان</strong><span>ثبت‌نام و ارسال پیشنهاد برای تابلو‌ساز رایگان است.</span></li>
         <li class="is-done"><strong>درخواست‌های واقعی</strong><span>فقط پروژه‌های هم‌شهر و هم‌خدمت به شما می‌رسند.</span></li>
@@ -18,13 +26,14 @@
     </div>
     <div class="vp-card">
       <h2>اطلاعات اولیه</h2>
+      <p class="muted">فیلدهای ستاره‌دار الزامی‌اند. کاور اختیاری است ولی پیشنهاد می‌شود.</p>
       <form method="post" enctype="multipart/form-data" class="stack-form">
         {% csrf_token %}
         {% include "partials/_form_errors.html" %}
         {% for field in form %}
           {% include "components/_field.html" with field=field %}
         {% endfor %}
-        <button class="btn btn--primary btn--lg" type="submit">ثبت پروفایل</button>
+        <button class="btn btn--primary btn--lg" type="submit">ثبت و ارسال برای تأیید</button>
       </form>
     </div>
   </div>

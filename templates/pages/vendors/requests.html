@@ -50,7 +50,15 @@
                 {% endif %}
               </div>
               <p class="vp-req__meta">
-                {{ r.service.title }} · {{ r.city.name }} · {{ r.created_at|jalali }}
+                {% if r.needs_guidance or not r.service_id %}
+                  نیاز به راهنمایی
+                {% else %}
+                  {{ r.service.title }}
+                {% endif %}
+                · {{ r.city.name }} · {{ r.created_at|jalali }}
+                {% if r.needs_guidance %}
+                  <span class="status-pill status-pill--reviewing">راهنمایی</span>
+                {% endif %}
               </p>
               <ul class="vp-req__facts">
                 <li>ابعاد: {{ r.dimensions_display }}</li>
@@ -67,7 +75,7 @@
             </div>
             <div class="vp-req__actions">
               <a class="btn btn--primary" href="{% url 'vendors:request_detail' pk=r.pk %}">
-                {% if r.pk in quoted_ids %}مشاهده{% else %}ارسال پیشنهاد{% endif %}
+                مشاهده درخواست
               </a>
             </div>
           </article>

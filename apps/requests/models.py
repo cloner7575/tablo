@@ -6,6 +6,8 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.common.models import TimeStampedModel
 
+MAX_REQUEST_IMAGES = 6
+
 
 class RequestStatus(models.TextChoices):
     DRAFT = "draft", _("پیش‌نویس")
@@ -20,9 +22,10 @@ class RequestStatus(models.TextChoices):
 
 
 class LightingType(models.TextChoices):
-    NONE = "none", _("بدون نور")
-    LED = "led", _("LED")
-    NEON = "neon", _("نئون")
+    UNSURE = "unsure", _("نمی‌دانم — تابلو‌ساز پیشنهاد دهد")
+    NONE = "none", _("بدون نور / فقط روز")
+    LED = "led", _("نور LED (رایج و کم‌مصرف)")
+    NEON = "neon", _("نئون (جلوهٔ شبانه)")
     SMD = "smd", _("SMD")
     HIDDEN = "hidden", _("نور مخفی")
 
@@ -74,6 +77,17 @@ class ProjectRequest(TimeStampedModel):
     installation_height = models.CharField(_("ارتفاع نصب"), max_length=80, blank=True)
     deadline = models.DateField(_("مهلت"), null=True, blank=True)
     image = models.ImageField(_("عکس محل"), upload_to="requests/", blank=True)
+    needs_guidance = models.BooleanField(
+        _("نیاز به راهنمایی"),
+        default=False,
+        help_text=_("مشتری نوع تابلو یا جزئیات فنی را نمی‌داند"),
+    )
+    size_choice = models.CharField(
+        _("اندازه تقریبی"),
+        max_length=20,
+        blank=True,
+        help_text=_("small / medium / large / unsure"),
+    )
     status = models.CharField(
         max_length=32,
         choices=RequestStatus.choices,
@@ -105,6 +119,57 @@ class ProjectRequest(TimeStampedModel):
 
     @property
     def dimensions_display(self) -> str:
+        labels = {
+            "small": "کوچک (حدود ۱ متر)",
+            "medium": "متوسط (حدود ۲٫۵ متر)",
+            "large": "بزرگ (حدود ۴ متر یا بیشتر)",
+            "unsure": "هنوز مشخص نیست",
+        }
+        if self.size_choice == "unsure":
+            return labels["unsure"]
         if self.width_cm and self.height_cm:
-            return f"{self.width_cm} × {self.height_cm} سانتی‌متر"
+            base = f"{self.width_cm} × {self.height_cm} سانتی‌متر"
+            preset = labels.get(self.size_choice)
+            if preset and self.size_choice != "unsure":
+                return f"{preset} — {base}"
+            return base
+        if self.size_choice in labels:
+            return labels[self.size_choice]
         return "—"
+
+    def photo_urls(self) -> list[str]:
+        """Gallery URLs — RequestImage first, legacy single image as fallback."""
+        urls = [item.image.url for item in self.images.all() if item.image]
+        if urls:
+            return urls
+        if self.image:
+            return [self.image.url]
+        return []
+
+    @property
+    def photo_count(self) -> int:
+        count = self.images.count() if self.pk else 0
+        if count:
+            return count
+        return 1 if self.image else 0
+
+
+class RequestImage(TimeStampedModel):
+    request = models.ForeignKey(
+        ProjectRequest,
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name=_("درخواست"),
+    )
+    image = models.ImageField(_("تصویر"), upload_to="requests/gallery/")
+    sort_order = models.PositiveSmallIntegerField(_("ترتیب"), default=0)
+    caption = models.CharField(_("توضیح کوتاه"), max_length=120, blank=True)
+
+    class Meta:
+        db_table = "request_images"
+        ordering = ["sort_order", "id"]
+        verbose_name = _("عکس درخواست")
+        verbose_name_plural = _("عکس‌های درخواست")
+
+    def __str__(self) -> str:
+        return f"RequestImage #{self.pk} ({self.request_id})"

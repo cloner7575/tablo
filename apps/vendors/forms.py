@@ -27,6 +27,7 @@ class VendorOnboardingForm(forms.ModelForm):
             "website",
             "years_of_experience",
             "logo",
+            "cover_image",
             "services",
         ]
         labels = {
@@ -39,6 +40,7 @@ class VendorOnboardingForm(forms.ModelForm):
             "website": _("وب‌سایت"),
             "years_of_experience": _("سال تجربه"),
             "logo": _("لوگو"),
+            "cover_image": _("تصویر کاور"),
         }
 
     def clean_logo(self):
@@ -47,17 +49,12 @@ class VendorOnboardingForm(forms.ModelForm):
             validate_uploaded_image(logo)
         return logo
 
-
-class VendorProfileForm(VendorOnboardingForm):
-    class Meta(VendorOnboardingForm.Meta):
-        fields = VendorOnboardingForm.Meta.fields + ["cover_image"]
-        labels = {
-            **VendorOnboardingForm.Meta.labels,
-            "cover_image": _("تصویر کاور"),
-        }
-
     def clean_cover_image(self):
         cover = self.cleaned_data.get("cover_image")
         if cover:
             validate_uploaded_image(cover)
         return cover
+
+
+class VendorProfileForm(VendorOnboardingForm):
+    """Same fields as onboarding — kept for clear view naming."""

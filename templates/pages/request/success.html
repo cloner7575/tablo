@@ -14,7 +14,7 @@
       {{ project_request.city.name }} ارسال شد. به‌زودی پیشنهاد قیمت می‌گیرید.
     </p>
     <div class="wz-success__meta">
-      <span>{{ project_request.service.title }}</span>
+      <span>{% if project_request.service %}{{ project_request.service.title }}{% else %}نیاز به راهنمایی{% endif %}</span>
       <span>{{ project_request.city.name }}</span>
       <span>{{ project_request.get_status_display }}</span>
     </div>

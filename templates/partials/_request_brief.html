@@ -1,0 +1,106 @@
+{% load persian %}
+{# Shared request brief for customer + vendor detail pages. Expects project_request + photos. #}
+<section class="req-brief" aria-labelledby="req-brief-title">
+  <div class="req-brief__head">
+    <h2 id="req-brief-title">{% if brief_title %}{{ brief_title }}{% else %}خلاصه نیاز{% endif %}</h2>
+    {% if brief_lead %}<p class="req-brief__lead">{{ brief_lead }}</p>{% endif %}
+    {% if project_request.needs_guidance %}
+      <p class="req-brief__badge" role="status">
+        مشتری نوع تابلو را نمی‌داند — لطفاً راهنمایی و پیشنهاد مناسب بدهید.
+      </p>
+    {% endif %}
+  </div>
+
+  {% if photos %}
+    <div class="req-gallery" aria-label="عکس‌های مشتری">
+      <h3 class="req-gallery__title">عکس‌های مشتری <span>({{ photos|length|fa_digits }})</span></h3>
+      <ul class="req-gallery__grid">
+        {% for url in photos %}
+          <li class="req-gallery__item">
+            <a href="{{ url }}" target="_blank" rel="noopener noreferrer">
+              <img src="{{ url }}" alt="عکس {{ forloop.counter|fa_digits }} درخواست" loading="lazy" width="640" height="480">
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="req-gallery req-gallery--empty">
+      <p>عکسی ضمیمه نشده است.</p>
+    </div>
+  {% endif %}
+
+  {% if project_request.description or project_request.text_content %}
+    <div class="req-brief__story">
+      {% if project_request.text_content %}
+        <div class="req-brief__sign">
+          <span class="req-specs__label">متن روی تابلو</span>
+          <strong lang="fa">«{{ project_request.text_content }}»</strong>
+        </div>
+      {% endif %}
+      {% if project_request.description %}
+        <div class="req-desc">
+          <h3>توضیحات مشتری</h3>
+          <p>{{ project_request.description|linebreaksbr }}</p>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="req-specs" role="list">
+    <div role="listitem">
+      <span class="req-specs__label">نوع تابلو</span>
+      <strong>
+        {% if project_request.needs_guidance or not project_request.service_id %}
+          هنوز مشخص نیست — نیاز به پیشنهاد
+        {% else %}
+          {{ project_request.service.title }}
+        {% endif %}
+      </strong>
+    </div>
+    <div role="listitem">
+      <span class="req-specs__label">شهر / محله</span>
+      <strong>
+        {{ project_request.city.name }}{% if project_request.district %} — {{ project_request.district }}{% endif %}
+      </strong>
+    </div>
+    <div role="listitem">
+      <span class="req-specs__label">ابعاد</span>
+      <strong>{{ project_request.dimensions_display }}</strong>
+    </div>
+    <div role="listitem">
+      <span class="req-specs__label">نورپردازی</span>
+      <strong>{{ project_request.get_lighting_type_display|default:"—" }}</strong>
+    </div>
+    <div role="listitem">
+      <span class="req-specs__label">نوع کسب‌وکار</span>
+      <strong>{{ project_request.business_type|default:"—" }}</strong>
+    </div>
+    <div role="listitem">
+      <span class="req-specs__label">بودجه</span>
+      <strong>
+        {% if project_request.budget_min or project_request.budget_max %}
+          {{ project_request.budget_min|default:0|toman|fa_digits }}
+          تا
+          {{ project_request.budget_max|default:0|toman|fa_digits }}
+        {% else %}توافقی{% endif %}
+      </strong>
+    </div>
+    <div role="listitem">
+      <span class="req-specs__label">نصب</span>
+      <strong>{% if project_request.installation_required %}نیاز به نصب دارد{% else %}بدون نصب{% endif %}</strong>
+    </div>
+    {% if project_request.material %}
+      <div role="listitem">
+        <span class="req-specs__label">متریال مدنظر</span>
+        <strong>{{ project_request.material }}</strong>
+      </div>
+    {% endif %}
+    {% if project_request.deadline %}
+      <div role="listitem">
+        <span class="req-specs__label">مهلت</span>
+        <strong>{{ project_request.deadline|jalali }}</strong>
+      </div>
+    {% endif %}
+  </div>
+</section>

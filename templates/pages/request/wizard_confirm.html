@@ -34,6 +34,12 @@
         <p class="wz-panel__hint">{{ step_hint }}</p>
       </header>
 
+      {% if summary.needs_guidance %}
+        <p class="wz-reassure" role="status">
+          چون نوع تابلو را انتخاب نکرده‌اید، تابلو‌سازهای شهر شما راهنمایی و پیشنهاد می‌فرستند.
+        </p>
+      {% endif %}
+
       <dl class="wz-summary">
         <div><dt>نوع تابلو</dt><dd>{{ summary.service }}</dd></div>
         <div><dt>شهر</dt><dd>{{ summary.city }}</dd></div>
@@ -43,7 +49,7 @@
         <div><dt>نوع کسب‌وکار</dt><dd>{{ summary.business_type }}</dd></div>
         <div><dt>محله</dt><dd>{{ summary.district }}</dd></div>
         <div><dt>بودجه</dt><dd>{{ summary.budget }}</dd></div>
-        <div><dt>عکس محل</dt><dd>{{ summary.has_image }}</dd></div>
+        <div><dt>عکس‌ها</dt><dd>{% if summary.photo_count %}{{ summary.photo_count|fa_digits }} عکس{% else %}بدون عکس{% endif %}</dd></div>
         <div class="wz-summary__wide"><dt>توضیحات</dt><dd>{{ summary.description }}</dd></div>
       </dl>
 

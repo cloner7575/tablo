@@ -10,6 +10,7 @@ urlpatterns = [
     path("onboarding/", views.onboarding, name="onboarding"),
     path("requests/", views.request_list, name="requests"),
     path("requests/<int:pk>/", views.request_detail, name="request_detail"),
+    path("requests/<int:pk>/quote/", views.request_quote, name="request_quote"),
     path("quotes/", views.my_quotes, name="my_quotes"),
     path("profile/", views.profile_edit, name="profile"),
     path("<uslug:slug>/", views.vendor_public, name="public"),

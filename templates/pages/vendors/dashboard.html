@@ -89,7 +89,7 @@
               <article class="vp-queue__item">
                 <div class="vp-queue__body">
                   <h3>{{ r.title }}</h3>
-                  <p>{{ r.service.title }} · {{ r.city.name }} · {{ r.created_at|jalali }}</p>
+                  <p>{% if r.service %}{{ r.service.title }}{% else %}نیاز به راهنمایی{% endif %} · {{ r.city.name }} · {{ r.created_at|jalali }}</p>
                   <ul>
                     <li>{{ r.dimensions_display }}</li>
                     <li>
@@ -99,7 +99,7 @@
                     </li>
                   </ul>
                 </div>
-                <a class="btn btn--primary btn--sm" href="{% url 'vendors:request_detail' pk=r.pk %}">ارسال پیشنهاد</a>
+                <a class="btn btn--primary btn--sm" href="{% url 'vendors:request_detail' pk=r.pk %}">مشاهده درخواست</a>
               </article>
             {% empty %}
               <div class="vp-empty">

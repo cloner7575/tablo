@@ -2,31 +2,36 @@
 
 {% block title %}{{ page.title }} | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}{{ page.meta_description|default:page.title }}{% endblock %}
+{% block body_class %}page-city-service{% endblock %}
 
 {% block content %}
-<section class="page-hero">
-  <div class="hero__content">
-    <h1>{{ page.title }}</h1>
-    <p>{{ page.body|truncatewords:40 }}</p>
-    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">قیمت بگیر</a>
-  </div>
-</section>
-<section class="section">
-  <article class="prose">{{ page.body|linebreaks }}</article>
-</section>
-<section class="section section--muted">
-  <div class="section__head">
-    <h2>تابلو‌سازان مرتبط</h2>
-  </div>
-  <div class="card-grid">
-    {% for v in vendors %}
-      <a class="vendor-card" href="{% url 'vendors:public' slug=v.slug %}">
-        <h3>{{ v.business_name }}</h3>
-        <p>{{ v.city.name }}</p>
-      </a>
-    {% empty %}
-      <p class="empty">فعلاً تابلو‌سازی برای این ترکیب ثبت نشده است.</p>
-    {% endfor %}
-  </div>
-</section>
+<article class="city-page">
+  <section class="svc-hero section" aria-labelledby="cs-title">
+    <div class="svc-hero__copy">
+      <p class="section__eyebrow">{{ page.city.name }} · {{ page.service.title }}</p>
+      <h1 id="cs-title">{{ page.title }}</h1>
+      <p class="svc-hero__lead">{{ page.body|truncatewords:40 }}</p>
+      <div class="svc-hero__actions">
+        <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">قیمت بگیر</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <article class="prose">{{ page.body|linebreaks }}</article>
+  </section>
+
+  <section class="section section--muted" aria-labelledby="cs-vendors-title">
+    <div class="section__head">
+      <h2 id="cs-vendors-title">تابلو‌سازان مرتبط</h2>
+    </div>
+    <div class="vn-grid">
+      {% for v in vendors %}
+        {% include "partials/_vendor_card.html" with v=v %}
+      {% empty %}
+        <p class="empty">فعلاً تابلو‌سازی برای این ترکیب ثبت نشده است.</p>
+      {% endfor %}
+    </div>
+  </section>
+</article>
 {% endblock %}

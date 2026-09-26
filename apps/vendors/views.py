@@ -57,6 +57,13 @@ def vendor_public(request: HttpRequest, slug: str) -> HttpResponse:
         )
         .exclude(pk=vendor.pk)
         .select_related("city")
+        .prefetch_related("services")
+        .annotate(
+            portfolio_count=Count(
+                "portfolio_items",
+                filter=Q(portfolio_items__is_published=True),
+            )
+        )
         .order_by("-rating")[:3]
     )
     for peer in related:
@@ -67,6 +74,7 @@ def vendor_public(request: HttpRequest, slug: str) -> HttpResponse:
         {
             "vendor": vendor,
             "portfolio": portfolio,
+            "has_portfolio": bool(portfolio),
             "reviews": vendor.reviews.filter(is_published=True)[:10],
             "related_vendors": related,
             "services": list(vendor.services.all()),
@@ -90,7 +98,10 @@ def onboarding(request: HttpRequest) -> HttpResponse:
         form.save_m2m()
         messages.success(
             request,
-            "پروفایل ثبت شد و پس از تأیید مدیر فعال می‌شود.",
+            (
+                "پروفایل ثبت شد و در انتظار تأیید مدیریت است. "
+                "تا تأیید، در فهرست عمومی دیده نمی‌شوید."
+            ),
         )
         return redirect("vendors:dashboard")
     return render(request, "pages/vendors/onboarding.html", {"form": form})
@@ -175,16 +186,46 @@ def request_list(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET"])
 def request_detail(request: HttpRequest, pk: int) -> HttpResponse:
     vendor = _require_vendor(request)
     project_request = get_object_or_404(
-        matched_requests_for_vendor(vendor).select_related("service", "city"),
+        matched_requests_for_vendor(vendor)
+        .select_related("service", "city")
+        .prefetch_related("images"),
         pk=pk,
     )
     existing = Quote.objects.filter(request=project_request, vendor=vendor).first()
+    return render(
+        request,
+        "pages/vendors/request_detail.html",
+        panel_context(
+            vendor,
+            "requests",
+            project_request=project_request,
+            photos=project_request.photo_urls(),
+            existing=existing,
+        ),
+    )
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def request_quote(request: HttpRequest, pk: int) -> HttpResponse:
+    vendor = _require_vendor(request)
+    project_request = get_object_or_404(
+        matched_requests_for_vendor(vendor)
+        .select_related("service", "city")
+        .prefetch_related("images"),
+        pk=pk,
+    )
+    existing = Quote.objects.filter(request=project_request, vendor=vendor).first()
+    if existing is not None:
+        messages.info(request, "برای این درخواست قبلاً پیشنهاد ثبت کرده‌اید.")
+        return redirect("vendors:request_detail", pk=pk)
+
     form = QuoteForm(request.POST or None)
-    if request.method == "POST" and form.is_valid() and existing is None:
+    if request.method == "POST" and form.is_valid():
         try:
             create_quote(
                 vendor=vendor,
@@ -198,13 +239,13 @@ def request_detail(request: HttpRequest, pk: int) -> HttpResponse:
             return redirect("vendors:my_quotes")
     return render(
         request,
-        "pages/vendors/request_detail.html",
+        "pages/vendors/request_quote.html",
         panel_context(
             vendor,
             "requests",
             project_request=project_request,
+            photos=project_request.photo_urls(),
             form=form,
-            existing=existing,
         ),
     )
 
@@ -266,7 +307,12 @@ def vendor_list(request: HttpRequest) -> HttpResponse:
         )
         .select_related("city")
         .prefetch_related("services")
-        .annotate(portfolio_count=Count("portfolio_items"))
+        .annotate(
+            portfolio_count=Count(
+                "portfolio_items",
+                filter=Q(portfolio_items__is_published=True),
+            )
+        )
         .order_by("-is_featured", "-rating")
     )
     for vendor in vendors:

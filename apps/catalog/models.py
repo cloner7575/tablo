@@ -11,6 +11,22 @@ class Service(TimeStampedModel):
     title = models.CharField(_("عنوان"), max_length=120)
     slug = models.SlugField(_("اسلاگ"), max_length=140, unique=True, allow_unicode=True)
     description = models.TextField(_("توضیحات"), blank=True)
+    suitable_for = models.TextField(
+        _("مناسب برای"),
+        blank=True,
+        help_text=_("کسب‌وکارهایی که این نوع تابلو برایشان مناسب است"),
+    )
+    materials = models.TextField(
+        _("متریال رایج"),
+        blank=True,
+        help_text=_("مواد و متریال‌های متداول این خدمت"),
+    )
+    faq = models.JSONField(
+        _("سوالات پرتکرار"),
+        default=list,
+        blank=True,
+        help_text=_('لیست {"question": "...", "answer": "..."}'),
+    )
     icon = models.ImageField(_("آیکون"), upload_to="services/icons/", blank=True)
     is_active = models.BooleanField(_("فعال"), default=True)
     sort_order = models.PositiveIntegerField(_("ترتیب"), default=0)

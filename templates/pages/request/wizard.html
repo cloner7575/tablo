@@ -9,8 +9,8 @@
   <div class="wz-layout">
     <aside class="wz-aside" aria-label="مراحل درخواست">
       <p class="section__eyebrow">ثبت درخواست رایگان</p>
-      <h2 class="wz-aside__title">چند قدم تا پیشنهاد قیمت</h2>
-      <p class="wz-aside__lead">جزئیات را وارد کنید؛ تابلو‌سازهای مرتبط پیشنهادشان را می‌فرستند.</p>
+      <h2 class="wz-aside__title">حتی اگر دقیق ندانید</h2>
+      <p class="wz-aside__lead">لازم نیست متخصص تابلو باشید. شهر، یک توضیح ساده و در صورت امکان عکس کافی است؛ بقیه را تابلو‌سازها پیشنهاد می‌دهند.</p>
       <ol class="wz-steps">
         {% for s in wizard_steps %}
           <li class="wz-steps__item{% if s.number == step %} is-current{% elif s.number < step %} is-done{% endif %}">
@@ -21,12 +21,12 @@
       </ol>
       <ul class="wz-perks">
         <li>رایگان برای مشتری</li>
+        <li>«نمی‌دانم» هم گزینه است</li>
         <li>مقایسه چند پیشنهاد</li>
-        <li>بدون نیاز به مراجعه حضوری</li>
       </ul>
     </aside>
 
-    <div class="wz-panel">
+    <div class="wz-panel{% if radio_step or choice_cards %} wz-panel--choices{% endif %}">
       <div class="wizard-progress" role="status" aria-label="مرحله {{ step|fa_digits }} از {{ total|fa_digits }}">
         <div class="wizard-progress__track" aria-hidden="true">
           <div class="wizard-progress__bar" style="width: {% widthratio step total 100 %}%"></div>
@@ -39,12 +39,59 @@
         {% if step_hint %}<p class="wz-panel__hint">{{ step_hint }}</p>{% endif %}
       </header>
 
+      {% if beginner_banner and not choice_cards %}
+        <p class="wz-reassure" role="status">{{ beginner_banner }}</p>
+      {% endif %}
+
       <form method="post" {% if enctype %}enctype="multipart/form-data"{% endif %} class="stack-form">
         {% csrf_token %}
         {% include "partials/_form_errors.html" %}
-        {% for field in form %}
-          {% include "components/_field.html" with field=field %}
-        {% endfor %}
+        {% if multi_image %}
+          <ul class="wz-photo-tips" aria-label="راهنمای عکس">
+            <li>عکس سردر یا دیواری که تابلو می‌خورد</li>
+            <li>لوگو یا نوشتهٔ فعلی (اگر دارید)</li>
+            <li>نمونه‌ای از اینترنت که سبکش را دوست دارید</li>
+          </ul>
+        {% endif %}
+
+        {% if choice_cards %}
+          <fieldset class="wz-cards{% if choice_field_name == 'size_choice' %} wz-cards--size{% endif %}">
+            <legend class="visually-hidden">{{ choice_legend }}</legend>
+            {% for card in choice_cards %}
+              <label class="wz-card{% if card.emphasized %} wz-card--soft{% endif %}">
+                <input
+                  type="radio"
+                  name="{{ choice_field_name }}"
+                  value="{{ card.value }}"
+                  {% if choice_selected == card.value %}checked{% endif %}
+                  required
+                >
+                <span class="wz-card__body">
+                  <span class="wz-card__title">{{ card.title }}</span>
+                  {% if card.hint %}<span class="wz-card__hint">{{ card.hint }}</span>{% endif %}
+                </span>
+              </label>
+            {% endfor %}
+          </fieldset>
+          {% if choice_field_name == "choice" and form.choice.errors %}
+            <ul class="errorlist" role="alert">{% for error in form.choice.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% elif choice_field_name == "size_choice" and form.size_choice.errors %}
+            <ul class="errorlist" role="alert">{% for error in form.size_choice.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% elif choice_field_name == "lighting_type" and form.lighting_type.errors %}
+            <ul class="errorlist" role="alert">{% for error in form.lighting_type.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        {% else %}
+          {% for field in form %}
+            {% include "components/_field.html" with field=field %}
+          {% endfor %}
+        {% endif %}
+
+        {% if multi_image %}
+          <div class="wz-preview" data-image-preview hidden>
+            <p class="wz-preview__label">پیش‌نمایش انتخاب‌شده</p>
+            <ul class="wz-preview__list" data-image-preview-list></ul>
+          </div>
+        {% endif %}
         <div class="form-actions wz-actions">
           {% if back_url_name %}
             <a class="btn btn--ghost-outline" href="{% url back_url_name %}">بازگشت</a>

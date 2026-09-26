@@ -13,8 +13,9 @@ def matched_requests_for_vendor(vendor: Vendor) -> QuerySet[ProjectRequest]:
     service_ids = list(vendor.services.values_list("id", flat=True))
     return (
         ProjectRequest.objects.filter(
-            Q(city=vendor.city, service_id__in=service_ids)
-            | Q(preferred_vendor=vendor),
+            Q(preferred_vendor=vendor)
+            | Q(city=vendor.city, needs_guidance=True)
+            | Q(city=vendor.city, service_id__in=service_ids),
             status__in=[
                 RequestStatus.SUBMITTED,
                 RequestStatus.REVIEWING,

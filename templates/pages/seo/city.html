@@ -1,37 +1,89 @@
 {% extends "base.html" %}
+{% load persian static %}
 
 {% block title %}تابلوسازی در {{ city.name }} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}سفارش تابلو در {{ city.name }} از تابلو‌سازهای تأییدشده{% endblock %}
+{% block meta_description %}سفارش تابلو در {{ city.name }} از تابلو‌سازهای تأییدشده — مقایسه قیمت و نمونه‌کار{% endblock %}
+{% block body_class %}page-city{% endblock %}
 
 {% block content %}
-<section class="page-hero">
-  <div class="hero__content">
-    <h1>تابلوسازی در {{ city.name }}</h1>
-    <p>درخواست بسازید و از تابلو‌سازهای {{ city.name }} پیشنهاد بگیرید.</p>
-    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">قیمت بگیر</a>
-  </div>
-</section>
-<section class="section">
-  <h2>خدمات</h2>
-  <div class="chip-grid">
-    {% for s in services %}
-      <a class="chip" href="{% url 'catalog:service' slug=s.slug %}">{{ s.title }}</a>
-    {% endfor %}
-  </div>
-</section>
-<section class="section section--muted">
-  <div class="section__head">
-    <h2>تابلو‌سازان {{ city.name }}</h2>
-  </div>
-  <div class="card-grid">
-    {% for v in vendors %}
-      <a class="vendor-card" href="{% url 'vendors:public' slug=v.slug %}">
-        <h3>{{ v.business_name }}</h3>
-        <p>{{ v.city.name }}</p>
-      </a>
-    {% empty %}
-      <p class="empty">تابلو‌سازی در این شهر فعال نیست.</p>
-    {% endfor %}
-  </div>
-</section>
+<article class="city-page">
+  <section class="svc-hero section" aria-labelledby="city-title">
+    <div class="svc-hero__copy">
+      <p class="section__eyebrow">شهر</p>
+      <h1 id="city-title">تابلوسازی در {{ city.name }}</h1>
+      <p class="svc-hero__lead">
+        درخواست بسازید و از تابلو‌سازهای تأییدشدهٔ {{ city.name }} پیشنهاد قیمت، زمان اجرا و گارانتی بگیرید.
+      </p>
+      <div class="svc-hero__actions">
+        <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">قیمت بگیر در {{ city.name }}</a>
+        <a class="btn btn--ghost-outline btn--lg" href="{% url 'vendors:list' %}">فهرست تابلو‌سازها</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="city-services-title">
+    <div class="section__head">
+      <p class="section__eyebrow">انواع تابلو</p>
+      <h2 id="city-services-title">خدمات محبوب</h2>
+    </div>
+    <div class="chip-row chip-row--lg">
+      {% for s in services %}
+        <a class="chip" href="{% url 'catalog:service' slug=s.slug %}">{{ s.title }}</a>
+      {% empty %}
+        <p class="empty">خدمتی ثبت نشده است.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="section section--muted" aria-labelledby="city-vendors-title">
+    <div class="section__head section__head--row">
+      <div>
+        <p class="section__eyebrow">شبکه محلی</p>
+        <h2 id="city-vendors-title">تابلو‌سازان {{ city.name }}</h2>
+      </div>
+    </div>
+    <div class="vn-grid">
+      {% for v in vendors %}
+        {% include "partials/_vendor_card.html" with v=v %}
+      {% empty %}
+        <div class="empty">
+          <strong>هنوز تابلو‌ساز تأییدشده‌ای در {{ city.name }} نیست</strong>
+          <p>درخواست را ثبت کنید تا به‌محض فعال شدن متخصصان محلی، پیشنهاد برسد.</p>
+          <a class="btn btn--primary btn--sm" href="{% url 'requests:wizard_start' %}">ثبت درخواست</a>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if portfolio %}
+  <section class="section" aria-labelledby="city-portfolio-title">
+    <div class="section__head">
+      <p class="section__eyebrow">اجرا در همین شهر</p>
+      <h2 id="city-portfolio-title">نمونه‌کارهای {{ city.name }}</h2>
+    </div>
+    <div class="vn-gallery">
+      {% for item in portfolio %}
+        <a class="vn-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+          {% else %}
+            <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
+          {% endif %}
+          <span>{{ item.title }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="sp-consult section" aria-labelledby="city-cta">
+    <div class="sp-consult__inner">
+      <div>
+        <h2 id="city-cta">پروژه تابلو در {{ city.name }} دارید؟</h2>
+        <p>یک بار جزئیات را بفرستید و چند پیشنهاد واقعی بگیرید.</p>
+      </div>
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">شروع درخواست رایگان</a>
+    </div>
+  </section>
+</article>
 {% endblock %}

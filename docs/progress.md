@@ -13,7 +13,14 @@
 | 8 Portfolio + Reviews | done | SEO pages + completed-only reviews |
 | 9 Homepage + SEO | done | conversion home, sitemap, OG, JSON-LD |
 | 10 Admin + stubs | done | rich admin, notifications, analytics, payments scaffolds |
-| 11 Quality | done | 67 pytest green, ruff clean, indexes |
+| 11 Quality | done | pytest green, ruff clean, indexes |
 | 12 Polish | done | README + progress |
+
+## Business phases (product depth — separate numbering)
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Business Phase 2 — Vendor marketplace depth | done | Service content fields + seed FAQ; cover in onboarding; real-only trust; service/city conversion pages; pending vendors gated |
+| Business Phase 3+ (wizard brief, quote compare, LeadOpportunity, …) | not started | Wait for next instruction — not implemented in this slice |
 
 Updated: 2026-09-26

@@ -12,7 +12,7 @@
       <h1>{{ project_request.title }}</h1>
       <p class="req-hero__meta">
         <span class="status-pill status-pill--{{ project_request.status }}">{{ project_request.get_status_display }}</span>
-        <span>{{ project_request.service.title }}</span>
+        <span>{% if project_request.service %}{{ project_request.service.title }}{% else %}نیاز به راهنمایی{% endif %}</span>
         <span>{{ project_request.city.name }}</span>
         <span>{{ project_request.created_at|jalali }}</span>
       </p>
@@ -25,53 +25,9 @@
 
   <div class="req-layout">
     <div class="req-main">
-      <section class="req-card" aria-labelledby="req-specs-title">
-        <h2 id="req-specs-title">جزئیات پروژه</h2>
-        <div class="req-specs">
-          <div>
-            <span class="req-specs__label">ابعاد</span>
-            <strong>{{ project_request.dimensions_display }}</strong>
-          </div>
-          <div>
-            <span class="req-specs__label">نورپردازی</span>
-            <strong>{{ project_request.get_lighting_type_display|default:"—" }}</strong>
-          </div>
-          <div>
-            <span class="req-specs__label">بودجه</span>
-            <strong>
-              {% if project_request.budget_min or project_request.budget_max %}
-                {{ project_request.budget_min|default:0|toman|fa_digits }}
-                تا
-                {{ project_request.budget_max|default:0|toman|fa_digits }}
-              {% else %}—{% endif %}
-            </strong>
-          </div>
-          <div>
-            <span class="req-specs__label">محله</span>
-            <strong>{{ project_request.district|default:"—" }}</strong>
-          </div>
-          <div>
-            <span class="req-specs__label">نوع کسب‌وکار</span>
-            <strong>{{ project_request.business_type|default:"—" }}</strong>
-          </div>
-          <div>
-            <span class="req-specs__label">متن تابلو</span>
-            <strong>{{ project_request.text_content|default:"—" }}</strong>
-          </div>
-        </div>
-        {% if project_request.description %}
-          <div class="req-desc">
-            <h3>توضیحات</h3>
-            <p>{{ project_request.description|linebreaksbr }}</p>
-          </div>
-        {% endif %}
-        {% if project_request.image %}
-          <div class="req-photo">
-            <h3>عکس محل نصب</h3>
-            <img src="{{ project_request.image.url }}" alt="عکس محل نصب" loading="lazy" width="800" height="500">
-          </div>
-        {% endif %}
-      </section>
+      <div class="req-card">
+        {% include "partials/_request_brief.html" with brief_title="جزئیات درخواست شما" brief_lead="همین خلاصه برای تابلو‌سازها نمایش داده می‌شود." %}
+      </div>
 
       {% if project_request.order %}
         <section class="req-card req-card--order" aria-labelledby="req-order-title">

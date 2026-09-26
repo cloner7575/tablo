@@ -21,7 +21,7 @@
       <a class="req-list__item" href="{% url 'requests:request_detail' pk=r.pk %}">
         <div>
           <strong>{{ r.title }}</strong>
-          <span>{{ r.service.title }} · {{ r.city.name }} · {{ r.created_at|jalali }}</span>
+          <span>{% if r.service %}{{ r.service.title }}{% else %}نیاز به راهنمایی{% endif %} · {{ r.city.name }} · {{ r.created_at|jalali }}</span>
         </div>
         <span class="status-pill status-pill--{{ r.status }}">{{ r.get_status_display }}</span>
       </a>

@@ -2,7 +2,7 @@
 {% load persian static %}
 
 {% block title %}{{ vendor.business_name }} | تابلو‌ساز در {{ vendor.city.name }} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}{{ vendor.business_name }} — امتیاز {{ vendor.rating }}، {{ vendor.completed_projects }} پروژه در {{ vendor.city.name }}{% endblock %}
+{% block meta_description %}{{ vendor.business_name }}{% if vendor.review_count %} — امتیاز {{ vendor.rating }}{% endif %}{% if vendor.completed_projects %}، {{ vendor.completed_projects }} پروژه{% endif %} در {{ vendor.city.name }}{% endblock %}
 {% block og_title %}{{ vendor.business_name }}{% endblock %}
 {% block body_class %}page-vendor{% endblock %}
 
@@ -13,12 +13,12 @@
   "@type": "LocalBusiness",
   "name": "{{ vendor.business_name|escapejs }}",
   "description": "{{ vendor.description|truncatechars:160|escapejs }}",
-  "address": {"@type": "PostalAddress", "addressLocality": "{{ vendor.city.name|escapejs }}"},
+  "address": {"@type": "PostalAddress", "addressLocality": "{{ vendor.city.name|escapejs }}"}{% if vendor.review_count %},
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "{{ vendor.rating }}",
     "reviewCount": "{{ vendor.review_count }}"
-  }
+  }{% endif %}
 }
 </script>
 {% endblock %}
@@ -37,15 +37,24 @@
     <div class="vn-hero__content">
       <div class="vn-hero__badges">
         <span class="vn-badge vn-badge--light">تأییدشده</span>
+        {% if has_portfolio %}<span class="vn-badge vn-badge--light">نمونه‌کار واقعی</span>{% endif %}
         {% if vendor.is_featured %}<span class="vn-badge vn-badge--accent">منتخب</span>{% endif %}
         <span class="vn-badge vn-badge--light">{{ vendor.city.name }}</span>
       </div>
       <h1 id="vn-title">{{ vendor.business_name }}</h1>
       <p class="vn-hero__lead">
-        ★ {{ vendor.rating|fa_digits }}
-        ({{ vendor.review_count|fa_digits }} نظر)
-        · {{ vendor.completed_projects|fa_digits }} پروژه تکمیل‌شده
-        · پاسخ حدود {{ vendor.response_time_hours|fa_digits }} ساعت
+        {% if vendor.review_count %}
+          ★ {{ vendor.rating|fa_digits }}
+          ({{ vendor.review_count|fa_digits }} نظر)
+        {% else %}
+          هنوز نظری ثبت نشده
+        {% endif %}
+        {% if vendor.completed_projects %}
+          · {{ vendor.completed_projects|fa_digits }} پروژه تکمیل‌شده
+        {% endif %}
+        {% if vendor.response_time_hours %}
+          · پاسخ حدود {{ vendor.response_time_hours|fa_digits }} ساعت
+        {% endif %}
       </p>
       <div class="vn-hero__actions">
         <a class="btn btn--primary btn--lg" href="{% url 'requests:from_vendor' slug=vendor.slug %}">
@@ -58,22 +67,36 @@
 
   <section class="vn-stats section" aria-label="آمار تابلو‌ساز">
     <div class="vn-stats__grid">
-      <div>
-        <strong>{{ vendor.rating|fa_digits }}</strong>
-        <span>امتیاز</span>
-      </div>
-      <div>
-        <strong>{{ vendor.completed_projects|fa_digits }}</strong>
-        <span>پروژه موفق</span>
-      </div>
-      <div>
-        <strong>{{ vendor.response_time_hours|fa_digits }}س</strong>
-        <span>میانگین پاسخ</span>
-      </div>
-      <div>
-        <strong>{% if vendor.years_of_experience %}{{ vendor.years_of_experience|fa_digits }}{% else %}—{% endif %}</strong>
-        <span>سال تجربه</span>
-      </div>
+      {% if vendor.review_count %}
+        <div>
+          <strong>{{ vendor.rating|fa_digits }}</strong>
+          <span>امتیاز</span>
+        </div>
+      {% endif %}
+      {% if vendor.completed_projects %}
+        <div>
+          <strong>{{ vendor.completed_projects|fa_digits }}</strong>
+          <span>پروژه موفق</span>
+        </div>
+      {% endif %}
+      {% if vendor.response_time_hours %}
+        <div>
+          <strong>{{ vendor.response_time_hours|fa_digits }}س</strong>
+          <span>میانگین پاسخ</span>
+        </div>
+      {% endif %}
+      {% if vendor.years_of_experience %}
+        <div>
+          <strong>{{ vendor.years_of_experience|fa_digits }}</strong>
+          <span>سال تجربه</span>
+        </div>
+      {% endif %}
+      {% if has_portfolio %}
+        <div>
+          <strong>{{ portfolio|length|fa_digits }}</strong>
+          <span>نمونه‌کار</span>
+        </div>
+      {% endif %}
     </div>
   </section>
 
@@ -114,7 +137,7 @@
                 <span>{{ item.title }}</span>
               </a>
             {% empty %}
-              <p class="empty">نمونه‌کاری ثبت نشده است.</p>
+              <p class="empty">نمونه‌کاری ثبت نشده است. از این تابلو‌ساز قیمت بگیرید تا پروژه شما اولین نمونه‌کار باشد.</p>
             {% endfor %}
           </div>
         </section>
@@ -131,7 +154,7 @@
                 <p>«{{ r.comment|default:"کار تمیز و حرفه‌ای بود." }}»</p>
               </blockquote>
             {% empty %}
-              <p class="empty">هنوز نظری ثبت نشده است.</p>
+              <p class="empty">هنوز نظری از پروژه تکمیل‌شده ثبت نشده است.</p>
             {% endfor %}
           </div>
         </section>
@@ -144,11 +167,15 @@
           <p class="muted">ابعاد، شهر و عکس محل را بفرستید؛ این تابلو‌ساز پیشنهاد می‌دهد.</p>
           <ul class="vn-side__facts">
             <li>شهر: {{ vendor.city.name }}</li>
-            <li>پاسخ: حدود {{ vendor.response_time_hours|fa_digits }} ساعت</li>
+            {% if vendor.response_time_hours %}
+              <li>پاسخ: حدود {{ vendor.response_time_hours|fa_digits }} ساعت</li>
+            {% endif %}
             {% if vendor.instagram %}
               <li>اینستاگرام: <bdi dir="ltr">@{{ vendor.instagram }}</bdi></li>
             {% endif %}
-            <li>آدرس: {{ vendor.address|default:vendor.city.name }}</li>
+            {% if vendor.address %}
+              <li>آدرس: {{ vendor.address }}</li>
+            {% endif %}
           </ul>
           <a class="btn btn--primary btn--block" href="{% url 'requests:from_vendor' slug=vendor.slug %}">
             درخواست قیمت از این تابلو‌ساز
@@ -172,19 +199,7 @@
     </div>
     <div class="vn-grid vn-grid--compact">
       {% for v in related_vendors %}
-        <a class="vn-card vn-card--link" href="{% url 'vendors:public' slug=v.slug %}">
-          <div class="vn-card__media">
-            {% if v.cover_image %}
-              <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="700" height="440">
-            {% else %}
-              <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="700" height="440">
-            {% endif %}
-          </div>
-          <div class="vn-card__body">
-            <h3>{{ v.business_name }}</h3>
-            <p>★ {{ v.rating|fa_digits }} · {{ v.city.name }}</p>
-          </div>
-        </a>
+        {% include "partials/_vendor_card.html" with v=v %}
       {% endfor %}
     </div>
   </section>

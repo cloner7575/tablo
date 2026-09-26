@@ -1,0 +1,40 @@
+{% load persian static %}
+<article class="vn-card">
+  <a class="vn-card__media" href="{% url 'vendors:public' slug=v.slug %}">
+    {% if v.cover_image %}
+      <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="700" height="440">
+    {% else %}
+      <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="700" height="440">
+    {% endif %}
+    {% if v.is_featured %}
+      <span class="vn-badge">منتخب</span>
+    {% endif %}
+  </a>
+  <div class="vn-card__body">
+    <div class="vn-card__top">
+      <h2><a href="{% url 'vendors:public' slug=v.slug %}">{{ v.business_name }}</a></h2>
+      <p class="vn-card__meta">
+        {% if v.review_count %}★ {{ v.rating|fa_digits }} · {% endif %}
+        {{ v.city.name }}
+        {% if v.completed_projects %} · {{ v.completed_projects|fa_digits }} پروژه{% endif %}
+      </p>
+      <p class="chip-row chip-row--trust" aria-label="سیگنال اعتماد">
+        <span class="chip chip--sm chip--ok">تأیید شده</span>
+        {% if v.portfolio_count %}
+          <span class="chip chip--sm">نمونه‌کار واقعی</span>
+        {% endif %}
+      </p>
+    </div>
+    {% if v.services.all %}
+      <p class="chip-row">
+        {% for s in v.services.all|slice:":3" %}
+          <span class="chip chip--sm">{{ s.title }}</span>
+        {% endfor %}
+      </p>
+    {% endif %}
+    <div class="vn-card__actions">
+      <a class="btn btn--primary btn--sm" href="{% url 'requests:from_vendor' slug=v.slug %}">درخواست قیمت</a>
+      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:public' slug=v.slug %}">پروفایل</a>
+    </div>
+  </div>
+</article>
