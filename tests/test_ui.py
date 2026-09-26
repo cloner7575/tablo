@@ -102,6 +102,15 @@ def test_rtl_layer_covers_what_logical_properties_do_not() -> None:
         assert rule in base
 
 
+def test_wizard_mobile_css_hides_aside_and_clips_overflow() -> None:
+    """Request wizard used to blow out phones via the 9-step aside rail."""
+    css = (STATIC / "css" / "tablo.css").read_text(encoding="utf-8")
+    assert ".page-wizard .wz-aside" in css
+    assert "display: none" in css
+    assert "overflow-x: clip" in css
+    assert ".wz-layout" in css and "flex-direction: column" in css
+
+
 @pytest.mark.django_db
 def test_shell_flips_direction_from_settings(client, settings) -> None:
     settings.TEXT_DIRECTION = "rtl"
