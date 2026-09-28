@@ -226,12 +226,14 @@ else:
         else "ltr"
     )
 
-STATIC_URL = "static/"
+STATIC_URL = os.getenv("STATIC_URL", "/static/") or "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+_static_root = os.getenv("STATIC_ROOT", "").strip()
+STATIC_ROOT = Path(_static_root) if _static_root else BASE_DIR / "public" / "static"
 
-MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = os.getenv("MEDIA_URL", "/media/") or "/media/"
+_media_root = os.getenv("MEDIA_ROOT", "").strip()
+MEDIA_ROOT = Path(_media_root) if _media_root else BASE_DIR / "public" / "media"
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},

@@ -27,6 +27,21 @@ def test_test_settings_are_hermetic() -> None:
     assert settings.CACHES["default"]["BACKEND"].endswith("LocMemCache")
 
 
+def test_static_and_media_default_under_public() -> None:
+    from core.settings import base as base_settings
+
+    assert base_settings.STATIC_URL == "/static/"
+    assert base_settings.MEDIA_URL == "/media/"
+    assert Path(base_settings.STATIC_ROOT) == BASE_DIR / "public" / "static"
+    assert Path(base_settings.MEDIA_ROOT) == BASE_DIR / "public" / "media"
+    assert BASE_DIR / "static" in [Path(p) for p in base_settings.STATICFILES_DIRS]
+
+
+def test_entrypoint_runs_collectstatic() -> None:
+    entrypoint = (BASE_DIR / "docker" / "entrypoint.sh").read_text(encoding="utf-8")
+    assert "collectstatic --noinput" in entrypoint
+
+
 def test_email_uses_the_mailers_api_not_the_deprecated_settings() -> None:
     # EMAIL_* is deprecated in Django 6.1 and removed in 7.0.
     assert settings.is_overridden("MAILERS")

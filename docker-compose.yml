@@ -31,9 +31,7 @@ services:
 
   web:
     build: .
-    command: >
-      sh -c "python manage.py migrate --noinput &&
-             python manage.py runserver 0.0.0.0:8000"
+    command: python manage.py runserver 0.0.0.0:8000
     env_file:
       - .env
     environment:
@@ -43,6 +41,8 @@ services:
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,web
     volumes:
       - .:/app
+      - static_data:/app/public/static
+      - media_data:/app/public/media
     ports:
       - "8000:8000"
     depends_on:
@@ -53,3 +53,5 @@ services:
 
 volumes:
   postgres_data:
+  static_data:
+  media_data:

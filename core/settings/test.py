@@ -38,6 +38,7 @@ CHANNEL_LAYERS = {
 }
 
 MEDIA_ROOT = tempfile.mkdtemp(prefix="core-test-media-")
+STATIC_ROOT = tempfile.mkdtemp(prefix="core-test-static-")
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},

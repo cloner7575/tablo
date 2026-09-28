@@ -21,6 +21,8 @@ db.sqlite3-journal
 /media/
 /staticfiles/
 /static_root/
+/public/static/
+/public/media/
 
 # Env and secrets
 .env

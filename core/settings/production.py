@@ -35,8 +35,8 @@ csrf_origins = get_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 if csrf_origins:
     CSRF_TRUSTED_ORIGINS = csrf_origins
 
-# Hashed, compressed static files served by WhiteNoise. Run collectstatic on
-# deploy; a missing file becomes a build error instead of a broken page.
+# Hashed, compressed static files served by WhiteNoise. collectstatic runs in
+# docker/entrypoint.sh on boot; a missing file becomes a build error.
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {
