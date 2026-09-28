@@ -40,6 +40,8 @@ def test_static_and_media_default_under_public() -> None:
 def test_entrypoint_runs_collectstatic() -> None:
     entrypoint = (BASE_DIR / "docker" / "entrypoint.sh").read_text(encoding="utf-8")
     assert "collectstatic --noinput" in entrypoint
+    assert "chown -R appuser:appuser /app/public" in entrypoint
+    assert "gosu appuser" in entrypoint
 
 
 def test_email_uses_the_mailers_api_not_the_deprecated_settings() -> None:

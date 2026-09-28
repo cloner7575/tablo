@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libpq5 \
+    && apt-get install -y --no-install-recommends libpq5 gosu \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 1000 appuser
 
@@ -18,8 +18,7 @@ RUN chmod +x docker/entrypoint.sh \
     && mkdir -p public/static public/media \
     && chown -R appuser:appuser public
 
-USER appuser
-
+# Entrypoint starts as root to chown volume mounts, then drops to appuser.
 ENTRYPOINT ["docker/entrypoint.sh"]
 EXPOSE 8000
 
