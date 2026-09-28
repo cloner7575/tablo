@@ -19,7 +19,7 @@
             {{ quotes|length|fa_digits }} کل
           </p>
         </div>
-        <a class="btn btn--primary" href="{% url 'vendors:requests' %}?open=1">پیشنهاد جدید</a>
+        <a class="btn btn--primary" href="{% url 'vendors:requests' %}">پیشنهاد جدید</a>
       </header>
 
       <div class="vp-feed vp-feed--cards">
@@ -53,7 +53,7 @@
             <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="file-text" %}</span>
             <strong>هنوز پیشنهادی ندارید</strong>
             <p>از صف درخواست‌های باز شروع کنید — پاسخ سریع شانس پذیرش را بالا می‌برد.</p>
-            <a class="btn btn--primary btn--sm" href="{% url 'vendors:requests' %}?open=1">مشاهده درخواست‌های باز</a>
+            <a class="btn btn--primary btn--sm" href="{% url 'vendors:requests' %}">مشاهده درخواست‌های باز</a>
           </div>
         {% endfor %}
       </div>

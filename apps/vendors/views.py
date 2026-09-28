@@ -6,6 +6,8 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.http import urlencode
 from django.views.decorators.http import require_http_methods
 
 from apps.analytics.services import track
@@ -13,16 +15,28 @@ from apps.portfolio.demo import attach_demo_image
 from apps.quotes.forms import QuoteForm
 from apps.quotes.models import Quote, QuoteStatus
 from apps.quotes.services import create_quote
-from apps.requests.selectors import matched_requests_for_vendor
+from apps.requests.selectors import (
+    GUIDANCE_FILTER,
+    filter_by_service,
+    matched_requests_for_vendor,
+    with_feed_counts,
+)
 from apps.vendors.demo import attach_demo_cover
 from apps.vendors.forms import VendorOnboardingForm, VendorProfileForm
 from apps.vendors.models import Vendor, VerificationStatus
 from apps.vendors.panel import (
     checklist_progress,
-    open_requests_count,
     panel_context,
     profile_checklist,
 )
+
+REQUEST_TABS = (
+    ("open", "بدون پیشنهاد من"),
+    ("quoted", "پیشنهاد داده‌ام"),
+    ("all", "همه"),
+)
+DEFAULT_REQUEST_TAB = "open"
+REQUEST_FEED_LIMIT = 50
 
 
 def _require_vendor(request: HttpRequest) -> Vendor:
@@ -147,40 +161,78 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     )
 
 
+def _feed_url(status: str, service: str) -> str:
+    params = {
+        key: value
+        for key, value in (
+            ("status", "" if status == DEFAULT_REQUEST_TAB else status),
+            ("service", service),
+        )
+        if value
+    }
+    base = reverse("vendors:requests")
+    return f"{base}?{urlencode(params)}" if params else base
+
+
 @login_required
 @require_http_methods(["GET"])
 def request_list(request: HttpRequest) -> HttpResponse:
     vendor = _require_vendor(request)
-    qs = matched_requests_for_vendor(vendor)
+    services = list(vendor.services.all())
 
-    city = request.GET.get("city")
-    service = request.GET.get("service")
-    budget_max = request.GET.get("budget_max")
-    only_open = request.GET.get("open") == "1"
-    if city:
-        qs = qs.filter(city__slug=city)
-    if service:
-        qs = qs.filter(service__slug=service)
-    if budget_max and budget_max.isdigit():
-        qs = qs.filter(Q(budget_min__lte=int(budget_max)) | Q(budget_min__isnull=True))
+    status = request.GET.get("status", DEFAULT_REQUEST_TAB)
+    if status not in dict(REQUEST_TABS):
+        status = DEFAULT_REQUEST_TAB
+    service = request.GET.get("service", "")
+    if service not in {s.slug for s in services} | {GUIDANCE_FILTER}:
+        service = ""
 
+    base = filter_by_service(matched_requests_for_vendor(vendor), service)
     quoted_ids = set(vendor.quotes.values_list("request_id", flat=True))
-    if only_open:
-        qs = qs.exclude(pk__in=quoted_ids)
+    all_count = base.count()
+    quoted_count = base.filter(pk__in=quoted_ids).count()
+    counts = {
+        "open": all_count - quoted_count,
+        "quoted": quoted_count,
+        "all": all_count,
+    }
 
-    requests_list = list(qs[:50])
-    open_count = open_requests_count(vendor)
+    feed = base
+    if status == "open":
+        feed = feed.exclude(pk__in=quoted_ids)
+    elif status == "quoted":
+        feed = feed.filter(pk__in=quoted_ids)
+
+    chips = [("", "همه")] + [(s.slug, s.title) for s in services]
+    chips.append((GUIDANCE_FILTER, "نیاز به راهنمایی"))
     return render(
         request,
         "pages/vendors/requests.html",
         panel_context(
             vendor,
             "requests",
-            requests=requests_list,
+            requests=list(with_feed_counts(feed)[:REQUEST_FEED_LIMIT]),
             quoted_ids=quoted_ids,
-            services=vendor.services.all(),
-            only_open=only_open,
-            open_count=open_count,
+            status=status,
+            service=service,
+            status_tabs=[
+                {
+                    "key": key,
+                    "label": label,
+                    "count": counts[key],
+                    "url": _feed_url(key, service),
+                    "current": key == status,
+                }
+                for key, label in REQUEST_TABS
+            ],
+            service_filters=[
+                {
+                    "label": label,
+                    "url": _feed_url(status, slug),
+                    "current": slug == service,
+                }
+                for slug, label in chips
+            ],
         ),
     )
 
@@ -190,9 +242,11 @@ def request_list(request: HttpRequest) -> HttpResponse:
 def request_detail(request: HttpRequest, pk: int) -> HttpResponse:
     vendor = _require_vendor(request)
     project_request = get_object_or_404(
-        matched_requests_for_vendor(vendor)
-        .select_related("service", "city")
-        .prefetch_related("images"),
+        with_feed_counts(
+            matched_requests_for_vendor(vendor)
+            .select_related("service", "city")
+            .prefetch_related("images")
+        ),
         pk=pk,
     )
     existing = Quote.objects.filter(request=project_request, vendor=vendor).first()

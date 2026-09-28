@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% load persian static %}
+
+{% block title %}ویرایش {{ item.title }} | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div class="vp-header__copy">
+          <p class="section__eyebrow">
+            <a href="{% url 'portfolio:manage' %}">نمونه‌کارهای من</a> / ویرایش
+          </p>
+          <h1>{{ item.title }}</h1>
+          <p class="muted">
+            {% if item.is_published %}
+              <span class="status-pill status-pill--approved">منتشر شده</span>
+            {% else %}
+              <span class="status-pill status-pill--draft">پیش‌نویس — در سایت دیده نمی‌شود</span>
+            {% endif %}
+          </p>
+        </div>
+        {% if item.is_published %}
+          <a class="btn btn--ghost-outline" href="{% url 'portfolio:detail' slug=item.slug %}">
+            {% include "components/_icon.html" with name="eye" size="sm" %}
+            مشاهده در سایت
+          </a>
+        {% endif %}
+      </header>
+
+      <section class="vp-card" id="media" aria-labelledby="pf-media-title">
+        <div class="vp-card__head pf-media-head">
+          <div>
+            <h2 id="pf-media-title">گالری عکس و ویدیو</h2>
+            <p class="muted pf-edit__hint">کاور روی کارت‌ها و اول گالری دیده می‌شود. ترتیب بقیه را با فلش‌ها عوض کنید.</p>
+          </div>
+          <span class="pf-edit__quota" aria-label="{{ media|length|fa_digits }} رسانه از سقف {{ media_limit|fa_digits }}">
+            {{ media|length|fa_digits }} از {{ media_limit|fa_digits }}
+          </span>
+        </div>
+
+        <ol class="pf-media-grid">
+          <li class="pf-media pf-media--cover">
+            <div class="pf-media__thumb">
+              {% if item.image %}
+                <img src="{{ item.image.url }}" alt="کاور {{ item.title }}" loading="lazy" width="320" height="240">
+              {% else %}
+                <span class="pf-media__empty">
+                  {% include "components/_icon.html" with name="image" size="lg" %}
+                  بدون کاور
+                </span>
+              {% endif %}
+              <span class="pf-media__badge pf-media__badge--cover">
+                {% include "components/_icon.html" with name="star" size="sm" %}
+                کاور
+              </span>
+            </div>
+            <p class="pf-media__caption">
+              {% if item.image %}تصویر اصلی نمونه‌کار{% else %}یکی از عکس‌ها را کاور کنید.{% endif %}
+            </p>
+          </li>
+
+          {% for m in media %}
+            <li class="pf-media">
+              <div class="pf-media__thumb">
+                {% if m.kind == "image" %}
+                  <img src="{{ m.image.url }}" alt="{{ m.caption|default:'عکس نمونه‌کار' }}" loading="lazy" width="320" height="240">
+                {% elif m.kind == "video" %}
+                  {% if m.poster %}
+                    <img src="{{ m.poster.url }}" alt="" loading="lazy" width="320" height="240">
+                  {% else %}
+                    <video src="{{ m.video.url }}#t=0.1" preload="metadata" muted playsinline aria-hidden="true" tabindex="-1"></video>
+                  {% endif %}
+                  <span class="pf-media__badge">{% include "components/_icon.html" with name="film" size="sm" %} ویدیو</span>
+                {% else %}
+                  <span class="pf-media__empty pf-media__empty--dark">
+                    {% include "components/_icon.html" with name="play" size="lg" %}
+                    <bdi dir="ltr">{{ m.aparat_hash }}</bdi>
+                  </span>
+                  <span class="pf-media__badge">{% include "components/_icon.html" with name="link" size="sm" %} آپارات</span>
+                {% endif %}
+                <span class="pf-media__order" aria-hidden="true">{{ forloop.counter|add:1|fa_digits }}</span>
+              </div>
+              {% if m.caption %}<p class="pf-media__caption">{{ m.caption }}</p>{% endif %}
+              <div class="pf-media__tools" role="group" aria-label="ابزار رسانه {{ forloop.counter|add:1|fa_digits }}">
+                <form method="post" action="{% url 'portfolio:media_move' pk=m.pk direction='up' %}">
+                  {% csrf_token %}
+                  <button class="pf-icon-btn" type="submit" aria-label="جابه‌جایی به قبل" title="جابه‌جایی به قبل" {% if forloop.first %}disabled{% endif %}>
+                    {% include "components/_icon.html" with name="arrow-up" size="sm" %}
+                  </button>
+                </form>
+                <form method="post" action="{% url 'portfolio:media_move' pk=m.pk direction='down' %}">
+                  {% csrf_token %}
+                  <button class="pf-icon-btn" type="submit" aria-label="جابه‌جایی به بعد" title="جابه‌جایی به بعد" {% if forloop.last %}disabled{% endif %}>
+                    {% include "components/_icon.html" with name="arrow-down" size="sm" %}
+                  </button>
+                </form>
+                {% if m.kind == "image" %}
+                  <form method="post" action="{% url 'portfolio:media_cover' pk=m.pk %}">
+                    {% csrf_token %}
+                    <button class="pf-icon-btn" type="submit" aria-label="انتخاب به‌عنوان کاور" title="انتخاب به‌عنوان کاور">
+                      {% include "components/_icon.html" with name="star" size="sm" %}
+                    </button>
+                  </form>
+                {% endif %}
+                <form method="post" action="{% url 'portfolio:media_delete' pk=m.pk %}" data-confirm="این رسانه از گالری حذف شود؟">
+                  {% csrf_token %}
+                  <button class="pf-icon-btn pf-danger" type="submit" aria-label="حذف رسانه" title="حذف">
+                    {% include "components/_icon.html" with name="trash" size="sm" %}
+                  </button>
+                </form>
+              </div>
+            </li>
+          {% endfor %}
+
+          {% if media_remaining %}
+            <li class="pf-media pf-media--add">
+              <a class="pf-media__add" href="#pf-add">
+                {% include "components/_icon.html" with name="plus" size="lg" %}
+                <span>افزودن عکس یا ویدیو</span>
+                <small>{{ media_remaining|fa_digits }} جای خالی</small>
+              </a>
+            </li>
+          {% endif %}
+        </ol>
+
+        {% if not media %}
+          <p class="pf-edit__empty">
+            {% include "components/_icon.html" with name="info" size="sm" %}
+            گالری این پروژه هنوز خالی است. عکس از زاویه‌های مختلف، نمای شب و یک ویدیوی کوتاه مشتری را زودتر قانع می‌کند.
+          </p>
+        {% endif %}
+      </section>
+
+      <section class="vp-card pf-add" id="pf-add" aria-labelledby="pf-add-title">
+        <div class="vp-card__head">
+          <h2 id="pf-add-title">افزودن به گالری</h2>
+        </div>
+        {% if media_remaining %}
+          <div class="pf-tabs" role="tablist" aria-label="نوع رسانه" data-tabs hidden>
+            <button type="button" role="tab" id="tab-images" aria-controls="panel-images" aria-selected="{% if active_tab == 'images' %}true{% else %}false{% endif %}">
+              {% include "components/_icon.html" with name="image" size="sm" %} عکس
+            </button>
+            <button type="button" role="tab" id="tab-video" aria-controls="panel-video" aria-selected="{% if active_tab == 'video' %}true{% else %}false{% endif %}">
+              {% include "components/_icon.html" with name="film" size="sm" %} فایل ویدیو
+            </button>
+            <button type="button" role="tab" id="tab-aparat" aria-controls="panel-aparat" aria-selected="{% if active_tab == 'aparat' %}true{% else %}false{% endif %}">
+              {% include "components/_icon.html" with name="link" size="sm" %} لینک آپارات
+            </button>
+          </div>
+
+          <div class="pf-tabpanel" id="panel-images" role="tabpanel" aria-labelledby="tab-images" data-tab-panel>
+            <form method="post" action="{% url 'portfolio:media_add' pk=item.pk %}" enctype="multipart/form-data" class="stack-form" data-busy-submit>
+              {% csrf_token %}
+              <input type="hidden" name="tab" value="images">
+              {% include "partials/_form_errors.html" with form=media_forms.images %}
+              {% include "pages/portfolio/_drop_field.html" with field=media_forms.images.images icon="image" hint="چند عکس را با هم رها کنید یا انتخاب کنید" %}
+              {% include "pages/portfolio/_file_preview.html" %}
+              {% include "components/_field.html" with field=media_forms.images.caption %}
+              <div class="pf-add__actions">
+                <button class="btn btn--primary" type="submit" data-busy-label="در حال آپلود…">افزودن عکس‌ها</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="pf-tabpanel" id="panel-video" role="tabpanel" aria-labelledby="tab-video" data-tab-panel>
+            <form method="post" action="{% url 'portfolio:media_add' pk=item.pk %}" enctype="multipart/form-data" class="stack-form" data-busy-submit>
+              {% csrf_token %}
+              <input type="hidden" name="tab" value="video">
+              {% include "partials/_form_errors.html" with form=media_forms.video %}
+              <div class="pf-form-grid">
+                <div class="pf-form-grid__full">
+                  {% include "pages/portfolio/_drop_field.html" with field=media_forms.video.video icon="film" hint=video_hint %}
+                  {% include "pages/portfolio/_file_preview.html" %}
+                </div>
+                {% include "pages/portfolio/_drop_field.html" with field=media_forms.video.poster icon="image" compact=True %}
+                {% include "components/_field.html" with field=media_forms.video.caption %}
+              </div>
+              <div class="pf-add__actions">
+                <button class="btn btn--primary" type="submit" data-busy-label="در حال آپلود ویدیو…">آپلود ویدیو</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="pf-tabpanel" id="panel-aparat" role="tabpanel" aria-labelledby="tab-aparat" data-tab-panel>
+            <form method="post" action="{% url 'portfolio:media_add' pk=item.pk %}" class="stack-form" data-busy-submit>
+              {% csrf_token %}
+              <input type="hidden" name="tab" value="aparat">
+              {% include "partials/_form_errors.html" with form=media_forms.aparat %}
+              <div class="pf-form-grid">
+                {% include "components/_field.html" with field=media_forms.aparat.aparat_url %}
+                {% include "components/_field.html" with field=media_forms.aparat.caption %}
+              </div>
+              <div class="pf-add__actions">
+                <button class="btn btn--primary" type="submit" data-busy-label="در حال ثبت…">افزودن ویدیوی آپارات</button>
+              </div>
+            </form>
+          </div>
+        {% else %}
+          <p class="callout">گالری پر است ({{ media_limit|fa_digits }} رسانه). برای افزودن مورد جدید، یکی از رسانه‌ها را حذف کنید.</p>
+        {% endif %}
+      </section>
+
+      <section class="vp-card" aria-labelledby="pf-details-title">
+        <div class="vp-card__head">
+          <h2 id="pf-details-title">اطلاعات نمونه‌کار</h2>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="stack-form" data-busy-submit>
+          {% csrf_token %}
+          {% include "partials/_form_errors.html" %}
+          <div class="pf-form-grid">
+            <div class="pf-form-grid__full">{% include "components/_field.html" with field=form.title %}</div>
+            {% include "components/_field.html" with field=form.service %}
+            {% include "components/_field.html" with field=form.city %}
+            <div class="pf-form-grid__full">{% include "components/_field.html" with field=form.description %}</div>
+            <div class="pf-form-grid__full">
+              {% include "pages/portfolio/_drop_field.html" with field=form.image icon="image" compact=True hint="برای عوض کردن کاور، عکس تازه رها کنید یا انتخاب کنید" %}
+            </div>
+          </div>
+          <div class="pf-form-footer">
+            {% include "pages/portfolio/_publish_field.html" with field=form.is_published %}
+            <button class="btn btn--primary" type="submit" data-busy-label="در حال ذخیره…">ذخیره تغییرات</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="vp-card pf-edit__danger" aria-labelledby="pf-danger-title">
+        <div>
+          <h2 id="pf-danger-title">حذف نمونه‌کار</h2>
+          <p class="muted">نمونه‌کار با همه عکس‌ها و ویدیوهایش برای همیشه حذف می‌شود.</p>
+        </div>
+        <form method="post" action="{% url 'portfolio:delete' pk=item.pk %}"
+              data-confirm="«{{ item.title }}» و همه رسانه‌هایش حذف شود؟ این کار برگشت‌پذیر نیست.">
+          {% csrf_token %}
+          <button class="btn btn--danger btn--sm" type="submit">
+            {% include "components/_icon.html" with name="trash" size="sm" %}
+            حذف نمونه‌کار
+          </button>
+        </form>
+      </section>
+    </div>
+  </section>
+</div>
+{% endblock %}

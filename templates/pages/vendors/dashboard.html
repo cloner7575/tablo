@@ -35,7 +35,7 @@
               {{ unread_chat_count|fa_digits }} پیام خوانده‌نشده
             </a>
           {% elif new_requests_count %}
-            <a class="btn btn--primary btn--lg" href="{% url 'vendors:requests' %}?open=1">
+            <a class="btn btn--primary btn--lg" href="{% url 'vendors:requests' %}">
               {% include "components/_icon.html" with name="inbox" size="sm" %}
               پاسخ به درخواست‌های باز
             </a>
@@ -49,7 +49,7 @@
       </header>
 
       <section class="vp-kpi" aria-label="شاخص‌های کلیدی">
-        <a class="vp-kpi__hero" href="{% url 'vendors:requests' %}?open=1">
+        <a class="vp-kpi__hero" href="{% url 'vendors:requests' %}">
           <span class="vp-kpi__label">درخواست بدون پیشنهاد</span>
           <strong>{{ new_requests_count|fa_digits }}</strong>
           <span class="vp-kpi__hint">اولویت امروز شما</span>
@@ -93,7 +93,7 @@
               <p class="vp-card__eyebrow">صف کار</p>
               <h2 id="open-req-title">درخواست‌های باز</h2>
             </div>
-            <a class="vp-card__link" href="{% url 'vendors:requests' %}?open=1">مشاهده همه</a>
+            <a class="vp-card__link" href="{% url 'vendors:requests' %}">مشاهده همه</a>
           </div>
           <div class="vp-queue">
             {% for r in recent_requests %}

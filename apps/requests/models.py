@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.common.models import TimeStampedModel
 
 MAX_REQUEST_IMAGES = 6
+DEADLINE_NEAR_DAYS = 7
 
 
 class RequestStatus(models.TextChoices):
@@ -136,6 +138,12 @@ class ProjectRequest(TimeStampedModel):
         if self.size_choice in labels:
             return labels[self.size_choice]
         return "—"
+
+    @property
+    def deadline_is_near(self) -> bool:
+        if self.deadline is None:
+            return False
+        return (self.deadline - timezone.localdate()).days <= DEADLINE_NEAR_DAYS
 
     def photo_urls(self) -> list[str]:
         """Gallery URLs — RequestImage first, legacy single image as fallback."""

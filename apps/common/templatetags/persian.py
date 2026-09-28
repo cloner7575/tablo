@@ -5,7 +5,12 @@ from decimal import Decimal
 
 from django import template
 
-from apps.common.persian import format_jalali, format_toman, to_persian_digits
+from apps.common.persian import (
+    format_jalali,
+    format_relative,
+    format_toman,
+    to_persian_digits,
+)
 
 register = template.Library()
 
@@ -27,6 +32,12 @@ def toman_filter(
 def jalali_filter(value: date | datetime | None, fmt: str = "%Y/%m/%d") -> str:
     """Format Gregorian date/datetime as Jalali. `{{ dt|jalali }}`."""
     return format_jalali(value, fmt=fmt)
+
+
+@register.filter(name="ago")
+def ago_filter(value: datetime | None) -> str:
+    """Relative Persian time. `{{ obj.created_at|ago }}` → «۳ ساعت پیش»."""
+    return format_relative(value)
 
 
 @register.filter(name="fa_digits")

@@ -190,7 +190,7 @@ def test_api_requests_requires_auth(client: Client):
 
 
 @pytest.mark.django_db
-def test_portfolio_detail_shows_hero_vendor_and_cta(
+def test_portfolio_detail_shows_gallery_vendor_and_cta(
     client: Client, vendor, service, city
 ):
     from apps.portfolio.models import PortfolioItem
@@ -211,7 +211,7 @@ def test_portfolio_detail_shows_hero_vendor_and_cta(
     assert vendor.business_name in body
     assert "درخواست قیمت مشابه" in body
     assert 'class="pf-detail"' in body
-    assert "pf-hero--compact" in body
+    assert 'class="pf-gallery' in body
     assert "img/demo/" in body or "portfolio/" in body
 
 

@@ -1,0 +1,24 @@
+{% comment %}
+File field as a drop zone. The real input stretches over the zone (opacity 0),
+so click, keyboard and native drag-and-drop all hit the input itself.
+Keep the helptext/error ids: Django points aria-describedby at them.
+{% endcomment %}
+<div class="field pf-drop-field{% if field.errors %} field--invalid{% endif %}">
+  <label class="pf-drop{% if compact %} pf-drop--compact{% endif %}" for="{{ field.id_for_label }}" data-drop>
+    <span class="pf-drop__icon" aria-hidden="true">{% include "components/_icon.html" with name=icon|default:"upload" %}</span>
+    <span class="pf-drop__text">
+      <span class="pf-drop__title">{{ field.label }}{% if field.field.required %} <span class="field__required">*</span>{% endif %}</span>
+      <span class="pf-drop__hint">{{ hint|default:"فایل را اینجا رها کنید یا برای انتخاب کلیک کنید" }}</span>
+      <span class="pf-drop__files" data-drop-files aria-live="polite"></span>
+    </span>
+    {{ field }}
+  </label>
+  {% if field.help_text %}
+    <div class="field__help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>
+  {% endif %}
+  {% if field.errors %}
+    <div class="field__error" id="{{ field.auto_id }}_error">
+      {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+  {% endif %}
+</div>

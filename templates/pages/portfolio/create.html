@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% block title %}افزودن نمونه‌کار | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+
+{% block content %}
+<div class="vp-workspace">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <header class="vp-header">
+        <div class="vp-header__copy">
+          <p class="section__eyebrow">
+            <a href="{% url 'portfolio:manage' %}">نمونه‌کارهای من</a> / نمونه‌کار جدید
+          </p>
+          <h1>افزودن نمونه‌کار</h1>
+          <p class="muted">عنوان واضح، عکس‌های واقعی از زاویه‌های مختلف و یک ویدیوی کوتاه، مشتری را زودتر قانع می‌کند.</p>
+        </div>
+      </header>
+
+      <form method="post" enctype="multipart/form-data" class="pf-create" data-busy-submit>
+        {% csrf_token %}
+        <section class="vp-card" aria-labelledby="pf-info-title">
+          <h2 id="pf-info-title">اطلاعات پروژه</h2>
+          {% include "partials/_form_errors.html" %}
+          <div class="pf-form-grid">
+            <div class="pf-form-grid__full">{% include "components/_field.html" with field=form.title %}</div>
+            {% include "components/_field.html" with field=form.service %}
+            {% include "components/_field.html" with field=form.city %}
+            <div class="pf-form-grid__full">{% include "components/_field.html" with field=form.description %}</div>
+          </div>
+        </section>
+
+        <section class="vp-card" aria-labelledby="pf-photos-title">
+          <h2 id="pf-photos-title">عکس‌ها</h2>
+          <div class="stack-form">
+            {% include "pages/portfolio/_drop_field.html" with field=form.image icon="image" %}
+            <div class="stack-form" data-preview-scope>
+              {% include "pages/portfolio/_drop_field.html" with field=form.gallery hint="چند عکس را با هم رها کنید یا انتخاب کنید" %}
+              {% include "pages/portfolio/_file_preview.html" %}
+            </div>
+          </div>
+        </section>
+
+        <section class="vp-card" aria-labelledby="pf-video-title">
+          <div class="vp-card__head">
+            <div>
+              <h2 id="pf-video-title">ویدیو <span class="pf-optional">اختیاری</span></h2>
+              <p class="muted pf-edit__hint">فایل ویدیو را آپلود کنید یا لینک آپارات بگذارید؛ هر دو هم می‌شود.</p>
+            </div>
+          </div>
+          <div class="pf-form-grid">
+            <div class="pf-form-grid__full" data-preview-scope>
+              {% include "pages/portfolio/_drop_field.html" with field=form.video icon="film" hint=video_hint %}
+              {% include "pages/portfolio/_file_preview.html" %}
+            </div>
+            {% include "pages/portfolio/_drop_field.html" with field=form.poster icon="image" compact=True %}
+            {% include "components/_field.html" with field=form.aparat_url %}
+          </div>
+        </section>
+
+        <div class="vp-card pf-create__footer">
+          {% include "pages/portfolio/_publish_field.html" with field=form.is_published %}
+          <div class="pf-create__actions">
+            <a class="btn btn--ghost" href="{% url 'portfolio:manage' %}">انصراف</a>
+            <button class="btn btn--primary" type="submit" data-busy-label="در حال آپلود…">ثبت نمونه‌کار</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -17,7 +17,7 @@
       {% include "components/_icon.html" with name="layout-dashboard" size="sm" %}
       <span>داشبورد</span>
     </a>
-    <a href="{% url 'vendors:requests' %}?open=1" {% if panel_active == "requests" %}aria-current="page"{% endif %}>
+    <a href="{% url 'vendors:requests' %}" {% if panel_active == "requests" %}aria-current="page"{% endif %}>
       {% include "components/_icon.html" with name="inbox" size="sm" %}
       <span>درخواست‌ها</span>
       {% if new_requests_count %}
@@ -54,7 +54,7 @@
         پروفایل عمومی
       </a>
     {% endif %}
-    <a class="btn btn--primary btn--sm btn--block" href="{% url 'vendors:requests' %}?open=1">
+    <a class="btn btn--primary btn--sm btn--block" href="{% url 'vendors:requests' %}">
       پاسخ سریع
     </a>
   </div>

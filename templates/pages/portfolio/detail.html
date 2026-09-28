@@ -19,98 +19,260 @@
 </script>
 {% endblock %}
 
+{% block extra_js %}
+<script src="{% static 'js/portfolio-gallery.js' %}" defer></script>
+{% endblock %}
+
 {% block content %}
-<article class="pf-detail">
-  <section class="pf-hero pf-hero--compact" aria-labelledby="pf-title">
-    <div class="pf-hero__media">
-      {% if item.image %}
-        <img src="{{ item.image.url }}" alt="{{ item.title }}" width="1400" height="900" fetchpriority="high">
-      {% else %}
-        <img src="{% static item.demo_image %}" alt="{{ item.title }}" width="1400" height="900" fetchpriority="high">
+<article class="pf-detail" aria-labelledby="pf-title">
+  <nav class="pf-breadcrumb pf-wrap" aria-label="مسیر صفحه">
+    <a href="{% url 'common:home' %}">خانه</a>
+    <span aria-hidden="true">/</span>
+    <a href="{% url 'vendors:public' slug=vendor.slug %}">{{ vendor.business_name }}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">نمونه‌کار</span>
+  </nav>
+
+  <div class="pf-product pf-wrap">
+    <section class="pf-gallery" aria-label="گالری عکس و ویدیوی پروژه" data-gallery>
+      <div class="pf-gallery__stage">
+        <ul class="pf-gallery__track" data-gallery-track>
+          {% for slide in slides %}
+            <li class="pf-gallery__slide" id="pf-slide-{{ forloop.counter }}" data-gallery-slide="{{ forloop.counter0 }}">
+              <a class="pf-tile{% if slide.is_video %} pf-tile--video{% endif %}"
+                 href="{{ slide.href }}"
+                 data-gallery-open="{{ forloop.counter0 }}"
+                 {% if slide.kind == "aparat" %}target="_blank" rel="noopener"{% endif %}
+                 aria-label="{% if slide.is_video %}پخش ویدیو{% else %}بزرگ‌نمایی عکس{% endif %} {{ forloop.counter|fa_digits }} از {{ slides|length|fa_digits }}">
+                {% if slide.thumb %}
+                  <img src="{{ slide.thumb }}" alt="{{ slide.caption|default:item.title }}" width="1000" height="1000"
+                       {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+                {% elif slide.kind == "video" %}
+                  <video src="{{ slide.src }}#t=0.1" preload="metadata" muted playsinline tabindex="-1" aria-hidden="true"></video>
+                {% else %}
+                  <span class="pf-tile__placeholder" aria-hidden="true">
+                    {% include "components/_icon.html" with name="film" size="lg" %}
+                    <span>ویدیوی آپارات</span>
+                  </span>
+                {% endif %}
+                {% if slide.is_video %}
+                  <span class="pf-tile__play" aria-hidden="true">{% include "components/_icon.html" with name="play" %}</span>
+                {% endif %}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+        <button class="pf-gallery__zoom" type="button" aria-label="نمایش گالری در اندازه بزرگ" data-gallery-zoom hidden>
+          {% include "components/_icon.html" with name="maximize" size="sm" %}
+        </button>
+        {% if slides|length > 1 %}
+          <ol class="pf-gallery__dots" aria-hidden="true">
+            {% for slide in slides %}<li{% if forloop.first %} class="is-active"{% endif %}></li>{% endfor %}
+          </ol>
+        {% endif %}
+      </div>
+
+      {% if thumbs %}
+        <ul class="pf-gallery__thumbs" aria-label="انتخاب عکس">
+          {% for slide in thumbs %}
+            <li>
+              <a class="pf-thumb" href="#pf-slide-{{ forloop.counter }}" data-gallery-thumb="{{ forloop.counter0 }}"
+                 aria-label="نمایش مورد {{ forloop.counter|fa_digits }}{% if slide.is_video %}، ویدیو{% endif %}"
+                 {% if forloop.first %}aria-current="true"{% endif %}>
+                {% if slide.thumb %}
+                  <img src="{{ slide.thumb }}" alt="" width="160" height="160" loading="lazy">
+                {% else %}
+                  {% include "components/_icon.html" with name="film" %}
+                {% endif %}
+                {% if slide.is_video %}
+                  <span class="pf-thumb__play" aria-hidden="true">{% include "components/_icon.html" with name="play" size="sm" %}</span>
+                {% endif %}
+              </a>
+            </li>
+          {% endfor %}
+          {% if more_count %}
+            <li>
+              <a class="pf-thumb pf-thumb--more" href="#pf-slide-{{ more_index|add:1 }}"
+                 data-gallery-open="{{ more_index }}" data-gallery-more
+                 aria-label="مشاهده همه {{ slides|length|fa_digits }} مورد گالری">
+                {% if more_thumb %}<img src="{{ more_thumb }}" alt="" width="160" height="160" loading="lazy">{% endif %}
+                <span class="pf-thumb__more" aria-hidden="true"><bdi dir="ltr">+{{ more_count|fa_digits }}</bdi></span>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
       {% endif %}
-    </div>
-    <div class="pf-hero__overlay">
-      <nav class="pf-breadcrumb" aria-label="مسیر صفحه">
-        <a href="{% url 'common:home' %}">خانه</a>
-        <span aria-hidden="true">/</span>
+    </section>
+
+    <div class="pf-summary">
+      <p class="pf-summary__kicker">
         {% if item.service %}
           <a href="{% url 'catalog:service' slug=item.service.slug %}">{{ item.service.title }}</a>
+        {% else %}نمونه‌کار{% endif %}
+        {% if item.city %}
           <span aria-hidden="true">/</span>
+          <a href="{% url 'catalog:city' slug=item.city.slug %}">{{ item.city.name }}</a>
         {% endif %}
-        <span aria-current="page">نمونه‌کار</span>
-      </nav>
-      <h1 id="pf-title">{{ item.title }}</h1>
-      <p class="pf-hero__meta">
-        {% if item.service %}<span>{{ item.service.title }}</span>{% endif %}
-        {% if item.city %}<span>{{ item.city.name }}</span>{% endif %}
-        <span>{{ item.vendor.business_name }}</span>
       </p>
-      <div class="pf-hero__actions">
-        <a class="btn btn--primary" href="{% url 'requests:from_vendor' slug=item.vendor.slug %}">
-          درخواست قیمت مشابه
-        </a>
-        <a class="btn btn--ghost-light" href="{% url 'vendors:public' slug=item.vendor.slug %}">
-          پروفایل تابلو‌ساز
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="pf-body section">
-    <div class="pf-layout">
-      <div class="pf-main">
-        <div class="pf-chip-row" aria-label="برچسب‌ها">
-          {% if item.service %}
-            <a class="chip" href="{% url 'catalog:service' slug=item.service.slug %}">{{ item.service.title }}</a>
-          {% endif %}
-          {% if item.city %}
-            <a class="chip" href="{% url 'catalog:city' slug=item.city.slug %}">{{ item.city.name }}</a>
-          {% endif %}
-          <span class="chip chip--quiet">اجرای {{ item.created_at|jalali }}</span>
-        </div>
-
-        <h2>درباره این پروژه</h2>
-        {% if item.description %}
-          <div class="prose">{{ item.description|linebreaks }}</div>
-        {% else %}
-          <p class="muted">توضیحات تکمیلی برای این نمونه‌کار ثبت نشده است. برای جزئیات اجرا با تابلو‌ساز گفتگو کنید.</p>
+      <h1 id="pf-title">{{ item.title }}</h1>
+      <p class="pf-summary__count">
+        {% include "components/_icon.html" with name="image" size="sm" %}
+        {{ photo_count|fa_digits }} عکس
+        {% if video_count %}
+          <span aria-hidden="true">·</span>
+          {% include "components/_icon.html" with name="film" size="sm" %}
+          {{ video_count|fa_digits }} ویدیو
         {% endif %}
+      </p>
 
-        <div class="pf-highlights" aria-label="نکات پروژه">
-          <article>
-            <h3>نوع تابلو</h3>
-            <p>{{ item.service.title|default:"عمومی" }}</p>
-          </article>
-          <article>
-            <h3>شهر اجرا</h3>
-            <p>{{ item.city.name|default:item.vendor.city.name }}</p>
-          </article>
-          <article>
-            <h3>تابلو‌ساز</h3>
-            <p>{{ item.vendor.business_name }}</p>
-          </article>
+      <h2 class="pf-summary__title">ویژگی‌ها</h2>
+      <dl class="pf-specs">
+        <div>
+          <dt>نوع تابلو</dt>
+          <dd>{% if item.service %}{{ item.service.title }}{% else %}عمومی{% endif %}</dd>
         </div>
+        <div>
+          <dt>شهر اجرا</dt>
+          <dd>{% if item.city %}{{ item.city.name }}{% else %}{{ vendor.city.name }}{% endif %}</dd>
+        </div>
+        <div>
+          <dt>تاریخ ثبت</dt>
+          <dd>{{ item.created_at|jalali|fa_digits }}</dd>
+        </div>
+        <div>
+          <dt>تابلو‌ساز</dt>
+          <dd><a href="{% url 'vendors:public' slug=vendor.slug %}">{{ vendor.business_name }}</a></dd>
+        </div>
+      </dl>
+
+      {% if item.description %}
+        <p class="pf-summary__lead">{{ item.description|truncatewords:32 }}</p>
+        <a class="pf-summary__more" href="#pf-about-title">
+          توضیحات کامل
+          {% include "components/_icon.html" with name="chevron-left" size="sm" flip=True %}
+        </a>
+      {% endif %}
+    </div>
+
+    <aside class="pf-buybox" aria-labelledby="pf-vendor-title">
+      <p class="pf-buybox__eyebrow">تابلو‌ساز این پروژه</p>
+      <h2 id="pf-vendor-title">
+        <a href="{% url 'vendors:public' slug=vendor.slug %}">{{ vendor.business_name }}</a>
+      </h2>
+      <ul class="pf-buybox__facts">
+        <li>
+          {% include "components/_icon.html" with name="star" size="sm" %}
+          <span><strong>{{ vendor.rating|fa_digits }}</strong> امتیاز از {{ vendor.review_count|fa_digits }} نظر</span>
+        </li>
+        <li>
+          {% include "components/_icon.html" with name="check-circle" size="sm" %}
+          <span>{{ vendor.completed_projects|fa_digits }} پروژه انجام‌شده</span>
+        </li>
+        {% if vendor.response_time_hours %}
+          <li>
+            {% include "components/_icon.html" with name="clock" size="sm" %}
+            <span>پاسخ حدود {{ vendor.response_time_hours|fa_digits }} ساعت</span>
+          </li>
+        {% endif %}
+        <li>
+          {% include "components/_icon.html" with name="home" size="sm" %}
+          <span>{{ vendor.city.name }}</span>
+        </li>
+      </ul>
+      <div class="pf-buybox__actions">
+        <a class="btn btn--primary btn--block" href="{% url 'requests:from_vendor' slug=vendor.slug %}">درخواست قیمت مشابه</a>
+        <a class="btn btn--ghost-outline btn--block" href="{% url 'vendors:public' slug=vendor.slug %}">پروفایل تابلو‌ساز</a>
+      </div>
+    </aside>
+  </div>
+
+  <dialog class="pf-lightbox" aria-labelledby="pf-lightbox-title" data-lightbox>
+    <div class="pf-lightbox__bar">
+      {% if photo_count and video_count %}
+        <div class="pf-lightbox__filters" role="group" aria-label="نوع رسانه">
+          <button type="button" data-lightbox-filter="all" aria-pressed="true">همه <span>{{ slides|length|fa_digits }}</span></button>
+          <button type="button" data-lightbox-filter="image" aria-pressed="false">عکس‌ها <span>{{ photo_count|fa_digits }}</span></button>
+          <button type="button" data-lightbox-filter="video" aria-pressed="false">ویدیوها <span>{{ video_count|fa_digits }}</span></button>
+        </div>
+      {% else %}
+        <p class="pf-lightbox__label">{% if video_count %}ویدیوها{% else %}تصاویر{% endif %}</p>
+      {% endif %}
+      <button class="pf-lightbox__btn pf-lightbox__close" type="button" aria-label="بستن گالری" data-lightbox-close>
+        {% include "components/_icon.html" with name="x" %}
+      </button>
+    </div>
+
+    <div class="pf-lightbox__body">
+      <div class="pf-lightbox__stage" data-lightbox-stage>
+        {% if slides|length > 1 %}
+          <button class="pf-lightbox__btn pf-lightbox__nav pf-lightbox__nav--prev" type="button" aria-label="مورد قبلی" data-lightbox-prev>
+            {% include "components/_icon.html" with name="chevron-left" flip=True %}
+          </button>
+        {% endif %}
+        <ul class="pf-lightbox__slides">
+          {% for slide in slides %}
+            <li class="pf-lightbox__slide" data-slide data-kind="{% if slide.is_video %}video{% else %}image{% endif %}" {% if not forloop.first %}hidden{% endif %}>
+              <figure>
+                {% if slide.kind == "video" %}
+                  <video controls playsinline preload="none" {% if slide.thumb %}poster="{{ slide.thumb }}"{% endif %}>
+                    <source src="{{ slide.src }}{% if not slide.thumb %}#t=0.1{% endif %}" type="{{ slide.mime }}">
+                    <a href="{{ slide.href }}">دانلود ویدیو</a>
+                  </video>
+                {% elif slide.kind == "aparat" %}
+                  <div class="pf-lightbox__embed">
+                    <iframe data-src="{{ slide.src }}" title="ویدیوی آپارات: {{ slide.caption|default:item.title }}"
+                            allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="origin"></iframe>
+                  </div>
+                {% else %}
+                  <img data-src="{{ slide.src }}" alt="{{ slide.caption|default:item.title }}" decoding="async">
+                {% endif %}
+                {% if slide.caption and not slide.is_cover %}
+                  <figcaption>{{ slide.caption }}</figcaption>
+                {% endif %}
+              </figure>
+            </li>
+          {% endfor %}
+        </ul>
+        {% if slides|length > 1 %}
+          <button class="pf-lightbox__btn pf-lightbox__nav pf-lightbox__nav--next" type="button" aria-label="مورد بعدی" data-lightbox-next>
+            {% include "components/_icon.html" with name="chevron-right" flip=True %}
+          </button>
+        {% endif %}
+        <p class="pf-lightbox__counter" aria-live="polite">
+          <span data-lightbox-index>۱</span> از <span data-lightbox-total>{{ slides|length|fa_digits }}</span>
+        </p>
       </div>
 
-      <aside class="pf-side" aria-labelledby="pf-vendor-title">
-        <p class="section__eyebrow">تابلو‌ساز این پروژه</p>
-        <h2 id="pf-vendor-title">{{ item.vendor.business_name }}</h2>
-        <p class="pf-side__rating">
-          ★ {{ item.vendor.rating|fa_digits }}
-          · {{ item.vendor.review_count|fa_digits }} نظر
-          · {{ item.vendor.completed_projects|fa_digits }} پروژه
-        </p>
-        <p class="muted">{{ item.vendor.city.name }}{% if item.vendor.response_time_hours %} · پاسخ حدود {{ item.vendor.response_time_hours|fa_digits }} ساعت{% endif %}</p>
-        <div class="pf-side__actions">
-          <a class="btn btn--primary btn--block" href="{% url 'requests:from_vendor' slug=item.vendor.slug %}">
-            درخواست قیمت مشابه
-          </a>
-          <a class="btn btn--ghost-outline btn--block" href="{% url 'vendors:public' slug=item.vendor.slug %}">
-            پروفایل تابلو‌ساز
-          </a>
-        </div>
-      </aside>
+      <div class="pf-lightbox__aside">
+        <p class="pf-lightbox__title" id="pf-lightbox-title">{{ item.title }}</p>
+        {% if slides|length > 1 %}
+          <ol class="pf-lightbox__thumbs" aria-label="همه موارد گالری">
+            {% for slide in slides %}
+              <li data-kind="{% if slide.is_video %}video{% else %}image{% endif %}">
+                <button type="button" data-lightbox-go="{{ forloop.counter0 }}"
+                        aria-label="مورد {{ forloop.counter|fa_digits }}{% if slide.is_video %}، ویدیو{% endif %}">
+                  {% if slide.thumb %}
+                    <img src="{{ slide.thumb }}" alt="" loading="lazy" width="120" height="120">
+                  {% else %}
+                    {% include "components/_icon.html" with name="film" %}
+                  {% endif %}
+                  {% if slide.is_video %}<span class="pf-lightbox__thumb-play" aria-hidden="true">{% include "components/_icon.html" with name="play" size="sm" %}</span>{% endif %}
+                </button>
+              </li>
+            {% endfor %}
+          </ol>
+        {% endif %}
+      </div>
     </div>
+  </dialog>
+
+  <section class="pf-about pf-wrap" aria-labelledby="pf-about-title">
+    <h2 id="pf-about-title">معرفی پروژه</h2>
+    {% if item.description %}
+      <div class="prose">{{ item.description|linebreaks }}</div>
+    {% else %}
+      <p class="muted">توضیحات تکمیلی برای این نمونه‌کار ثبت نشده است. برای جزئیات اجرا با تابلو‌ساز گفتگو کنید.</p>
+    {% endif %}
   </section>
 
   {% if related %}
@@ -120,16 +282,25 @@
         <p class="section__eyebrow">پروژه‌های مرتبط</p>
         <h2 id="related-title">نمونه‌کارهای مشابه</h2>
       </div>
-      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:public' slug=item.vendor.slug %}">همه کارهای این تابلو‌ساز</a>
+      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:public' slug=vendor.slug %}#portfolio">همه کارهای این تابلو‌ساز</a>
     </div>
     <div class="svc-gallery">
       {% for rel in related %}
-        <a class="svc-gallery__item" href="{% url 'portfolio:detail' slug=rel.slug %}">
-          {% if rel.image %}
-            <img src="{{ rel.image.url }}" alt="{{ rel.title }}" loading="lazy" width="600" height="400">
-          {% else %}
-            <img src="{% static rel.demo_image %}" alt="{{ rel.title }}" loading="lazy" width="600" height="400">
-          {% endif %}
+        <a class="svc-gallery__item pf-related" href="{% url 'portfolio:detail' slug=rel.slug %}">
+          <span class="pf-related__media">
+            {% if rel.image %}
+              <img src="{{ rel.image.url }}" alt="{{ rel.title }}" loading="lazy" width="600" height="400">
+            {% else %}
+              <img src="{% static rel.demo_image %}" alt="{{ rel.title }}" loading="lazy" width="600" height="400">
+            {% endif %}
+            {% if rel.image_count or rel.video_count %}
+              <span class="pf-count">
+                {% include "components/_icon.html" with name="image" size="sm" %}
+                {{ rel.image_count|add:rel.video_count|add:1|fa_digits }}
+                {% if rel.video_count %}{% include "components/_icon.html" with name="play" size="sm" %}{% endif %}
+              </span>
+            {% endif %}
+          </span>
           <span>{{ rel.title }}</span>
           <span class="svc-gallery__meta">{{ rel.vendor.business_name }}{% if rel.city %} · {{ rel.city.name }}{% endif %}</span>
         </a>

@@ -11,31 +11,54 @@
     <div class="vp-main">
       <header class="vp-header">
         <div class="vp-header__copy">
-          <p class="section__eyebrow">مشاهده درخواست #{{ project_request.pk|fa_digits }}</p>
-          <h1>{{ project_request.title }}</h1>
-          <p class="muted">
-            {% if project_request.needs_guidance or not project_request.service_id %}
-              نیاز به راهنمایی
-            {% else %}
-              {{ project_request.service.title }}
+          <p class="section__eyebrow">
+            <a href="{% url 'vendors:requests' %}">درخواست‌ها</a>
+            · شماره {{ project_request.pk|fa_digits }}
+          </p>
+          <div class="vp-lead__tags">
+            {% if project_request.preferred_vendor_id == vendor.pk %}
+              <span class="vp-tag vp-tag--preferred">
+                {% include "components/_icon.html" with name="star" size="sm" %}
+                مشتری شما را انتخاب کرده
+              </span>
             {% endif %}
-            · {{ project_request.city.name }} · {{ project_request.created_at|jalali }}
+            {% if project_request.needs_guidance or not project_request.service_id %}
+              <span class="vp-tag vp-tag--guidance">نیاز به راهنمایی</span>
+            {% else %}
+              <span class="vp-tag">{{ project_request.service.title }}</span>
+            {% endif %}
+            {% if project_request.deadline_is_near %}
+              <span class="vp-tag vp-tag--urgent">
+                {% include "components/_icon.html" with name="clock" size="sm" %}
+                فوری
+              </span>
+            {% endif %}
+            {% if existing %}
+              <span class="vp-tag vp-tag--done">پیشنهاد داده‌اید</span>
+            {% endif %}
+          </div>
+          <h1>{{ project_request.title|fa_digits }}</h1>
+          <p class="muted vp-brief__meta">
+            {% include "components/_icon.html" with name="map-pin" size="sm" %}
+            {{ project_request.city.name }}{% if project_request.district %}، {{ project_request.district }}{% endif %}{% if project_request.business_type %} · {{ project_request.business_type }}{% endif %}
+            · {{ project_request.created_at|ago }}
           </p>
         </div>
         <a class="btn btn--ghost-outline" href="{% url 'vendors:requests' %}">بازگشت به لیست</a>
       </header>
 
-      {% if project_request.needs_guidance %}
+      {% if project_request.needs_guidance or not project_request.service_id %}
         <p class="vp-alert" role="status">
+          {% include "components/_icon.html" with name="info" size="sm" %}
           مشتری نوع تابلو را نمی‌داند — با دیدن عکس و توضیحات، نوع مناسب را پیشنهاد دهید.
         </p>
       {% endif %}
 
       <div class="vp-req-view">
-        <section class="vp-card vp-req-brief" aria-labelledby="vp-brief-title">
+        <section class="vp-card vp-brief vp-req-brief" aria-labelledby="vp-brief-title">
           <div class="vp-req-brief__head">
             <h2 id="vp-brief-title">مشتری چه می‌خواهد؟</h2>
-            <p>اول جزئیات را کامل بخوانید؛ بعد برای ارسال پیشنهاد بروید.</p>
+            <p>جزئیات را کامل بخوانید؛ پیشنهاد شفاف شانس پذیرش را بالا می‌برد.</p>
           </div>
 
           {% if photos %}
@@ -44,7 +67,7 @@
                 عکس‌های مشتری
                 <span>({{ photos|length|fa_digits }})</span>
               </h3>
-              <ul class="vp-req-photos__grid{% if photos|length == 1 %} is-single{% endif %}">
+              <ul class="vp-req-photos__mosaic{% if photos|length == 1 %} is-single{% elif photos|length == 2 %} is-pair{% endif %}">
                 {% for url in photos %}
                   <li>
                     <a href="{{ url }}" target="_blank" rel="noopener noreferrer">
@@ -62,29 +85,32 @@
               <p class="vp-req-photos__hint">برای بزرگ‌نمایی روی عکس کلیک کنید.</p>
             </div>
           {% else %}
-            <p class="vp-req-photos-empty">عکسی ضمیمه نشده — روی توضیح و مشخصات تکیه کنید.</p>
+            <p class="vp-req-photos-empty">
+              {% include "components/_icon.html" with name="image" size="sm" %}
+              عکسی ضمیمه نشده — روی توضیح و مشخصات تکیه کنید.
+            </p>
           {% endif %}
 
-          {% if project_request.text_content or project_request.description %}
-            <div class="vp-req-story">
-              {% if project_request.text_content %}
-                <div class="vp-req-sign">
-                  <span>متن روی تابلو</span>
-                  <strong lang="fa">«{{ project_request.text_content }}»</strong>
-                </div>
-              {% endif %}
-              {% if project_request.description %}
-                <div class="vp-req-desc">
-                  <h3>توضیحات مشتری</h3>
-                  <p>{{ project_request.description|linebreaksbr }}</p>
-                </div>
-              {% endif %}
+          {% if project_request.text_content %}
+            <div class="vp-req-sign">
+              <span>متن روی تابلو</span>
+              <strong lang="fa">«{{ project_request.text_content }}»</strong>
+            </div>
+          {% endif %}
+
+          {% if project_request.description %}
+            <div class="vp-req-desc">
+              <h3>توضیحات مشتری</h3>
+              <p>{{ project_request.description|linebreaksbr }}</p>
             </div>
           {% endif %}
 
           <dl class="vp-req-specs">
             <div>
-              <dt>نوع تابلو</dt>
+              <dt>
+                {% include "components/_icon.html" with name="layers" size="sm" %}
+                نوع تابلو
+              </dt>
               <dd>
                 {% if project_request.needs_guidance or not project_request.service_id %}
                   هنوز مشخص نیست — نیاز به پیشنهاد
@@ -94,70 +120,121 @@
               </dd>
             </div>
             <div>
-              <dt>شهر / محله</dt>
+              <dt>
+                {% include "components/_icon.html" with name="map-pin" size="sm" %}
+                شهر / محله
+              </dt>
               <dd>
                 {{ project_request.city.name }}{% if project_request.district %} — {{ project_request.district }}{% endif %}
               </dd>
             </div>
             <div>
-              <dt>ابعاد</dt>
-              <dd>{{ project_request.dimensions_display }}</dd>
+              <dt>
+                {% include "components/_icon.html" with name="ruler" size="sm" %}
+                ابعاد
+              </dt>
+              <dd>{{ project_request.dimensions_display|fa_digits }}</dd>
             </div>
             <div>
-              <dt>نورپردازی</dt>
+              <dt>
+                {% include "components/_icon.html" with name="lightbulb" size="sm" %}
+                نورپردازی
+              </dt>
               <dd>{{ project_request.get_lighting_type_display|default:"—" }}</dd>
             </div>
+            {% if project_request.business_type %}
+              <div>
+                <dt>
+                  {% include "components/_icon.html" with name="home" size="sm" %}
+                  نوع کسب‌وکار
+                </dt>
+                <dd>{{ project_request.business_type }}</dd>
+              </div>
+            {% endif %}
             <div>
-              <dt>نوع کسب‌وکار</dt>
-              <dd>{{ project_request.business_type|default:"—" }}</dd>
-            </div>
-            <div>
-              <dt>بودجه</dt>
+              <dt>
+                {% include "components/_icon.html" with name="wrench" size="sm" %}
+                نصب
+              </dt>
               <dd>
-                {% if project_request.budget_min or project_request.budget_max %}
-                  {{ project_request.budget_min|default:0|toman|fa_digits }}
-                  تا
-                  {{ project_request.budget_max|default:0|toman|fa_digits }}
-                {% else %}توافقی{% endif %}
+                {% if project_request.installation_required %}
+                  نیاز به نصب دارد{% if project_request.installation_height %} — {{ project_request.installation_height }}{% endif %}
+                {% else %}
+                  بدون نصب
+                {% endif %}
               </dd>
-            </div>
-            <div>
-              <dt>نصب</dt>
-              <dd>{% if project_request.installation_required %}نیاز به نصب دارد{% else %}بدون نصب{% endif %}</dd>
             </div>
             {% if project_request.material %}
               <div>
-                <dt>متریال مدنظر</dt>
+                <dt>
+                  {% include "components/_icon.html" with name="package" size="sm" %}
+                  متریال مدنظر
+                </dt>
                 <dd>{{ project_request.material }}</dd>
               </div>
             {% endif %}
             {% if project_request.deadline %}
-              <div>
-                <dt>مهلت</dt>
-                <dd>{{ project_request.deadline|jalali }}</dd>
+              <div{% if project_request.deadline_is_near %} class="is-urgent"{% endif %}>
+                <dt>
+                  {% include "components/_icon.html" with name="calendar" size="sm" %}
+                  مهلت
+                </dt>
+                <dd>{{ project_request.deadline|jalali|fa_digits }}</dd>
               </div>
             {% endif %}
           </dl>
         </section>
 
-        <aside class="vp-card vp-req-next" aria-labelledby="vp-next-title">
+        <aside class="vp-card vp-req-next{% if existing %} is-quoted{% endif %}" aria-labelledby="vp-next-title">
+          <div class="vp-lead__budget">
+            <span>بودجه مشتری</span>
+            <strong>
+              {% if project_request.budget_min and project_request.budget_max %}
+                {{ project_request.budget_min|toman:""|fa_digits }} تا {{ project_request.budget_max|toman|fa_digits }}
+              {% elif project_request.budget_min %}
+                از {{ project_request.budget_min|toman|fa_digits }}
+              {% elif project_request.budget_max %}
+                تا {{ project_request.budget_max|toman|fa_digits }}
+              {% else %}
+                توافقی
+              {% endif %}
+            </strong>
+          </div>
+
+          <p class="vp-lead__competition">
+            {% if existing %}
+              {% include "components/_icon.html" with name="check-circle" size="sm" %}
+              <span>
+                پیشنهاد داده‌اید{% if project_request.quote_count > 1 %} · {{ project_request.quote_count|add:-1|fa_digits }} رقیب{% endif %}
+              </span>
+            {% elif project_request.quote_count %}
+              {% include "components/_icon.html" with name="file-text" size="sm" %}
+              <span>{{ project_request.quote_count|fa_digits }} پیشنهاد ثبت شده</span>
+            {% else %}
+              {% include "components/_icon.html" with name="zap" size="sm" %}
+              <span>اولین پیشنهاد را شما بدهید</span>
+            {% endif %}
+          </p>
+
           {% if existing %}
             <h2 id="vp-next-title">پیشنهاد شما ثبت شده</h2>
             <p class="req-quote__price">{{ existing.price|toman|fa_digits }}</p>
             <ul class="req-quote__facts">
-              <li>زمان اجرا: {{ existing.estimated_delivery_days|fa_digits }} روز</li>
-              <li>گارانتی: {{ existing.warranty|default:"—" }}</li>
-              <li>وضعیت: {{ existing.get_status_display }}</li>
+              <li><span>زمان اجرا</span><strong>{{ existing.estimated_delivery_days|fa_digits }} روز</strong></li>
+              <li><span>گارانتی</span><strong>{{ existing.warranty|default:"—" }}</strong></li>
+              <li><span>وضعیت</span><strong>{{ existing.get_status_display }}</strong></li>
             </ul>
             <div class="vp-req-next__actions">
-              <a class="btn btn--ghost-outline btn--block" href="{% url 'vendors:my_quotes' %}">مشاهده همه پیشنهادها</a>
+              <a class="btn btn--secondary btn--block" href="{% url 'vendors:my_quotes' %}">مشاهده همه پیشنهادها</a>
+              <a class="vp-req-next__later" href="{% url 'vendors:requests' %}">بازگشت به لیست</a>
             </div>
           {% else %}
             <h2 id="vp-next-title">قدم بعدی</h2>
-            <p class="vp-req-next__lead">جزئیات را دیدید؟ الان پیشنهاد قیمت بفرستید.</p>
+            <p class="vp-req-next__lead">جزئیات را دیدید؟ الان پیشنهاد قیمت، زمان اجرا و گارانتی بفرستید.</p>
             <div class="vp-req-next__actions">
               <a class="btn btn--primary btn--lg btn--block" href="{% url 'vendors:request_quote' pk=project_request.pk %}">
-                ارسال پیشنهاد
+                بررسی و ارسال پیشنهاد
+                {% include "components/_icon.html" with name="chevron-right" size="sm" flip=True %}
               </a>
               <a class="vp-req-next__later" href="{% url 'vendors:requests' %}">فعلاً برمی‌گردم به لیست</a>
             </div>

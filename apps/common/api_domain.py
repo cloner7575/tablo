@@ -183,8 +183,10 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
 
 class PortfolioViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = PortfolioItem.objects.filter(is_published=True).select_related(
-        "vendor", "service", "city"
+    queryset = (
+        PortfolioItem.objects.filter(is_published=True)
+        .select_related("vendor", "service", "city")
+        .prefetch_related("media")
     )
     serializer_class = PortfolioSerializer
     permission_classes = [AllowAny]

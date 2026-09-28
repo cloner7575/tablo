@@ -39,6 +39,9 @@ CHANNEL_LAYERS = {
 
 MEDIA_ROOT = tempfile.mkdtemp(prefix="core-test-media-")
 STATIC_ROOT = tempfile.mkdtemp(prefix="core-test-static-")
+IMAGE_UPLOAD_MAX_BYTES = 5 * 1024 * 1024
+VIDEO_UPLOAD_MAX_BYTES = 50 * 1024 * 1024
+PORTFOLIO_MAX_MEDIA = 20
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},

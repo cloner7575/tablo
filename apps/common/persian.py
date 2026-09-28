@@ -94,6 +94,25 @@ def format_jalali(
     return text
 
 
+def format_relative(value: datetime | None, *, now: datetime | None = None) -> str:
+    """«۳ ساعت پیش» for the last week, a Jalali date after that."""
+    if value is None:
+        return ""
+    seconds = int(((now or timezone.now()) - value).total_seconds())
+    if seconds < 60:
+        return "همین حالا"
+    if seconds < 3600:
+        return to_persian_digits(f"{seconds // 60} دقیقه پیش")
+    if seconds < 86400:
+        return to_persian_digits(f"{seconds // 3600} ساعت پیش")
+    days = seconds // 86400
+    if days == 1:
+        return "دیروز"
+    if days < 7:
+        return to_persian_digits(f"{days} روز پیش")
+    return format_jalali(value, persian_digits=True)
+
+
 def toman_to_rial(amount_toman: int) -> int:
     """Iranian payment gateways typically charge in rial."""
     return int(amount_toman) * 10

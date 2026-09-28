@@ -6,7 +6,7 @@ from apps.accounts.models import User
 from apps.accounts.services import request_otp, validate_phone
 from apps.catalog.models import Service
 from apps.locations.models import City
-from apps.portfolio.models import PortfolioItem
+from apps.portfolio.models import PortfolioItem, PortfolioMedia
 from apps.quotes.models import Quote
 from apps.requests.models import ProjectRequest
 from apps.reviews.models import Review
@@ -145,7 +145,27 @@ class QuoteCreateSerializer(serializers.ModelSerializer):
         )
 
 
+class PortfolioMediaSerializer(serializers.ModelSerializer):
+    embed_url = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = PortfolioMedia
+        fields = (
+            "id",
+            "kind",
+            "image",
+            "video",
+            "poster",
+            "embed_url",
+            "caption",
+            "sort_order",
+        )
+        read_only_fields = fields
+
+
 class PortfolioSerializer(serializers.ModelSerializer):
+    media = PortfolioMediaSerializer(many=True, read_only=True)
+
     class Meta:
         model = PortfolioItem
         fields = (
@@ -156,6 +176,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
             "service",
             "city",
             "image",
+            "media",
             "vendor",
             "created_at",
         )

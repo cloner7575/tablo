@@ -10,55 +10,113 @@
     {% include "partials/_vendor_panel_nav.html" %}
     <div class="vp-main">
       <header class="vp-header">
-        <div>
+        <div class="vp-header__copy">
           <p class="section__eyebrow">گالری فروش</p>
           <h1>نمونه‌کارهای من</h1>
-          <p class="muted">{{ items|length|fa_digits }} مورد — نمونه‌کار خوب، پیشنهاد شما را باورپذیرتر می‌کند.</p>
+          <p class="muted">کارهای واقعی با چند عکس و ویدیو، اعتماد مشتری را زودتر جلب می‌کند.</p>
         </div>
+        <a class="btn btn--primary" href="{% url 'portfolio:create' %}">
+          {% include "components/_icon.html" with name="plus" size="sm" %}
+          افزودن نمونه‌کار
+        </a>
       </header>
 
-      <div class="vp-detail-grid">
-        <section class="vp-card">
-          <h2>لیست نمونه‌کارها</h2>
-          <div class="vp-feed">
-            {% for item in items %}
-              <div class="vp-feed__item vp-feed__item--static">
-                <div>
-                  <strong>{{ item.title }}</strong>
-                  <span>{% if item.is_published %}منتشر شده{% else %}پیش‌نویس{% endif %} · {{ item.created_at|jalali }}</span>
-                </div>
-                <div class="vp-card__actions">
+      <div class="vp-toolbar">
+        <nav class="vp-status-tabs" aria-label="فیلتر وضعیت">
+          <a href="?{% if query %}q={{ query|urlencode }}{% endif %}" {% if status == "all" %}aria-current="page"{% endif %}>
+            همه <span>{{ counts.all|fa_digits }}</span>
+          </a>
+          <a href="?status=published{% if query %}&q={{ query|urlencode }}{% endif %}" {% if status == "published" %}aria-current="page"{% endif %}>
+            منتشر شده <span>{{ counts.published|fa_digits }}</span>
+          </a>
+          <a href="?status=draft{% if query %}&q={{ query|urlencode }}{% endif %}" {% if status == "draft" %}aria-current="page"{% endif %}>
+            پیش‌نویس <span>{{ counts.draft|fa_digits }}</span>
+          </a>
+        </nav>
+        <form class="pf-search" method="get" role="search">
+          {% if status != "all" %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+          <label class="visually-hidden" for="pf-search-q">جستجو در عنوان نمونه‌کارها</label>
+          <input id="pf-search-q" type="search" name="q" value="{{ query }}" placeholder="جستجو در عنوان…" maxlength="80">
+          <button class="pf-icon-btn" type="submit" aria-label="جستجو">
+            {% include "components/_icon.html" with name="search" size="sm" %}
+          </button>
+        </form>
+      </div>
+
+      {% if items %}
+        <ul class="pf-manage__grid">
+          {% for item in items %}
+            <li class="pf-manage__card">
+              <a class="pf-manage__thumb" href="{% url 'portfolio:edit' pk=item.pk %}" tabindex="-1" aria-hidden="true">
+                {% if item.image %}
+                  <img src="{{ item.image.url }}" alt="" loading="lazy" width="480" height="360">
+                {% else %}
+                  <img src="{% static item.demo_image %}" alt="" loading="lazy" width="480" height="360">
+                {% endif %}
+                {% if item.is_published %}
+                  <span class="status-pill status-pill--approved">منتشر شده</span>
+                {% else %}
+                  <span class="status-pill status-pill--draft">پیش‌نویس</span>
+                {% endif %}
+                {% if item.image or item.image_count or item.video_count %}
+                  <span class="pf-manage__counts">
+                    {% if item.image or item.image_count %}
+                      <span>
+                        {% include "components/_icon.html" with name="image" size="sm" %}
+                        {% if item.image %}{{ item.image_count|add:1|fa_digits }}{% else %}{{ item.image_count|fa_digits }}{% endif %}
+                      </span>
+                    {% endif %}
+                    {% if item.video_count %}
+                      <span>
+                        {% include "components/_icon.html" with name="film" size="sm" %}
+                        {{ item.video_count|fa_digits }}
+                      </span>
+                    {% endif %}
+                  </span>
+                {% endif %}
+              </a>
+              <div class="pf-manage__body">
+                <h2 class="pf-manage__title"><a href="{% url 'portfolio:edit' pk=item.pk %}">{{ item.title }}</a></h2>
+                <p class="pf-manage__meta">
+                  {% if item.service %}{{ item.service.title }} · {% endif %}{% if item.city %}{{ item.city.name }} · {% endif %}{{ item.created_at|jalali|fa_digits }}
+                </p>
+                <div class="pf-manage__actions">
+                  <a class="btn btn--secondary btn--sm" href="{% url 'portfolio:edit' pk=item.pk %}">
+                    {% include "components/_icon.html" with name="pencil" size="sm" %}
+                    ویرایش
+                  </a>
                   {% if item.is_published %}
-                    <a class="btn btn--ghost-outline btn--sm" href="{% url 'portfolio:detail' slug=item.slug %}">مشاهده</a>
+                    <a class="pf-icon-btn" href="{% url 'portfolio:detail' slug=item.slug %}" aria-label="مشاهده {{ item.title }} در سایت" title="مشاهده در سایت">
+                      {% include "components/_icon.html" with name="eye" size="sm" %}
+                    </a>
                   {% endif %}
-                  <form method="post" action="{% url 'portfolio:delete' pk=item.pk %}">
+                  <form method="post" action="{% url 'portfolio:delete' pk=item.pk %}"
+                        data-confirm="«{{ item.title }}» و همه عکس‌ها و ویدیوهایش حذف شود؟ این کار برگشت‌پذیر نیست.">
                     {% csrf_token %}
-                    <button class="btn btn--ghost btn--sm" type="submit">حذف</button>
+                    <button class="pf-icon-btn pf-danger" type="submit" aria-label="حذف {{ item.title }}" title="حذف">
+                      {% include "components/_icon.html" with name="trash" size="sm" %}
+                    </button>
                   </form>
                 </div>
               </div>
-            {% empty %}
-              <div class="vp-empty vp-empty--compact">
-                <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="image" %}</span>
-                <strong>هنوز نمونه‌کاری ندارید</strong>
-                <p>اولین کار واقعی را با عکس و توضیح کوتاه اضافه کنید.</p>
-              </div>
-            {% endfor %}
-          </div>
-        </section>
-
-        <section class="vp-card">
-          <h2>افزودن نمونه‌کار</h2>
-          <p class="muted">عنوان واضح + توضیح کوتاه + تصویر واقعی بهتر دیده می‌شود.</p>
-          <form method="post" enctype="multipart/form-data" class="stack-form">
-            {% csrf_token %}
-            {% for field in form %}
-              {% include "components/_field.html" with field=field %}
-            {% endfor %}
-            <button class="btn btn--primary" type="submit">افزودن</button>
-          </form>
-        </section>
-      </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% elif query or status != "all" %}
+        <div class="vp-card vp-empty">
+          <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="search-x" %}</span>
+          <strong>نتیجه‌ای پیدا نشد</strong>
+          <p>{% if query %}هیچ نمونه‌کاری با عنوان «{{ query }}» {% else %}نمونه‌کاری با این وضعیت {% endif %}ندارید.</p>
+          <a class="btn btn--ghost-outline btn--sm" href="{% url 'portfolio:manage' %}">نمایش همه</a>
+        </div>
+      {% else %}
+        <div class="vp-card vp-empty">
+          <span class="vp-empty__icon" aria-hidden="true">{% include "components/_icon.html" with name="image" %}</span>
+          <strong>هنوز نمونه‌کاری ندارید</strong>
+          <p>اولین کار واقعی را با چند عکس از زاویه‌های مختلف اضافه کنید؛ بعد می‌توانید ویدیو هم بگذارید.</p>
+          <a class="btn btn--primary btn--sm" href="{% url 'portfolio:create' %}">افزودن اولین نمونه‌کار</a>
+        </div>
+      {% endif %}
     </div>
   </section>
 </div>

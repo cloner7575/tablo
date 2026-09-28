@@ -5,6 +5,7 @@ from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as _
 
 from apps.catalog.models import Service
+from apps.common.forms import MultipleFileInput, MultipleImageField
 from apps.common.validators import validate_uploaded_image
 from apps.locations.models import City
 from apps.requests.models import MAX_REQUEST_IMAGES, LightingType
@@ -82,26 +83,6 @@ LIGHTING_CARDS: tuple[dict[str, str | bool], ...] = (
         "hint": "نور از پشت یا لبه، بدون لامپ دیده",
     },
 )
-
-
-class MultipleFileInput(forms.ClearableFileInput):
-    allow_multiple_selected = True
-
-
-class MultipleImageField(forms.ImageField):
-    def clean(
-        self,
-        data: UploadedFile | list[UploadedFile] | None,
-        initial: object | None = None,
-    ) -> list[UploadedFile]:
-        single_clean = super().clean
-        if isinstance(data, (list, tuple)):
-            if not data:
-                return []
-            return [single_clean(item, initial) for item in data if item]
-        if data in self.empty_values:
-            return []
-        return [single_clean(data, initial)]
 
 
 class RequestWizardServiceForm(forms.Form):

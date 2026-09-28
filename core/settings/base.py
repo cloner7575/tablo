@@ -195,6 +195,10 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = get_int("FILE_UPLOAD_MAX_MEMORY_SIZE", 5 * 1024 * 
 DATA_UPLOAD_MAX_MEMORY_SIZE = get_int("DATA_UPLOAD_MAX_MEMORY_SIZE", 6 * 1024 * 1024)
 IMAGE_UPLOAD_MAX_BYTES = get_int("IMAGE_UPLOAD_MAX_BYTES", 5 * 1024 * 1024)
 ALLOWED_IMAGE_CONTENT_TYPES = ("image/jpeg", "image/png", "image/webp")
+# Your reverse proxy / gunicorn body limit must be at least this large.
+VIDEO_UPLOAD_MAX_BYTES = get_int("VIDEO_UPLOAD_MAX_BYTES", 50 * 1024 * 1024)
+ALLOWED_VIDEO_CONTENT_TYPES = ("video/mp4", "video/webm")
+PORTFOLIO_MAX_MEDIA = get_int("PORTFOLIO_MAX_MEDIA", 20)
 
 LANGUAGE_CODE = os.getenv("DJANGO_LANGUAGE_CODE", "en-us")
 TIME_ZONE = os.getenv("DJANGO_TIME_ZONE", "UTC")
