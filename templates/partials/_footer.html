@@ -1,36 +1,13 @@
-<footer class="site-footer">
-  <div class="site-footer__inner">
-    <div class="site-footer__brand">
-      <a class="brand" href="{% url 'common:home' %}">
-        <span class="brand__mark" aria-hidden="true">{% include "components/_icon.html" with name="zap" %}</span>
-        <span>{{ SITE_NAME }}</span>
-      </a>
-      <p>پلتفرم تخصصی سفارش و مقایسه خدمات تابلوسازی برای کسب‌وکارهای ایران.</p>
+<footer class="at-footer sf-footer">
+  <div class="at-footer__main at-wrap">
+    <div class="at-footer__brand sf-footer__brand">
+      <a class="sf-footer__identity" href="{% url 'common:home' %}"><span class="sf-footer__mark" aria-hidden="true">{% include 'components/_icon.html' with name='layers' %}</span><span><strong><bdi>{{ SITE_NAME }}</bdi></strong><small>از انتخاب تابلو تا ساخت و نصب</small></span></a>
+      <p>برای مغازه‌ات تابلو می‌خواهی؟ نیازت را بگو و پیشنهادهای ساخت و نصب را کنار هم ببین.</p>
+      <a class="btn btn--primary sf-footer__action" href="{% url 'requests:wizard_start' %}">درخواست قیمت تابلو {% include 'components/_icon.html' with name='arrow-right' size='sm' %}</a>
     </div>
-
-    <nav aria-labelledby="footer-product">
-      <h2 id="footer-product">محصول</h2>
-      <ul>
-        <li><a href="{% url 'requests:wizard_start' %}">قیمت بگیر</a></li>
-        <li><a href="{% url 'vendors:list' %}">تابلو‌سازها</a></li>
-        <li><a href="{% url 'catalog:service' slug='chalnium' %}">تابلو چلنیوم</a></li>
-        <li><a href="{% url 'catalog:service' slug='neon' %}">تابلو نئون</a></li>
-      </ul>
-    </nav>
-
-    <nav aria-labelledby="footer-cities">
-      <h2 id="footer-cities">شهرها</h2>
-      <ul>
-        <li><a href="{% url 'catalog:city' slug='tehran' %}">تهران</a></li>
-        <li><a href="{% url 'catalog:city' slug='karaj' %}">کرج</a></li>
-        <li><a href="{% url 'accounts:vendor_register' %}">عضویت تابلو‌ساز</a></li>
-        <li><a href="{% url 'accounts:login' %}">ورود</a></li>
-      </ul>
-    </nav>
+    <nav class="sf-footer__nav sf-footer__nav--explore" aria-labelledby="footer-product"><h2 id="footer-product">برای انتخاب بهتر</h2><ul><li><a href="{% url 'portfolio:list' %}">{% include 'components/_icon.html' with name='image' size='sm' %} نمونه تابلوها</a></li><li><a href="{% url 'vendors:list' %}">{% include 'components/_icon.html' with name='user' size='sm' %} تابلوسازها</a></li><li><a href="{% url 'catalog:services' %}">{% include 'components/_icon.html' with name='layers' size='sm' %} انواع تابلو</a></li><li><a href="{% url 'common:guide' %}">{% include 'components/_icon.html' with name='lightbulb' size='sm' %} راهنمای سفارش</a></li><li><a href="{% url 'editorial:articles' %}">{% include 'components/_icon.html' with name='file-text' size='sm' %} مقاله‌های راهنما</a></li><li><a href="{% url 'editorial:saved' %}">{% include 'components/_icon.html' with name='bookmark' size='sm' %} ذخیره‌های من</a></li></ul></nav>
+    <nav class="sf-footer__nav" aria-labelledby="footer-account"><h2 id="footer-account">حساب و همکاری</h2><ul><li><a href="{% if user.is_authenticated %}{% if user.is_vendor_user %}{% url 'vendors:dashboard' %}{% else %}{% url 'requests:dashboard' %}{% endif %}{% else %}{% url 'accounts:login' %}{% endif %}">{% include 'components/_icon.html' with name='layout-dashboard' size='sm' %} ورود و پیگیری سفارش</a></li><li><a href="{% url 'accounts:vendor_register' %}">{% include 'components/_icon.html' with name='wrench' size='sm' %} ثبت‌نام تابلوساز</a></li></ul><p class="sf-footer__hint">تابلوساز هستید؟ نمونه‌کارهایتان را معرفی کنید و درخواست‌های مرتبط را ببینید.</p></nav>
   </div>
-
-  <div class="site-footer__bar">
-    <p>© {{ SITE_NAME }} — ساخته‌شده برای کسب‌وکارهای واقعی</p>
-    <p>نماد اعتماد الکترونیکی و ساماندهی به‌زودی</p>
-  </div>
+  {% if footer_cities %}<nav class="sf-footer__cities at-wrap" aria-label="تابلوسازی در شهرها">{% for city in footer_cities %}<a href="{% url 'catalog:city' slug=city.slug %}">تابلوسازی {{ city.name }}</a>{% endfor %}</nav>{% endif %}
+  <div class="at-footer__bottom at-wrap"><span>© {{ SITE_NAME }} <span class="sf-footer__separator" aria-hidden="true">/</span> سفارش تابلو، قدم‌به‌قدم</span><span class="sf-footer__note">{% include 'components/_icon.html' with name='check-circle' size='sm' %} طرح و مبلغ نهایی، پیش از ساخت تأیید می‌شوند.</span></div>
 </footer>

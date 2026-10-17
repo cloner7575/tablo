@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.analytics.services import track
 from apps.notifications.services import NotificationEvent, notify
 from apps.orders.models import Order, OrderStatus
-from apps.quotes.models import Quote, QuoteStatus
+from apps.quotes.models import PriceKind, Quote, QuoteStatus
 from apps.requests.models import ProjectRequest, RequestStatus
 from apps.requests.selectors import matched_requests_for_vendor
 from apps.vendors.models import Vendor
@@ -19,6 +19,7 @@ def create_quote(
     vendor: Vendor,
     project_request: ProjectRequest,
     price: int,
+    price_kind: str = PriceKind.FINAL,
     estimated_delivery_days: int,
     description: str = "",
     warranty: str = "",
@@ -47,6 +48,7 @@ def create_quote(
         request=project_request,
         vendor=vendor,
         price=price,
+        price_kind=price_kind,
         estimated_delivery_days=estimated_delivery_days,
         description=description,
         warranty=warranty,
@@ -71,7 +73,10 @@ def create_quote(
 
 @transaction.atomic
 def accept_quote(*, quote: Quote, user) -> Order:
-    project_request = quote.request
+    project_request = ProjectRequest.objects.select_for_update().get(
+        pk=quote.request_id
+    )
+    quote = Quote.objects.select_for_update().select_related("vendor").get(pk=quote.pk)
     if project_request.customer_id != user.id and not user.is_staff:
         raise PermissionDenied
 
@@ -86,6 +91,7 @@ def accept_quote(*, quote: Quote, user) -> Order:
         RequestStatus.ACCEPTED,
         RequestStatus.COMPLETED,
         RequestStatus.CANCELLED,
+        RequestStatus.DRAFT,
     }:
         raise ValidationError(_("این درخواست دیگر قابل پذیرش پیشنهاد نیست."))
 
@@ -104,7 +110,8 @@ def accept_quote(*, quote: Quote, user) -> Order:
         quote=quote,
         customer=project_request.customer,
         vendor=quote.vendor,
-        agreed_price=quote.price,
+        agreed_price=quote.total_price,
+        workflow_required=True,
         status=OrderStatus.ACTIVE,
     )
 
@@ -129,4 +136,35 @@ def mark_quote_viewed(*, quote: Quote, user) -> Quote:
         quote.status = QuoteStatus.VIEWED
         quote.save(update_fields=["status", "updated_at"])
         track("quote_viewed", {"quote_id": quote.pk})
+    return quote
+
+
+@transaction.atomic
+def toggle_shortlist(*, quote: Quote, user) -> Quote:
+    if quote.request.customer_id != user.pk:
+        raise PermissionDenied
+    available = (QuoteStatus.PENDING, QuoteStatus.VIEWED, QuoteStatus.SHORTLISTED)
+    closed = (
+        RequestStatus.ACCEPTED,
+        RequestStatus.COMPLETED,
+        RequestStatus.CANCELLED,
+        RequestStatus.DRAFT,
+    )
+    next_status = (
+        QuoteStatus.VIEWED
+        if quote.status == QuoteStatus.SHORTLISTED
+        else QuoteStatus.SHORTLISTED
+    )
+    changed = (
+        Quote.objects.filter(
+            pk=quote.pk,
+            request__customer=user,
+            status__in=available,
+        )
+        .exclude(request__status__in=closed)
+        .update(status=next_status)
+    )
+    if not changed:
+        raise ValidationError(_("این پیشنهاد دیگر قابل انتخاب برای مقایسه نیست."))
+    quote.status = next_status
     return quote

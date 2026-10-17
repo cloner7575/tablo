@@ -76,14 +76,14 @@ p {
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   text-underline-offset: 0.2em;
   text-decoration-thickness: from-font;
   transition: color var(--dur-1) var(--ease-out);
 }
 
 a:hover {
-  color: var(--color-accent-hover);
+  color: var(--color-accent-text);
 }
 
 code,
@@ -567,7 +567,7 @@ kbd {
   height: 2.5rem;
   border-radius: var(--radius-sm);
   background: var(--color-accent-soft);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .panel {
@@ -596,7 +596,7 @@ kbd {
 
 .badge--accent {
   background: var(--color-accent-soft);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* --- Hero ---------------------------------------------------------------- */
@@ -954,7 +954,7 @@ kbd {
   height: 1.5rem;
   border-radius: var(--radius-pill);
   background: var(--color-accent-soft);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
   font-weight: 600;
@@ -1020,7 +1020,7 @@ kbd {
   height: 0.85rem;
   border-radius: var(--radius-pill);
   border: 2px solid color-mix(in srgb, var(--color-muted) 35%, transparent);
-  border-top-color: var(--color-accent);
+  border-top-color: var(--color-accent-text);
   animation: spin 700ms linear infinite;
 }
 

@@ -5,6 +5,9 @@ from apps.requests import views
 app_name = "requests"
 
 urlpatterns = [
+    path("need/", views.wizard_need, name="wizard_need"),
+    path("details/", views.wizard_details, name="wizard_details"),
+    path("from-board/", views.start_from_board, name="from_board"),
     path("", views.wizard_start, name="wizard_start"),
     path("service/", views.wizard_service, name="wizard_service"),
     path("city/", views.wizard_city, name="wizard_city"),
@@ -21,6 +24,7 @@ urlpatterns = [
     path("dashboard/", views.customer_dashboard, name="dashboard"),
     path("mine/<int:pk>/", views.request_detail, name="request_detail"),
     path("quotes/<int:pk>/", views.quote_detail, name="quote_detail"),
+    path("quotes/<int:pk>/shortlist/", views.quote_shortlist, name="quote_shortlist"),
     path("orders/<int:pk>/complete/", views.order_complete, name="order_complete"),
     path("mine/<int:pk>/review/", views.review_create, name="review_create"),
 ]

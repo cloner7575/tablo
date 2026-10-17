@@ -207,3 +207,14 @@ class PortfolioMediaForm(VideoInputsMixin, forms.Form):
         if incoming > remaining:
             raise _limit_error(limit, remaining)
         return cleaned
+
+
+class BoardActionForm(forms.Form):
+    return_query = forms.CharField(max_length=1000, required=False)
+    action = forms.ChoiceField(
+        choices=[("add", "add"), ("remove", "remove")], required=False
+    )
+    destination = forms.ChoiceField(
+        choices=[("gallery", "gallery"), ("board", "board"), ("detail", "detail")],
+        required=False,
+    )

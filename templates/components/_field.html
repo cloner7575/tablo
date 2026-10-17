@@ -1,10 +1,15 @@
+{% load i18n %}
+{% if field.is_hidden %}
+{{ field }}
+{% if field.errors %}<div class="field__error" role="alert">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+{% else %}
 {% comment %}
 Django sets aria-invalid and aria-describedby on the widget itself, pointing at
 `<auto_id>_helptext` and `<auto_id>_error`. Keep those ids exactly as they are.
 {% endcomment %}
 <div class="field{% if field.errors %} field--invalid{% endif %}">
   <label for="{{ field.id_for_label }}">
-    {{ field.label }}{% if field.field.required %} <span class="field__required" title="required">*</span>{% endif %}
+    {{ field.label }}{% if field.field.required %} <span class="field__required" title="{% translate 'الزامی' %}">*</span>{% endif %}
   </label>
   {{ field }}
   {% if field.help_text %}
@@ -20,3 +25,5 @@ Django sets aria-invalid and aria-describedby on the widget itself, pointing at
     </div>
   {% endif %}
 </div>
+
+{% endif %}

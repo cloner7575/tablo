@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|StrReplace",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/home/alisafari/Desktop/tablo/.codex/hooks/protect-main.sh'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

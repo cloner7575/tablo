@@ -28,6 +28,8 @@ class Service(TimeStampedModel):
         help_text=_('لیست {"question": "...", "answer": "..."}'),
     )
     icon = models.ImageField(_("آیکون"), upload_to="services/icons/", blank=True)
+    source_name = models.CharField(_("منبع تصویر خدمت"), max_length=160, blank=True)
+    source_url = models.URLField(_("صفحهٔ منبع تصویر"), max_length=1000, blank=True)
     is_active = models.BooleanField(_("فعال"), default=True)
     sort_order = models.PositiveIntegerField(_("ترتیب"), default=0)
 

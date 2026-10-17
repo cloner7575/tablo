@@ -2,30 +2,34 @@
 {% load persian static %}
 
 {% block title %}تابلو‌سازها | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}فهرست تابلو‌سازهای تأییدشده — امتیاز، نمونه‌کار و درخواست قیمت{% endblock %}
+{% block meta_description %}تابلوسازها، خدمات و نمونه‌کارهایشان را ببینید؛ خدمات و نمونه‌ها را برای انتخاب تابلو بررسی کنید.{% endblock %}
 {% block body_class %}page-vendors{% endblock %}
 
 {% block content %}
 <section class="vn-list">
   <header class="vn-list__hero section">
     <div class="vn-list__hero-copy">
-      <p class="section__eyebrow">شبکه متخصصان</p>
-      <h1>تابلو‌سازهای تأییدشده</h1>
+      <p class="section__eyebrow">شبکه تابلوسازها</p>
+      <h1>تابلوسازها و نمونه‌کارهایشان</h1>
       <p>
-        {{ vendors_count|fa_digits }} مجموعه فعال؛ فقط پروفایل‌های تأییدشده اینجا هستند.
+        {% if vendors_count %}{{ vendors_count|fa_digits }} عضو فعال{% if has_filters %} با انتخاب‌های شما{% endif %}؛ خدمات و نمونه‌کارها را بررسی کنید.{% else %}مجموعه‌های تابلوسازی و خدماتشان را بشناسید.{% endif %}
       </p>
     </div>
-    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">شروع درخواست رایگان</a>
+    <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">ثبت درخواست اجرا</a>
   </header>
 
-  <section class="section" aria-label="فهرست تابلو‌سازها">
-    <div class="vn-grid">
+  <section id="vendor-results" class="section" aria-label="فهرست تابلو‌سازها">
+    <details class="ux-filter-panel" data-responsive-filter open {% if has_filters %}data-filter-active{% endif %}><summary>{% include "components/_icon.html" with name="sliders" size="sm" %}<span>پیدا کردن متخصص مناسب</span>{% include "components/_icon.html" with name="chevron-down" size="sm" %}</summary><form class="mp-vendor-filter" method="get" action="#vendor-results">{% include "partials/_form_errors.html" %}{% for field in form %}{% include "components/_field.html" with field=field %}{% endfor %}<button class="btn btn--primary" type="submit">{% include "components/_icon.html" with name="search" size="sm" %} جست‌وجو</button></form></details>
+    {% if has_filters %}<p class="ed-filter-summary"><span>نتیجه‌ها بر اساس انتخاب شما</span><a href="{% url 'vendors:list' %}">پاک کردن فیلترها</a></p>{% endif %}
+    {% if vendors or not industry_providers %}<div class="vn-grid">
       {% for v in vendors %}
         {% include "partials/_vendor_card.html" with v=v %}
       {% empty %}
-        <p class="empty">هنوز تابلو‌سازی تأیید نشده است.</p>
+        <div class="at-empty"><h2>{% if form.errors %}فیلترها را اصلاح کنید.{% elif has_filters %}متخصصی با این انتخاب‌ها پیدا نشد.{% else %}شبکهٔ تابلوسازها در حال تکمیل است.{% endif %}</h2><p>می‌توانید درخواست ثبت کنید تا تابلوسازهای مرتبط پروژهٔ شما را ببینند.</p><a class="btn btn--secondary" href="{% url 'requests:wizard_start' %}">ثبت درخواست تابلو</a></div>
       {% endfor %}
     </div>
+    {% include "pages/editorial/_pagination.html" %}{% endif %}
   </section>
+  <section class="section ir-provider-section" aria-labelledby="reference-makers"><div class="at-section-head"><div><p class="at-eyebrow">آشنایی با صنعت</p><h2 id="reference-makers">مجموعه‌ها را از نمونه‌کارهایشان بشناس.</h2><p>خدمات و سبک کار مجموعه‌ها را برای انتخاب تابلو بررسی کنید.</p></div></div><div class="at-makers">{% for provider in industry_providers %}{% include 'partials/_industry_provider_card.html' %}{% empty %}<p class="muted">مجموعه‌ای با این فیلترها پیدا نشد.</p>{% endfor %}</div></section>
 </section>
 {% endblock %}

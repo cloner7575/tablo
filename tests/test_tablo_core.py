@@ -169,6 +169,10 @@ def test_review_only_after_completed(customer, vendor, project_request):
             rating=5,
             comment="عالی",
         )
+    with pytest.raises(ValidationError):
+        complete_order(order=order, user=customer)
+    order.stage = "delivered"
+    order.save(update_fields=["stage"])
     complete_order(order=order, user=customer)
     project_request.refresh_from_db()
     review = create_review(
@@ -449,7 +453,7 @@ def test_vendor_public_shows_rich_profile(client: Client, vendor, service):
 def test_home_ok(client: Client):
     response = client.get(reverse("common:home"))
     assert response.status_code == 200
-    assert "قیمت بگیر" in response.content.decode()
+    assert f'href="{reverse("requests:wizard_start")}' in response.content.decode()
 
 
 @pytest.mark.django_db

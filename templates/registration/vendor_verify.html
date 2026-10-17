@@ -1,16 +1,5 @@
-{% extends "base.html" %}
-
+{% extends "registration/base_auth.html" %}
 {% block title %}تأیید ثبت‌نام | {{ SITE_NAME }}{% endblock %}
-
-{% block content %}
-<section class="section section--narrow">
-  <h1>تأیید شماره</h1>
-  <form method="post" class="stack-form">
-    {% csrf_token %}
-    {% for field in form %}
-      {% include "components/_field.html" with field=field %}
-    {% endfor %}
-    <button class="btn btn--primary" type="submit">تأیید و ادامه</button>
-  </form>
-</section>
-{% endblock %}
+{% block auth_heading %}یک قدم تا میز کارت.{% endblock %}
+{% block auth_intro %}<p class="auth-card__aside">کد تأیید شمارهٔ <bdi dir="ltr">{{ phone }}</bdi> را وارد کن تا معرفی کارگاهت را ادامه بدهی.</p>{% endblock %}
+{% block auth_body %}<form method="post" class="stack-form" data-busy-submit>{% csrf_token %}{% include "partials/_form_errors.html" %}{% for field in form %}{% include "components/_field.html" with field=field %}{% endfor %}<button class="btn btn--primary btn--block" type="submit" data-busy-label="در حال بررسی…">تأیید و ادامه</button></form><a class="at-text-link" href="{% url 'accounts:vendor_register' %}">تغییر شمارهٔ موبایل</a>{% endblock %}

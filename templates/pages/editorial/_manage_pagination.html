@@ -1,0 +1,2 @@
+{% load persian %}
+{% if page.has_other_pages %}<nav class="ed-pagination" aria-label="صفحه‌های مدیریت">{% if page.has_previous %}<a href="?{{ param }}={{ page.previous_page_number }}">صفحهٔ قبل</a>{% endif %}<span>صفحهٔ {{ page.number|fa_digits }} از {{ page.paginator.num_pages|fa_digits }}</span>{% if page.has_next %}<a href="?{{ param }}={{ page.next_page_number }}">صفحهٔ بعد</a>{% endif %}</nav>{% endif %}

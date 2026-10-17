@@ -1,18 +1,5 @@
-{% extends "base.html" %}
-
+{% extends "registration/base_auth.html" %}
 {% block title %}تأیید کد | {{ SITE_NAME }}{% endblock %}
-
-{% block content %}
-<section class="section section--narrow">
-  <h1>کد تأیید را وارد کنید</h1>
-  <p>کد به <bdi dir="ltr">{{ phone }}</bdi> ارسال شد.</p>
-  <form method="post" class="stack-form">
-    {% csrf_token %}
-    {% include "partials/_form_errors.html" %}
-    {% for field in form %}
-      {% include "components/_field.html" with field=field %}
-    {% endfor %}
-    <button class="btn btn--primary" type="submit">ورود</button>
-  </form>
-</section>
-{% endblock %}
+{% block auth_heading %}کد ورود را وارد کن.{% endblock %}
+{% block auth_intro %}<p class="auth-card__aside">کد تأیید شمارهٔ <bdi dir="ltr">{{ phone }}</bdi> را وارد کن.</p>{% endblock %}
+{% block auth_body %}<form method="post" class="stack-form" data-busy-submit>{% csrf_token %}{% include "partials/_form_errors.html" %}{% for field in form %}{% include "components/_field.html" with field=field %}{% endfor %}<button class="btn btn--primary btn--block" type="submit" data-busy-label="در حال بررسی…">ورود به حساب</button></form><a class="at-text-link" href="{% url 'accounts:login' %}">تغییر شمارهٔ موبایل</a>{% endblock %}

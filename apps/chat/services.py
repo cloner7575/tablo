@@ -84,8 +84,9 @@ def _mark_negotiating(*, quote: Quote) -> None:
 def get_or_open_conversation(*, quote: Quote, user) -> Conversation:
     """Open chat for a quote.
 
-    Only the customer may start a conversation. Vendors may join an existing
-    thread after the customer has opened it.
+    The customer can initiate negotiation. The assigned vendor can also open
+    execution chat after their quote has been accepted. Other vendors only
+    join conversations the customer has already opened.
     """
     if not user_can_access_quote(quote=quote, user=user):
         raise PermissionDenied(_("دسترسی به این گفتگو مجاز نیست."))
@@ -101,7 +102,12 @@ def get_or_open_conversation(*, quote: Quote, user) -> Conversation:
         return conversation
 
     is_customer = quote.request.customer_id == user.id
-    if not is_customer:
+    assigned_vendor = (
+        quote.status == QuoteStatus.ACCEPTED
+        and quote.request.status == RequestStatus.ACCEPTED
+        and quote.vendor.user_id == user.pk
+    )
+    if not is_customer and not assigned_vendor:
         raise ChatError(_("گفتگو هنوز توسط مشتری شروع نشده است."))
 
     conversation = Conversation.objects.create(quote=quote)

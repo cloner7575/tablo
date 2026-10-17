@@ -58,7 +58,11 @@ def panel_context(vendor: Vendor, active: str, **extra: object) -> dict[str, obj
     return {
         "vendor": vendor,
         "panel_active": active,
-        "new_requests_count": open_requests_count(vendor),
-        "unread_chat_count": unread_chat_count_for_vendor(vendor=vendor),
+        "new_requests_count": extra.get("new_requests_count")
+        if "new_requests_count" in extra
+        else open_requests_count(vendor),
+        "unread_chat_count": extra.get("unread_chat_count")
+        if "unread_chat_count" in extra
+        else unread_chat_count_for_vendor(vendor=vendor),
         **extra,
     }

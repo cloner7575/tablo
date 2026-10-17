@@ -15,6 +15,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 SITE_NAME = os.getenv("DJANGO_SITE_NAME", "Core")
+PUBLIC_SITE_URL = os.getenv("DJANGO_SITE_URL", "").strip().rstrip("/")
+if PUBLIC_SITE_URL:
+    public_parts = urlparse(PUBLIC_SITE_URL)
+    if (
+        public_parts.scheme not in {"http", "https"}
+        or not public_parts.netloc
+        or public_parts.path
+        or public_parts.query
+        or public_parts.fragment
+        or public_parts.username
+    ):
+        raise ValueError(
+            "DJANGO_SITE_URL must be an absolute site origin, such as https://example.com"
+        )
 
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
@@ -49,6 +63,7 @@ INSTALLED_APPS = [
     "apps.quotes.apps.QuotesConfig",
     "apps.orders.apps.OrdersConfig",
     "apps.portfolio.apps.PortfolioConfig",
+    "apps.editorial.apps.EditorialConfig",
     "apps.reviews.apps.ReviewsConfig",
     "apps.notifications.apps.NotificationsConfig",
     "apps.payments.apps.PaymentsConfig",

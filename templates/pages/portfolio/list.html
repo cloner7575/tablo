@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load persian %}
+{% block title %}نمونه تابلو مغازه؛ مدل دلخواهتان را پیدا کنید | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}نمونه تابلوهای مغازه را ببینید، بر اساس نوع تابلو و شهر جست‌وجو کنید و مدل‌های دلخواهتان را برای سفارش ذخیره کنید.{% endblock %}
+{% block body_class %}page-discovery{% endblock %}
+{% block content %}
+<header class="at-page-head"><div><p class="at-eyebrow">نمونه تابلوها</p><h1>چه تابلویی<br><span>به مغازه‌ات می‌آید؟</span></h1><p>مدل‌ها را ببین و هر کدام را که دوست داری ذخیره کن تا به تابلوساز نشان بدهی. نوع تصویر روی هر کارت مشخص است.</p></div><a class="btn btn--secondary" href="{% url 'editorial:saved' %}">{% include "components/_icon.html" with name="bookmark" size="sm" %} ذخیره‌های من</a></header>
+<details class="ux-filter-panel" data-responsive-filter open {% if query or selected_service or selected_city %}data-filter-active{% endif %}><summary>{% include "components/_icon.html" with name="sliders" size="sm" %}<span>جست‌وجو و فیلترها</span><span class="ux-filter-summary">سبک دلخواهت را پیدا کن</span>{% include "components/_icon.html" with name="chevron-down" size="sm" %}</summary><form class="at-filter" method="get">
+  <div class="field at-filter__search"><label for="gallery-query">جست‌وجوی پروژه یا تابلوساز</label><input id="gallery-query" name="q" type="search" value="{{ query }}" maxlength="80" placeholder="مثلاً کافه، استیل یا نام کارگاه"></div>
+  <div class="field"><label for="gallery-service">نوع تابلو</label><select id="gallery-service" name="service"><option value="">همهٔ انواع</option>{% for s in services %}<option value="{{ s.slug }}" {% if selected_service == s.slug %}selected{% endif %}>{{ s.title }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="gallery-city">شهر اجرا</label><select id="gallery-city" name="city"><option value="">همهٔ شهرها</option>{% for c in cities %}<option value="{{ c.slug }}" {% if selected_city == c.slug %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="gallery-sort">مرتب‌سازی</label><select id="gallery-sort" name="sort"><option value="newest" {% if sort == 'newest' %}selected{% endif %}>جدیدترین</option><option value="maker" {% if sort == 'maker' %}selected{% endif %}>امتیاز اعضای سایت</option></select></div>
+  <button class="btn btn--primary" type="submit">{% include "components/_icon.html" with name="search" size="sm" %} جست‌وجو</button>
+</form></details>
+<div class="at-results-head"><p>{{ page_obj.paginator.count|fa_digits }} نمونه‌کار{% if query %} برای «<bdi>{{ query }}</bdi>»{% endif %}</p>{% if query or selected_city or selected_service %}<a href="{% url 'portfolio:list' %}">پاک کردن فیلترها</a>{% else %}<span>با ذخیرهٔ نمونه‌ها، ذخیره‌های خودت را بساز.</span>{% endif %}</div>
+<div class="at-project-grid">
+  {% for item in page_obj %}{% include "pages/portfolio/_discovery_card.html" with destination="gallery" %}{% empty %}<div class="at-empty">{% include "components/_icon.html" with name="search-x" size="lg" %}<h2>نمونه‌ای با این مشخصات پیدا نشد.</h2><p>جست‌وجو را گسترده‌تر کن یا مشخصات پروژهٔ خودت را ثبت کن.</p><div class="at-actions"><a class="btn btn--secondary" href="{% url 'portfolio:list' %}">نمایش همه</a><a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">درخواست قیمت تابلو</a></div></div>{% endfor %}
+</div>
+{% if page_obj.has_other_pages %}<nav class="at-pagination" aria-label="صفحه‌های گالری">{% if page_obj.has_previous %}<a class="btn btn--secondary" href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">صفحهٔ قبل</a>{% endif %}<span>صفحهٔ {{ page_obj.number|fa_digits }} از {{ page_obj.paginator.num_pages|fa_digits }}</span>{% if page_obj.has_next %}<a class="btn btn--secondary" href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">صفحهٔ بعد</a>{% endif %}</nav>{% endif %}
+{% endblock %}

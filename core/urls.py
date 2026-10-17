@@ -3,19 +3,21 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
-from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 import apps.common.converters  # noqa: F401 — register <uslug:>
 from apps.common.sitemaps import sitemaps
+from apps.common.views import robots
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("apps.accounts.urls")),
+    path("orders/", include("apps.orders.urls")),
     path("request/", include("apps.requests.urls")),
     path("vendors/", include("apps.vendors.urls")),
     path("chats/", include("apps.chat.urls")),
     path("portfolio/", include("apps.portfolio.urls")),
+    path("", include("apps.editorial.urls")),
     path("api/", include("core.api_urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
@@ -31,7 +33,7 @@ urlpatterns = [
     ),
     path(
         "robots.txt",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+        robots,
         name="robots",
     ),
     path("i18n/", include("django.conf.urls.i18n")),

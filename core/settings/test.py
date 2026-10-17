@@ -13,6 +13,7 @@ DEBUG = False
 ALLOWED_HOSTS = ["testserver", "localhost", "127.0.0.1"]
 
 SITE_NAME = "Core"
+PUBLIC_SITE_URL = ""
 LANGUAGE_CODE = "en-us"
 LANGUAGES = [("en-us", "English")]
 TEXT_DIRECTION = "ltr"

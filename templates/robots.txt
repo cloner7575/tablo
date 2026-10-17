@@ -2,8 +2,18 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /accounts/
-Disallow: /vendor/
-Disallow: /request/dashboard/
+Disallow: /orders/
+Disallow: /request/
+Disallow: /chats/
 Disallow: /api/
+Disallow: /portfolio/manage/
+Disallow: /inspiration/manage/
+Disallow: /inspiration/saved/
+Disallow: /vendors/dashboard/
+Disallow: /vendors/requests/
+Disallow: /vendors/quotes/
+Disallow: /vendors/chats/
+Disallow: /vendors/profile/
+Disallow: /vendors/onboarding/
 
-Sitemap: /sitemap.xml
+Sitemap: {{ SITEMAP_URL }}

@@ -2,7 +2,7 @@
 {% load persian %}
 
 {% block title %}گفتگوها | {{ SITE_NAME }}{% endblock %}
-{% block body_class %}{% if role == "vendor" %}page-vendor-panel{% else %}page-chat{% endif %}{% endblock %}
+{% block body_class %}{% if role == "vendor" %}page-vendor-panel{% else %}page-chat page-customer-panel{% endif %}{% endblock %}
 
 {% block content %}
 {% if role == "vendor" %}
@@ -22,13 +22,13 @@
   </section>
 </div>
 {% else %}
-<section class="section chat-inbox">
+<div class="ws-workspace"><section class="ws-shell">{% include "partials/_customer_panel_nav.html" with customer_panel_active="chats" %}<div class="ws-main"><section class="chat-inbox">
   <header class="section__head">
     <p class="section__eyebrow">مذاکره با تابلو‌سازها</p>
     <h1>گفتگوها</h1>
     <p class="muted">برای هر پیشنهاد یک گفتگوی جدا دارید تا مقایسه شفاف بماند.</p>
   </header>
   {% include "pages/chat/_inbox_list.html" %}
-</section>
+</section></div></section></div>
 {% endif %}
 {% endblock %}

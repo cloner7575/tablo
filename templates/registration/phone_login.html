@@ -1,19 +1,5 @@
-{% extends "base.html" %}
-
+{% extends "registration/base_auth.html" %}
 {% block title %}ورود با موبایل | {{ SITE_NAME }}{% endblock %}
-
-{% block content %}
-<section class="section section--narrow">
-  <h1>ورود با شماره موبایل</h1>
-  <p class="muted">کد تأیید برای شما پیامک می‌شود (در محیط توسعه در کنسول چاپ می‌شود).</p>
-  <form method="post" class="stack-form">
-    {% csrf_token %}
-    {% include "partials/_form_errors.html" %}
-    {% for field in form %}
-      {% include "components/_field.html" with field=field %}
-    {% endfor %}
-    <button class="btn btn--primary btn--block" type="submit">دریافت کد</button>
-  </form>
-  <p class="muted"><a href="{% url 'accounts:password_login' %}">ورود با رمز عبور (کارکنان)</a></p>
-</section>
-{% endblock %}
+{% block auth_heading %}به میز کارت خوش آمدی.{% endblock %}
+{% block auth_intro %}<p class="auth-card__aside">شمارهٔ موبایلت را وارد کن تا با کد یک‌بارمصرف وارد شوی.</p>{% endblock %}
+{% block auth_body %}<form method="post" class="stack-form" data-busy-submit>{% csrf_token %}{% include "partials/_form_errors.html" %}{% for field in form %}{% include "components/_field.html" with field=field %}{% endfor %}<button class="btn btn--primary btn--block" type="submit" data-busy-label="در حال بررسی…">دریافت کد ورود</button></form><p class="auth-card__aside">تابلوساز هستی؟ <a href="{% url 'accounts:vendor_register' %}">معرفی کارگاه و عضویت</a></p><a class="ux-auth-staff" href="{% url 'accounts:password_login' %}">ورود کارکنان با رمز عبور</a>{% endblock %}

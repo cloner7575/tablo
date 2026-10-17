@@ -1,0 +1,2 @@
+{% load persian %}
+{% if page_obj.has_other_pages %}<nav class="at-pagination" aria-label="صفحه‌های محتوا">{% if page_obj.has_previous %}<a class="btn btn--secondary" href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">صفحهٔ قبل</a>{% endif %}<span>صفحهٔ {{ page_obj.number|fa_digits }} از {{ page_obj.paginator.num_pages|fa_digits }}</span>{% if page_obj.has_next %}<a class="btn btn--secondary" href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">صفحهٔ بعد</a>{% endif %}</nav>{% endif %}

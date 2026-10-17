@@ -1,0 +1,480 @@
+{
+  "checked_on": "2026-10-13",
+  "providers": [
+    {
+      "key": "novin",
+      "name": "نوین گرافیک",
+      "website": "https://novin-graphics.com/",
+      "city_slug": "tehran",
+      "city_name": "تهران",
+      "image": "novin-gerad.webp",
+      "services": [
+        "chalnium",
+        "steel",
+        "lightbox",
+        "neon",
+        "flexi",
+        "plexi",
+        "wayfinding"
+      ],
+      "description": "حروف برجسته، تابلوهای فروشگاهی و راهنمای طبقات."
+    },
+    {
+      "key": "namatabesh",
+      "name": "نما تابش",
+      "website": "https://namatabesh.com/",
+      "city_slug": "",
+      "city_name": "",
+      "image": "namatabesh-vozara.webp",
+      "services": [
+        "chalnium",
+        "steel",
+        "composite",
+        "plexi",
+        "lasvegas",
+        "led"
+      ],
+      "description": "نمونه‌های حروف استیل، چلنیوم، کامپوزیت و تابلوهای نورانی."
+    },
+    {
+      "key": "rangin",
+      "name": "رنگین‌رسانه",
+      "website": "https://ranginrasaneh.com/",
+      "city_slug": "",
+      "city_name": "",
+      "image": "rangin-national-jewels.webp",
+      "services": [
+        "steel",
+        "composite",
+        "lightbox",
+        "wayfinding",
+        "flexi",
+        "wood",
+        "swedish"
+      ],
+      "description": "تابلوهای نما، نام ساختمان، راهنما و تابلوهای فضای داخلی."
+    },
+    {
+      "key": "doral",
+      "name": "دورال",
+      "website": "https://www.doralsign.com/",
+      "city_slug": "mashhad",
+      "city_name": "مشهد",
+      "image": "doral-chalnium.webp",
+      "services": [
+        "chalnium",
+        "steel",
+        "lightbox",
+        "flexi",
+        "composite",
+        "plexi",
+        "led"
+      ],
+      "description": "خدمات حروف برجسته، لایت‌باکس، فلکسی و نمای مغازه."
+    },
+    {
+      "key": "brandtablo",
+      "name": "برند تابلو",
+      "website": "https://brandtablo.com/",
+      "city_slug": "tehran",
+      "city_name": "تهران",
+      "image": "",
+      "services": [
+        "chalnium",
+        "composite",
+        "steel",
+        "wood",
+        "lasvegas"
+      ],
+      "description": "تابلوهای چلنیوم، استیل و نماهای ترکیبی همراه راهنمای انتخاب تابلو."
+    },
+    {
+      "key": "diba",
+      "name": "تابلو دیبا",
+      "website": "https://tablodiba.com/",
+      "city_slug": "tehran",
+      "city_name": "تهران",
+      "image": "diba-office.webp",
+      "services": [
+        "chalnium",
+        "steel",
+        "lightbox",
+        "wayfinding"
+      ],
+      "description": "انواع تابلو، نشانه‌های راهنما و خدمات تابلوسازی."
+    },
+    {
+      "key": "novinlight",
+      "name": "نوین لایت",
+      "website": "https://novinlight.com/",
+      "city_slug": "tehran",
+      "city_name": "تهران",
+      "image": "novinlight-lasvegas.webp",
+      "services": [
+        "chalnium",
+        "lightbox",
+        "neon",
+        "composite",
+        "steel",
+        "wood",
+        "swedish",
+        "lasvegas"
+      ],
+      "description": "خدمات تابلوهای نورانی، لایت‌باکس و نماهای ترکیبی کامپوزیت و ترموود."
+    }
+  ],
+  "services": [
+    {
+      "slug": "chalnium",
+      "title": "تابلو چلنیوم",
+      "description": "حروف برجسته با رویهٔ پلکسی و لبهٔ چلنیوم؛ نور داخل حروف، نام مغازه را در شب روشن می‌کند.",
+      "suitable_for": "سردر مغازه، داروخانه و فروشگاه",
+      "materials": "پلکسی، لبهٔ چلنیوم، پی‌وی‌سی و نور اس‌ام‌دی",
+      "image": "doral-chalnium.webp",
+      "source_name": "دورال",
+      "source_url": "https://www.doralsign.com/",
+      "faq": [
+        {
+          "question": "چلنیوم چه فرقی با نئون فلکسی دارد؟",
+          "answer": "چلنیوم حروف حجمی با رویهٔ پلکسی است؛ نئون فلکسی یک خط نوری منعطف برای ترسیم نوشته و شکل است."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "steel",
+      "title": "تابلو استیل",
+      "description": "حروف و لوگوی فلزی براق یا مات؛ با نور پشت حروف یا بدون نور ساخته می‌شود.",
+      "suitable_for": "شرکت، رستوران، طلافروشی و لابی",
+      "materials": "ورق استیل، زیرسازی و در صورت نیاز نور پشت حروف",
+      "image": "novin-gerad.webp",
+      "source_name": "نوین گرافیک",
+      "source_url": "https://novin-graphics.com/",
+      "faq": [
+        {
+          "question": "نور پشت حروف استیل چیست؟",
+          "answer": "در این مدل نور از پشت حروف به زمینه می‌تابد؛ رویهٔ فلزی حروف مانند پلکسی شفاف نور را عبور نمی‌دهد."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "composite",
+      "title": "نمای کامپوزیت و تابلو",
+      "description": "کامپوزیت زمینهٔ سردر است و معمولاً با حروف برجسته ترکیب می‌شود؛ جنس حروف را جداگانه انتخاب می‌کنید.",
+      "suitable_for": "سردر فروشگاه و نمای تجاری",
+      "materials": "ورق کامپوزیت، زیرسازی فلزی و حروف انتخابی",
+      "image": "novin-amir-chocolate.webp",
+      "source_name": "نوین گرافیک",
+      "source_url": "https://novin-graphics.com/",
+      "faq": [
+        {
+          "question": "کامپوزیت جنس حروف تابلوست؟",
+          "answer": "کامپوزیت معمولاً زمینه و پوشش سردر است. جنس حروف، نور و زیرسازی باید جداگانه در پیشنهاد نوشته شوند."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "lightbox",
+      "title": "تابلو لایت‌باکس",
+      "description": "باکس نوردار برای نمایش تصویر، لوگو یا منو؛ به شکل دیواری، ایستاده یا دوطرفه عرضه می‌شود.",
+      "suitable_for": "فروشگاه، منوی رستوران و فضای داخلی",
+      "materials": "قاب آلومینیومی یا فلزی، رویهٔ چاپی و نور داخلی",
+      "image": "novinlight-lightbox.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "faq": [
+        {
+          "question": "لایت‌باکس با حروف برجسته چه فرقی دارد؟",
+          "answer": "لایت‌باکس یک قاب نوردار با سطح تصویری یا نوشته است؛ در تابلو حروف برجسته، خود حروف حجم مستقل دارند."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "neon",
+      "title": "تابلو نئون فلکسی",
+      "description": "خط نوری منعطف برای نوشته و طرح؛ بیشتر برای تابلوی داخل مغازه، کافه و دیوار استفاده می‌شود.",
+      "suitable_for": "کافه، رستوران، سالن زیبایی و فضای داخلی",
+      "materials": "نئون فلکسی، منبع تغذیه و پایهٔ پلکسی",
+      "image": "novinlight-neon.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "faq": [
+        {
+          "question": "نئون فلکسی همان نئون شیشه‌ای است؟",
+          "answer": "خیر. نئون فلکسی از خط نوری منعطف استفاده می‌کند؛ نئون شیشه‌ای با لولهٔ شیشه‌ای ساخته می‌شود."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "plexi",
+      "title": "حروف پلکسی و پلاستیک",
+      "description": "حروف و نشان‌های ساخته‌شده از پلکسی؛ رنگ، حجم و نور آن‌ها با طرح کسب‌وکار هماهنگ می‌شود.",
+      "suitable_for": "سردر مغازه، لوگوی دیوار و تابلوهای داخلی",
+      "materials": "پلکسی رنگی، زیرسازی و در مدل نوردار نور داخلی",
+      "image": "namatabesh-plexi.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "faq": [
+        {
+          "question": "حروف پلکسی همیشه نوردار است؟",
+          "answer": "خیر. پلکسی برای مدل‌های ساده و نوردار استفاده می‌شود؛ نور، ضخامت و روش نصب به طرح بستگی دارند."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "flexi",
+      "title": "تابلو فلکسی",
+      "description": "طرح روی پارچهٔ مخصوص تابلو چاپ می‌شود و روی قاب نصب می‌شود؛ نور می‌تواند از پشت یا با پروژکتور باشد.",
+      "suitable_for": "سردر فروشگاه، خدمات و تابلوهای بزرگ چاپی",
+      "materials": "چاپ فلکسی، قاب فلزی و تجهیزات نور طبق طرح",
+      "image": "doral-flex.webp",
+      "source_name": "دورال",
+      "source_url": "https://www.doralsign.com/",
+      "faq": [
+        {
+          "question": "نور تابلوی فلکسی چطور تأمین می‌شود؟",
+          "answer": "می‌توان پشت سطح چاپی نور قرار داد یا آن را با پروژکتور روشن کرد. محل و روش نورپردازی در پیشنهاد مشخص شود."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "wood",
+      "title": "نمای ترموود و تابلو",
+      "description": "زمینهٔ چوبی برای نصب حروف یا لوگو؛ نوع چوب و جزئیات نصب باید با شرایط محل سازگار باشد.",
+      "suitable_for": "کافه، رستوران و نمای فروشگاه",
+      "materials": "ترموود، زیرسازی و حروف برجستهٔ انتخابی",
+      "image": "novinlight-wood.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "faq": [
+        {
+          "question": "ترموود جای حروف تابلو را می‌گیرد؟",
+          "answer": "ترموود زمینهٔ چوبی سردر است؛ نوشته و لوگو معمولاً با حروف یا نشان جداگانه روی آن نصب می‌شوند."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "swedish",
+      "title": "حروف لبه سوئدی",
+      "description": "حروف برجسته با لبهٔ باریک و رویهٔ صاف؛ برای نوشته‌ها و لوگوهای ساده و خوانا استفاده می‌شود.",
+      "suitable_for": "فروشگاه، شرکت و تابلوی نام برند",
+      "materials": "لبهٔ آلومینیومی، رویهٔ پلکسی و نور داخلی",
+      "image": "novinlight-swedish.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "faq": [
+        {
+          "question": "لبه سوئدی برای چه طرحی مناسب است؟",
+          "answer": "لبهٔ باریک این حروف برای نوشته‌ها و لوگوهای ساده استفاده می‌شود؛ ضخامت و اندازه را با تابلوساز بررسی کنید."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "lasvegas",
+      "title": "تابلو لاسوگاسی",
+      "description": "حروف برجسته با لامپ‌های قابل دیدن روی حروف؛ ظاهر آن بر پایهٔ نورهای نقطه‌ای است.",
+      "suitable_for": "رستوران، کافه و فضای فروشگاهی",
+      "materials": "بدنهٔ حروف، لامپ‌های نقطه‌ای و سیم‌کشی",
+      "image": "namatabesh-lasvegas.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "faq": [
+        {
+          "question": "چرا نور تابلو لاسوگاسی نقطه‌ای است؟",
+          "answer": "لامپ‌های روی حروف دیده می‌شوند و بخشی از ظاهر تابلو هستند؛ با نور یکنواخت داخل حروف متفاوت است."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "wayfinding",
+      "title": "تابلو راهنمای طبقات و اتاق",
+      "description": "تابلوهای معرفی طبقه، اتاق و مسیر برای کمک به پیدا کردن مقصد در ساختمان.",
+      "suitable_for": "شرکت، مطب، بیمارستان و مجتمع تجاری",
+      "materials": "پلکسی، آلومینیوم، استیل یا ترکیب مواد طبق محل",
+      "image": "rangin-wayfinding.webp",
+      "source_name": "رنگین‌رسانه",
+      "source_url": "https://ranginrasaneh.com/",
+      "faq": [
+        {
+          "question": "برای تابلوی راهنما چه اطلاعاتی لازم است؟",
+          "answer": "نام طبقات و اتاق‌ها، مسیرها، محل نصب و امکان تغییر نام واحدها را پیش از طراحی مشخص کنید."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    },
+    {
+      "slug": "led",
+      "title": "تابلو ال‌ای‌دی و روان",
+      "description": "نمایش نوشته و پیام با ماژول‌های ال‌ای‌دی؛ مدل ثابت و روان را از روشنایی داخل حروف تفکیک کنید.",
+      "suitable_for": "سردر مغازه و نمایش پیام فروشگاه",
+      "materials": "ماژول ال‌ای‌دی، کنترلر، منبع تغذیه و قاب",
+      "image": "namatabesh-led.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "faq": [
+        {
+          "question": "تابلو روان با نور ال‌ای‌دی داخل حروف یکی است؟",
+          "answer": "خیر. تابلو روان پیام را با ماژول و کنترلر نمایش می‌دهد؛ نور داخل حروف فقط نوشتهٔ ثابت را روشن می‌کند."
+        },
+        {
+          "question": "برای دریافت قیمت چه اطلاعاتی لازم است؟",
+          "answer": "عکس محل، نوشتهٔ تابلو و اندازهٔ تقریبی را آماده کنید. جنس، نور، زیرسازی و هزینهٔ نصب را پیش از ساخت با تابلوساز نهایی کنید."
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "slug": "reference-novin-amir-chocolate",
+      "title": "سردر امیرشکلات",
+      "description": "سردر امیرشکلات با زمینهٔ تیره و حروف برجسته؛ ترکیب نوشتهٔ فارسی و انگلیسی روی نمای فروشگاه.",
+      "service": "composite",
+      "image": "novin-amir-chocolate.webp",
+      "source_name": "نوین گرافیک",
+      "source_url": "https://novin-graphics.com/",
+      "source_image_url": "https://novin-graphics.com/wp-content/uploads/2026/10/%D8%AA%D8%A7%D8%A8%D9%84%D9%88-%D8%A7%D9%85%DB%8C%D8%B1%D8%B4%DA%A9%D9%84%D8%A7%D8%AA-3.webp"
+    },
+    {
+      "slug": "reference-novin-gerad",
+      "title": "حروف استیل گراد",
+      "description": "حروف و نشان استیل گراد روی زمینهٔ تیره و دیوار طرح‌دار.",
+      "service": "steel",
+      "image": "novin-gerad.webp",
+      "source_name": "نوین گرافیک",
+      "source_url": "https://novin-graphics.com/",
+      "source_image_url": "https://novin-graphics.com/wp-content/uploads/2026/10/%D8%AA%D8%A7%D8%A8%D9%84%D9%88-%D8%A7%D8%B3%D8%AA%DB%8C%D9%84-%DA%AF%D8%B1%D8%A7%D8%AF-2.webp"
+    },
+    {
+      "slug": "reference-namatabesh-vozara",
+      "title": "تابلو استیل رستوران وزرا",
+      "description": "حروف برجستهٔ رستوران وزرا روی زمینهٔ چوبی؛ ترکیب رنگ گرم چوب با حروف استیل.",
+      "service": "steel",
+      "image": "namatabesh-vozara.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "source_image_url": "https://namatabesh.com/storages/sample/qNZHioJ23ml5P1HCrxAgrchZJF7nOzbIju657eJj.jpg"
+    },
+    {
+      "slug": "reference-namatabesh-shirin-asal",
+      "title": "تابلو شیرین‌عسل",
+      "description": "تابلوی فروشگاه شیرین‌عسل با حروف روشن و زمینهٔ کامپوزیت تیره.",
+      "service": "composite",
+      "image": "namatabesh-shirin-asal.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "source_image_url": "https://namatabesh.com/storages/sample/mxxGZn30oZmijNuJzdutZPnCdb2uMQv32oUWq49h.jpg"
+    },
+    {
+      "slug": "reference-rangin-national-jewels",
+      "title": "تابلو موزهٔ جواهرات ملی",
+      "description": "حروف نام موزهٔ جواهرات ملی روی نمای ساختمان.",
+      "service": "steel",
+      "image": "rangin-national-jewels.webp",
+      "source_name": "رنگین‌رسانه",
+      "source_url": "https://ranginrasaneh.com/",
+      "source_image_url": "https://ranginrasaneh.com/wp-content/uploads/2021/03/javaherat-melli-musem-signage.jpg"
+    },
+    {
+      "slug": "reference-namatabesh-aramis",
+      "title": "تابلو چلنیوم آرامیس",
+      "description": "تابلوی آرامیس با حروف چلنیوم و ترکیب نور و زمینهٔ تیره.",
+      "service": "chalnium",
+      "image": "namatabesh-aramis.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "source_image_url": "https://namatabesh.com/storages/sample/rJ56hbK6Rb5DZoMgVc1IcdDR3eUb8SIzBqWsB6Gx.jpg"
+    },
+    {
+      "slug": "reference-namatabesh-parsina",
+      "title": "حروف فلزی پارسینا",
+      "description": "حروف و نشان فلزی پارسینا با زمینهٔ ساده و روشن.",
+      "service": "",
+      "image": "namatabesh-parsina.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "source_image_url": "https://namatabesh.com/storages/sample/d7OAwJdvtloC5ozUrfvHNZLor2itdGMGP14FVU9P.jpg"
+    },
+    {
+      "slug": "reference-rangin-wayfinding",
+      "title": "تابلو راهنمای رفاه فرازان هدف",
+      "description": "تابلو راهنمای طبقات و واحدهای شرکت رفاه فرازان هدف.",
+      "service": "wayfinding",
+      "image": "rangin-wayfinding.webp",
+      "source_name": "رنگین‌رسانه",
+      "source_url": "https://ranginrasaneh.com/table-guide-for-classes/",
+      "source_image_url": "https://ranginrasaneh.com/wp-content/uploads/2021/06/photo_2021-04-30_18-02-43.jpg"
+    },
+    {
+      "slug": "reference-namatabesh-plexi",
+      "title": "حروف پلاستیک آفاق",
+      "description": "حروف پلاستیک آفاق با نور داخلی و رویهٔ رنگی.",
+      "service": "plexi",
+      "image": "namatabesh-plexi.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "source_image_url": "https://namatabesh.com/storages/sample/AVG4YBCvQTBS1SvlHbSinwJl6jCFaqaW21nPVk6s.jpg"
+    },
+    {
+      "slug": "reference-namatabesh-lasvegas",
+      "title": "حروف لاسوگاسی",
+      "description": "حروف لاسوگاسی با لامپ‌های نقطه‌ای روی بدنهٔ حروف.",
+      "service": "lasvegas",
+      "image": "namatabesh-lasvegas.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "source_image_url": "https://namatabesh.com/storages/sample/8VHIUwLJ5WIjIQOMlnChihgrVqMp29NjPXQzv7aT.jpg"
+    },
+    {
+      "slug": "reference-namatabesh-led",
+      "title": "تابلو روان Welcome",
+      "description": "تابلو روان Welcome برای نمایش پیام با ماژول‌های ال‌ای‌دی.",
+      "service": "led",
+      "image": "namatabesh-led.webp",
+      "source_name": "نما تابش",
+      "source_url": "https://namatabesh.com/",
+      "source_image_url": "https://namatabesh.com/storages/sample/oUuYUiWdu4u0CRydUoPbCBdaFk1VvL66oTm6fNvw.jpg"
+    }
+  ]
+}

@@ -4,22 +4,35 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.paginator import Paginator
+from django.db.models import F, Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.decorators.http import require_http_methods
+from django.utils.translation import gettext as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
+from apps.catalog.models import Service
 from apps.common.persian import to_persian_digits
+from apps.common.seo import breadcrumbs, public_url
+from apps.editorial.collections import save_reference
+from apps.locations.models import City
 from apps.portfolio.demo import attach_demo_image
 from apps.portfolio.forms import (
+    BoardActionForm,
     PortfolioCreateForm,
     PortfolioForm,
     PortfolioMediaForm,
     max_media,
 )
+from apps.portfolio.inspiration import (
+    board_ids,
+)
 from apps.portfolio.models import PortfolioItem, PortfolioMedia
 from apps.portfolio.selectors import (
     detail_queryset,
+    discoverable_items,
     portfolio_slides,
     published_items,
     vendor_item_counts,
@@ -88,9 +101,17 @@ def portfolio_detail(request: HttpRequest, slug: str) -> HttpResponse:
     thumbs = slides[: THUMB_SLOTS - 1] if overflow else slides
     return render(
         request,
-        "pages/portfolio/detail.html",
+        "pages/portfolio/reference_detail.html"
+        if item.is_reference
+        else "pages/portfolio/detail.html",
         {
             "item": item,
+            "saved_ids": board_ids(request),
+            "SEO_TITLE": item.title,
+            "SEO_DESCRIPTION": (item.description or item.title)[:200],
+            "SEO_IMAGE": public_url(request, slides[0].thumb)
+            if slides and slides[0].thumb
+            else "",
             "vendor": item.vendor,
             "slides": slides,
             "thumbs": thumbs if len(slides) > 1 else [],
@@ -100,6 +121,26 @@ def portfolio_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "photo_count": sum(1 for s in slides if not s.is_video),
             "video_count": sum(1 for s in slides if s.is_video),
             "related": _related_items(item),
+            "work_schema": {
+                "@context": "https://schema.org",
+                "@type": "CreativeWork",
+                "name": item.title,
+                "description": (item.description or item.title)[:200],
+                "url": public_url(request, request.path),
+                **(
+                    {"creator": {"@type": "Organization", "name": item.creator_name}}
+                    if not item.is_reference
+                    else {}
+                ),
+            },
+            "breadcrumb_schema": breadcrumbs(
+                request,
+                [
+                    ("خانه", "/"),
+                    ("نمونه‌کارها", reverse("portfolio:list")),
+                    (item.title, request.path),
+                ],
+            ),
         },
     )
 
@@ -312,3 +353,93 @@ def portfolio_delete(request: HttpRequest, pk: int) -> HttpResponse:
     delete_item(item=item)
     messages.success(request, "نمونه‌کار حذف شد.")
     return redirect("portfolio:manage")
+
+
+@never_cache
+@require_GET
+def gallery(request: HttpRequest) -> HttpResponse:
+    query = request.GET.get("q", "").strip()[:80]
+    service = request.GET.get("service", "")[:140]
+    city = request.GET.get("city", "")[:140]
+    order = request.GET.get("sort", "newest")
+    if order not in {"newest", "maker"}:
+        order = "newest"
+    items = discoverable_items()
+    if query:
+        items = items.filter(
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(vendor__business_name__icontains=query)
+            | Q(source_name__icontains=query)
+            | Q(service__suitable_for__icontains=query)
+        )
+    if service:
+        items = items.filter(service__slug=service)
+    if city:
+        items = items.filter(city__slug=city)
+    items = (
+        items.order_by(F("vendor__rating").desc(nulls_last=True), "-created_at", "-pk")
+        if order == "maker"
+        else items.order_by("-created_at", "-pk")
+    )
+    page = Paginator(items, 12).get_page(request.GET.get("page"))
+    for item in page:
+        attach_demo_image(item)
+    params = request.GET.copy()
+    params.pop("page", None)
+    return render(
+        request,
+        "pages/portfolio/list.html",
+        {
+            "page_obj": page,
+            "services": Service.objects.filter(is_active=True),
+            "cities": City.objects.filter(is_active=True),
+            "query": query,
+            "selected_service": service,
+            "selected_city": city,
+            "sort": order,
+            "saved_ids": board_ids(request),
+            "filter_query": params.urlencode(),
+            "SEO_TITLE": "نمونه‌کارهای متخصصان تابلوسازی",
+            "SEO_DESCRIPTION": (
+                "نمونه‌کار تابلوسازها را با نوع تابلو و شهر ببینید؛ "
+                "مرجع‌های مناسب پروژه را انتخاب و در بورد ذخیره کنید."
+            ),
+            "CANONICAL_URL": public_url(
+                request,
+                request.path + (f"?page={page.number}" if page.number > 1 else ""),
+            ),
+        },
+    )
+
+
+@require_GET
+def board(request: HttpRequest) -> HttpResponse:
+    return redirect('editorial:ideas', permanent=True)
+
+
+@require_POST
+def board_toggle(request: HttpRequest, pk: int) -> HttpResponse:
+    item = get_object_or_404(discoverable_items(), pk=pk)
+    form = BoardActionForm(request.POST)
+    if not form.is_valid():
+        return HttpResponse(_("عملیات بورد معتبر نیست."), status=400)
+    stored = save_reference(
+        request,
+        kind="portfolio_item",
+        pk=item.pk,
+        action=form.cleaned_data["action"] or "add",
+    )
+    if stored:
+        messages.success(request, _("ذخیره‌ها به‌روز شدند."))
+    else:
+        messages.info(request, _("۲۴ نمونه ذخیره دارید؛ ابتدا یکی را حذف کنید."))
+    destination = form.cleaned_data["destination"]
+    if destination == "detail":
+        return redirect("portfolio:detail", slug=item.slug)
+    if destination == "gallery":
+        # Prefix the fixed local route; the submitted value only supplies filters.
+        query = form.cleaned_data["return_query"]
+        url = reverse("portfolio:list")
+        return redirect(f"{url}?{query}" if query else url)
+    return redirect("editorial:saved")

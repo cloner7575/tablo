@@ -1,23 +1,12 @@
 {% extends "base.html" %}
-{% load persian static %}
+{% load persian static seo %}
 
 {% block title %}{{ item.title }} | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}{{ item.description|default:item.title|truncatechars:150 }}{% endblock %}
 {% block og_title %}{{ item.title }}{% endblock %}
 {% block body_class %}page-portfolio{% endblock %}
 
-{% block structured_data %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "CreativeWork",
-  "name": "{{ item.title|escapejs }}",
-  "description": "{{ item.description|default:item.title|truncatechars:160|escapejs }}",
-  "creator": {"@type": "Organization", "name": "{{ item.vendor.business_name|escapejs }}"}
-  {% if item.city %},"contentLocation": {"@type": "Place", "name": "{{ item.city.name|escapejs }}"}{% endif %}
-}
-</script>
-{% endblock %}
+{% block structured_data %}{% structured_data work_schema %}{% structured_data breadcrumb_schema %}{% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/portfolio-gallery.js' %}" defer></script>
@@ -115,6 +104,13 @@
         {% endif %}
       </p>
       <h1 id="pf-title">{{ item.title }}</h1>
+      {% if vendor.is_approved %}
+      <form class="at-panel-tools" method="post" action="{% url 'portfolio:board_toggle' pk=item.pk %}">
+        {% csrf_token %}<input type="hidden" name="destination" value="detail">
+        {% if item.pk in request.session.inspiration_board %}<input type="hidden" name="action" value="remove"><button class="btn btn--secondary btn--sm" type="submit">{% include "components/_icon.html" with name="bookmark" size="sm" %} حذف از ذخیره‌ها</button>{% else %}<input type="hidden" name="action" value="add"><button class="btn btn--secondary btn--sm" type="submit">{% include "components/_icon.html" with name="bookmark" size="sm" %} ذخیره در ذخیره‌ها</button>{% endif %}
+        <a class="at-text-link" href="{% url 'editorial:saved' %}">مشاهده بورد</a>
+      </form>
+      {% endif %}
       <p class="pf-summary__count">
         {% include "components/_icon.html" with name="image" size="sm" %}
         {{ photo_count|fa_digits }} عکس
@@ -302,7 +298,7 @@
             {% endif %}
           </span>
           <span>{{ rel.title }}</span>
-          <span class="svc-gallery__meta">{{ rel.vendor.business_name }}{% if rel.city %} · {{ rel.city.name }}{% endif %}</span>
+          <span class="svc-gallery__meta">{% if not rel.is_reference %}{{ rel.creator_name }}{% endif %}{% if rel.city %} · {{ rel.city.name }}{% endif %}</span>
         </a>
       {% endfor %}
     </div>

@@ -296,7 +296,6 @@ def test_detail_shows_tags_budget_and_competition(
 
     from apps.requests.models import RequestImage
 
-    rival = _vendor("09125555555", city, chalnium)
     req = _request(
         customer,
         city,
@@ -309,7 +308,7 @@ def test_detail_shows_tags_budget_and_competition(
         district="جردن",
         description="سردر روشن می‌خواهم.",
     )
-    _quote(rival, req)
+    _quote(vendor, req)
     buf = BytesIO()
     Image.new("RGB", (40, 40), (10, 20, 30)).save(buf, format="JPEG")
     RequestImage.objects.create(
@@ -324,12 +323,12 @@ def test_detail_shows_tags_budget_and_competition(
     assert "فوری" in body
     assert "تا ۷٬۵۰۰٬۰۰۰ تومان" in body
     assert " ۰ تومان تا" not in body
-    assert "۱ پیشنهاد ثبت شده" in body
+    assert "پیشنهاد داده‌اید" in body
     assert "نانوایی آفتاب" in body
     assert "جردن" in body
     assert "عکس‌های مشتری" in body
-    assert "بررسی و ارسال پیشنهاد" in body
-    assert reverse("vendors:request_quote", kwargs={"pk": req.pk}) in body
+    assert "پیشنهاد شما ثبت شده" in body
+    assert reverse("vendors:my_quotes") in body
     assert "ثبت و ارسال پیشنهاد" not in body
 
 

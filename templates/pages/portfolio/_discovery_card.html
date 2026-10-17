@@ -1,0 +1,13 @@
+{% load static %}
+<article class="at-project{% if item.is_reference %} at-project--reference{% endif %}">
+  <a class="at-project__image" href="{% url 'portfolio:detail' slug=item.slug %}">
+    {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="800" height="600">{% else %}<img src="{% static item.demo_image %}" alt="تصویر الهام برای {{ item.title }}" loading="lazy" width="800" height="600"><span class="at-demo">تصویر الهام</span>{% endif %}
+    {% if item.service %}<span class="at-project__tag">{{ item.service.title }}</span>{% endif %}
+    <span class="pl-image-action" aria-hidden="true">دیدن جزئیات {% include 'components/_icon.html' with name='arrow-right' size='sm' %}</span>
+  </a>
+  <div class="at-project__info"><div><h3><a href="{% url 'portfolio:detail' slug=item.slug %}"><bdi>{{ item.title }}</bdi></a></h3>{% if not item.is_reference %}<p><bdi>{{ item.creator_name }}</bdi>{% if item.city %} · {{ item.city.name }}{% endif %}</p>{% endif %}</div>
+    <form method="post" action="{% url 'portfolio:board_toggle' pk=item.pk %}">{% csrf_token %}<input type="hidden" name="destination" value="{{ destination|default:'gallery' }}"><input type="hidden" name="return_query" value="{{ request.GET.urlencode }}">
+      {% if item.pk in saved_ids %}<input type="hidden" name="action" value="remove"><button class="at-save is-saved" type="submit" aria-label="حذف {{ item.title }} از ذخیره‌ها" title="حذف از ذخیره‌ها">{% include "components/_icon.html" with name="bookmark" size="sm" %}</button>{% else %}<input type="hidden" name="action" value="add"><button class="at-save" type="submit" aria-label="ذخیره {{ item.title }} در ذخیره‌ها" title="ذخیره در ذخیره‌ها">{% include "components/_icon.html" with name="bookmark" size="sm" %}</button>{% endif %}
+    </form>
+  </div>
+</article>

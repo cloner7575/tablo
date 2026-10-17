@@ -5,6 +5,9 @@ from apps.portfolio import views
 app_name = "portfolio"
 
 urlpatterns = [
+    path("", views.gallery, name="list"),
+    path("board/", views.board, name="board"),
+    path("board/<int:pk>/", views.board_toggle, name="board_toggle"),
     path("manage/", views.portfolio_manage, name="manage"),
     path("manage/new/", views.portfolio_create, name="create"),
     path("manage/<int:pk>/", views.portfolio_edit, name="edit"),

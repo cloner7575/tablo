@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from django.db.models import Count, Q, QuerySet
 
+from apps.accounts.models import User
+from apps.quotes.models import QuoteStatus
 from apps.requests.models import ProjectRequest, RequestStatus
 from apps.vendors.models import Vendor, VerificationStatus
 
@@ -16,8 +18,12 @@ def matched_requests_for_vendor(vendor: Vendor) -> QuerySet[ProjectRequest]:
     return (
         ProjectRequest.objects.filter(
             Q(preferred_vendor=vendor)
-            | Q(city=vendor.city, needs_guidance=True)
-            | Q(city=vendor.city, service_id__in=service_ids),
+            | Q(preferred_vendor__isnull=True, city=vendor.city, needs_guidance=True)
+            | Q(
+                preferred_vendor__isnull=True,
+                city=vendor.city,
+                service_id__in=service_ids,
+            ),
             status__in=[
                 RequestStatus.SUBMITTED,
                 RequestStatus.REVIEWING,
@@ -50,11 +56,21 @@ def with_feed_counts(qs: QuerySet[ProjectRequest]) -> QuerySet[ProjectRequest]:
     )
 
 
-def customer_requests(user) -> QuerySet[ProjectRequest]:
+def customer_requests(user: User) -> QuerySet[ProjectRequest]:
     return (
         ProjectRequest.objects.filter(customer=user)
-        .select_related("service", "city")
-        .prefetch_related("quotes__vendor")
+        .select_related("service", "city", "order__quote", "order__vendor", "review")
+        .annotate(
+            quote_count=Count("quotes", distinct=True),
+            new_quote_count=Count(
+                "quotes", filter=Q(quotes__status=QuoteStatus.PENDING), distinct=True
+            ),
+            shortlist_count=Count(
+                "quotes",
+                filter=Q(quotes__status=QuoteStatus.SHORTLISTED),
+                distinct=True,
+            ),
+        )
         .order_by("-created_at")
     )
 

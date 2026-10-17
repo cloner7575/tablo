@@ -13,47 +13,44 @@ document.addEventListener("htmx:beforeSwap", (event) => {
 });
 
 function closeMobileNav() {
-  const toggle = document.querySelector("[data-nav-toggle]");
   const drawer = document.querySelector("[data-nav-drawer]");
-  if (!toggle || !drawer) {
-    return;
-  }
-  toggle.setAttribute("aria-expanded", "false");
-  drawer.hidden = true;
-  document.body.classList.remove("nav-open");
+  if (drawer?.open) drawer.close();
 }
 
 function openMobileNav() {
-  const toggle = document.querySelector("[data-nav-toggle]");
   const drawer = document.querySelector("[data-nav-drawer]");
-  if (!toggle || !drawer) {
-    return;
-  }
+  const toggle = document.querySelector("[data-nav-toggle]");
+  if (!drawer || !toggle || drawer.open) return;
+  drawer.showModal();
   toggle.setAttribute("aria-expanded", "true");
-  drawer.hidden = false;
   document.body.classList.add("nav-open");
+  drawer.querySelector(".mobile-drawer__nav a")?.focus();
 }
 
 function initMobileNav() {
   const toggle = document.querySelector("[data-nav-toggle]");
   const drawer = document.querySelector("[data-nav-drawer]");
-  if (!toggle || !drawer) {
-    return;
-  }
-
-  toggle.addEventListener("click", (event) => {
-    event.preventDefault();
-    if (toggle.getAttribute("aria-expanded") === "true") {
-      closeMobileNav();
-    } else {
-      openMobileNav();
-    }
+  if (!toggle || !drawer) return;
+  toggle.addEventListener("click", () => drawer.open ? closeMobileNav() : openMobileNav());
+  drawer.addEventListener("close", () => {
+    toggle.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("nav-open");
+    toggle.focus();
   });
-
+  drawer.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeMobileNav();
+  });
+  drawer.querySelector("[data-nav-close]")?.addEventListener("click", closeMobileNav);
   drawer.addEventListener("click", (event) => {
-    if (event.target.closest("a, button")) {
-      closeMobileNav();
-    }
+    if (event.target.closest("a")) closeMobileNav();
+    if (event.target !== drawer) return;
+    const bounds = drawer.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right ||
+        event.clientY < bounds.top || event.clientY > bounds.bottom) closeMobileNav();
+  });
+  window.matchMedia("(min-width: 1101px)").addEventListener("change", (event) => {
+    if (event.matches) closeMobileNav();
   });
 }
 
@@ -63,13 +60,8 @@ if (document.readyState === "loading") {
   initMobileNav();
 }
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closeMobileNav();
-  }
-});
-
 const PREVIEW_LIMIT = 12;
+const BUSY_BUTTONS = new Map();
 
 function previewItem(file) {
   const li = document.createElement("li");
@@ -118,7 +110,8 @@ function initMultiImagePreview() {
 // and tell the user the upload is running.
 function initBusySubmit() {
   document.querySelectorAll("form[data-busy-submit]").forEach((form) => {
-    form.addEventListener("submit", () => {
+    form.addEventListener("submit", (event) => {
+      if (event.defaultPrevented) return;
       const button = form.querySelector("[type=submit][data-busy-label]");
       form.setAttribute("aria-busy", "true");
       if (!button) {
@@ -126,6 +119,11 @@ function initBusySubmit() {
       }
       // Defer so the submitter's own name/value still reaches the server.
       window.setTimeout(() => {
+        if (event.defaultPrevented) {
+          form.removeAttribute("aria-busy");
+          return;
+        }
+        BUSY_BUTTONS.set(button, Array.from(button.childNodes, (node) => node.cloneNode(true)));
         button.disabled = true;
         button.textContent = button.dataset.busyLabel;
       }, 0);
@@ -232,3 +230,19 @@ if (document.readyState === "loading") {
 } else {
   initForms();
 }
+
+// Back-forward cache restores the same DOM, including a disabled submit button.
+window.addEventListener("pageshow", () => {
+  BUSY_BUTTONS.forEach((nodes, button) => {
+    button.disabled = false;
+    button.replaceChildren(...nodes);
+    button.closest("form")?.removeAttribute("aria-busy");
+  });
+  BUSY_BUTTONS.clear();
+});
+
+// Reveal an invalid optional field before native validation tries to focus it.
+document.addEventListener("invalid", (event) => {
+  const disclosure = event.target.closest?.("details");
+  if (disclosure) disclosure.open = true;
+}, true);

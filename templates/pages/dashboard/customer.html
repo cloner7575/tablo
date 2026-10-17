@@ -1,54 +1,10 @@
-{% extends "base.html" %}
-{% load persian %}
-
-{% block title %}داشبورد مشتری | {{ SITE_NAME }}{% endblock %}
-{% block body_class %}page-request{% endblock %}
-
+{% extends "base.html" %}{% load persian %}
+{% block title %}حساب مشتری | {{ SITE_NAME }}{% endblock %}
+{% block body_class %}page-request page-customer-panel{% endblock %}
 {% block content %}
-<section class="section">
-  <div class="section__head section__head--row">
-    <div>
-      <p class="section__eyebrow">پنل مشتری</p>
-      <h1>درخواست‌های من</h1>
-      <p class="muted">وضعیت پروژه‌ها و پیشنهادهای رسیده را از اینجا پیگیری کنید.</p>
-    </div>
-    <div class="cluster">
-      <a class="btn btn--ghost-outline" href="{% url 'chat:inbox' %}">گفتگوها</a>
-      <a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">درخواست جدید</a>
-    </div>
-  </div>
-
-  <h2 class="req-section-title">پروژه‌های فعال</h2>
-  <div class="req-list">
-    {% for r in active %}
-      <a class="req-list__item" href="{% url 'requests:request_detail' pk=r.pk %}">
-        <div>
-          <strong>{{ r.title }}</strong>
-          <span>{% if r.service %}{{ r.service.title }}{% else %}نیاز به راهنمایی{% endif %} · {{ r.city.name }} · {{ r.created_at|jalali }}</span>
-        </div>
-        <span class="status-pill status-pill--{{ r.status }}">{{ r.get_status_display }}</span>
-      </a>
-    {% empty %}
-      <div class="empty">
-        <strong>پروژه فعالی ندارید</strong>
-        <p><a href="{% url 'requests:wizard_start' %}">اولین درخواست را ثبت کنید</a> و چند پیشنهاد قیمت بگیرید.</p>
-      </div>
-    {% endfor %}
-  </div>
-
-  <h2 class="req-section-title">تکمیل‌شده</h2>
-  <div class="req-list">
-    {% for r in completed %}
-      <a class="req-list__item" href="{% url 'requests:request_detail' pk=r.pk %}">
-        <div>
-          <strong>{{ r.title }}</strong>
-          <span>{{ r.get_status_display }}</span>
-        </div>
-        <span class="status-pill status-pill--completed">{{ r.get_status_display }}</span>
-      </a>
-    {% empty %}
-      <p class="empty">هنوز پروژه تکمیل‌شده‌ای ندارید.</p>
-    {% endfor %}
-  </div>
-</section>
+<div class="ws-workspace"><section class="ws-shell">{% include "partials/_customer_panel_nav.html" %}<div class="ws-main">
+<header class="ws-welcome"><div><p class="ed-kicker">حساب شما</p><h1>سفارش‌های شما</h1><p>{% if customer_unread_count %}{{ customer_unread_count|fa_digits }} پیام خوانده‌نشده دارید؛ گفت‌وگوها را بررسی کنید.{% elif summary.new_quotes %}{{ summary.new_quotes|fa_digits }} پیشنهاد تازه منتظر بررسی شماست.{% elif summary.reviews %}{{ summary.reviews|fa_digits }} سفارش تکمیل‌شده منتظر نظر شماست.{% elif summary.active %}{{ summary.active|fa_digits }} سفارش در حال اجرا دارید؛ طرح و مراحل کار را بررسی کنید.{% else %}نیازتان را ثبت کنید؛ پیشنهاد، انتخاب و اجرا را از همین‌جا پیگیری کنید.{% endif %}</p></div><a class="btn btn--primary" href="{% if customer_unread_count %}{% url 'chat:inbox' %}{% elif summary.new_quotes %}?status=offers#workspace-projects{% elif summary.reviews %}?status=completed#workspace-projects{% elif summary.active %}?status=active#workspace-projects{% else %}{% url 'requests:wizard_start' %}{% endif %}">{% if customer_unread_count %}بررسی گفت‌وگوها{% elif summary.new_quotes %}بررسی پیشنهادهای تازه{% elif summary.reviews %}ثبت نظر سفارش‌ها{% elif summary.active %}پیگیری سفارش جاری{% else %}درخواست جدید{% endif %} {% include "components/_icon.html" with name="arrow-right" size="sm" %}</a></header>
+<section class="ws-metrics" aria-label="خلاصهٔ سفارش‌ها"><a href="{% url 'requests:dashboard' %}"><span>همهٔ سفارش‌ها</span><strong>{{ summary.total|fa_digits }}</strong></a><a href="?status=offers#workspace-projects"><span>پیشنهاد تازه</span><strong>{{ summary.new_quotes|fa_digits }}</strong></a><a href="?status=active#workspace-projects"><span>در حال اجرا</span><strong>{{ summary.active|fa_digits }}</strong></a><a href="?status=completed#workspace-projects"><span>منتظر نظر شما</span><strong>{{ summary.reviews|fa_digits }}</strong></a></section>
+<section id="workspace-projects" class="ws-projects"><div class="ws-section-head"><div><p class="ed-kicker">پیگیری درخواست‌ها</p><h2>سفارش‌های من</h2></div><span class="muted">{{ page_obj.paginator.count|fa_digits }} سفارش</span></div><form class="ws-filter" method="get" action="#workspace-projects">{% include "partials/_form_errors.html" %}{% for field in form %}{% include "components/_field.html" with field=field %}{% endfor %}<button class="btn btn--secondary" type="submit">{% include "components/_icon.html" with name="search" size="sm" %} پیدا کردن سفارش</button>{% if has_filters %}<a class="at-text-link" href="{% url 'requests:dashboard' %}">پاک کردن فیلتر</a>{% endif %}</form><div class="ws-project-grid">{% for card in cards %}{% with project=card.project action=card.action %}<article class="ws-project-card"><div class="ws-project-card__top"><p class="ed-kicker">درخواست {{ project.pk|fa_digits }}</p><span class="status-pill status-pill--{{ project.status }}">{{ project.get_status_display }}</span></div><h3><a href="{% url 'requests:request_detail' pk=project.pk %}">{{ project.title|default:'درخواست تابلو' }}</a></h3><p class="ws-project-card__meta">{% if project.service %}{{ project.service.title }}{% else %}نیاز به راهنمایی{% endif %}{% if project.city %} · {{ project.city.name }}{% endif %} · {{ project.created_at|jalali|fa_digits }}</p><div class="ws-project-card__facts"><span>{% include "components/_icon.html" with name="file-text" size="sm" %} {{ project.quote_count|fa_digits }} پیشنهاد</span>{% if project.new_quote_count %}<span class="ws-new">{{ project.new_quote_count|fa_digits }} تازه</span>{% endif %}{% if project.shortlist_count %}<span>{{ project.shortlist_count|fa_digits }} منتخب</span>{% endif %}</div><div class="ws-next"><small>قدم بعدی</small><p>{{ action.hint }}</p><a class="btn {% if action.kind == 'offers' or action.kind == 'active' or action.kind == 'review' %}btn--primary{% else %}btn--secondary{% endif %}" href="{{ action.url }}">{{ action.label }} {% include "components/_icon.html" with name="arrow-right" size="sm" %}</a></div></article>{% endwith %}{% empty %}<div class="ws-empty">{% include "components/_icon.html" with name="layers" size="lg" %}<h3>{% if form.errors %}فیلترها را اصلاح کنید.{% elif has_filters %}سفارش‌ای با این انتخاب پیدا نشد.{% else %}اولین سفارش‌تان از اینجا شروع می‌شود.{% endif %}</h3><p>مشخصات محل و نیازتان را ثبت کنید؛ تابلوسازها مرتبط پیشنهاد اجرا می‌دهند.</p><a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">ثبت درخواست تابلو</a></div>{% endfor %}</div>{% include "pages/editorial/_pagination.html" %}</section>
+</div></section></div>
 {% endblock %}

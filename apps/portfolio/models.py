@@ -44,6 +44,8 @@ class PortfolioItem(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name="portfolio_items",
         verbose_name=_("تابلو‌ساز"),
+        null=True,
+        blank=True,
     )
     title = models.CharField(_("عنوان"), max_length=200)
     slug = models.SlugField(_("اسلاگ"), max_length=220, unique=True, allow_unicode=True)
@@ -63,6 +65,9 @@ class PortfolioItem(TimeStampedModel):
         related_name="portfolio_items",
     )
     image = models.ImageField(_("تصویر"), upload_to="portfolio/", blank=True)
+    source_name = models.CharField(_("نام سازنده در منبع"), max_length=160, blank=True)
+    source_url = models.URLField(_("صفحهٔ منبع"), max_length=1000, blank=True)
+    source_image_url = models.URLField(_("نشانی عکس اصلی"), max_length=1000, blank=True)
     is_published = models.BooleanField(default=True)
 
     class Meta:
@@ -74,9 +79,24 @@ class PortfolioItem(TimeStampedModel):
             models.Index(fields=["vendor", "is_published"]),
             models.Index(fields=["slug"]),
         ]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(vendor__isnull=False)
+                | (~Q(source_name="") & ~Q(source_url="") & ~Q(image="")),
+                name="portfolio_has_vendor_or_attributed_source",
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.title
+
+    @property
+    def is_reference(self) -> bool:
+        return self.vendor_id is None
+
+    @property
+    def creator_name(self) -> str:
+        return self.source_name if self.is_reference else self.vendor.business_name
 
     def save(self, *args: object, **kwargs: object) -> None:
         if not self.slug:

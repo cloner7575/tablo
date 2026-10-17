@@ -1,4 +1,3 @@
-from django.db.models import Sum
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -6,12 +5,17 @@ from django.views.decorators.http import require_GET
 
 from apps.analytics.services import track
 from apps.catalog.demo import attach_demo_image as attach_service_demo
+from apps.catalog.industry import industry_providers
 from apps.catalog.models import Service
 from apps.common.htmx import is_htmx
+from apps.common.seo import public_url
 from apps.common.services import database_status
+from apps.editorial.collections import saved_idea_ids
+from apps.editorial.selectors import published_articles, published_ideas
 from apps.locations.models import City
 from apps.portfolio.demo import PORTFOLIO_DEMO_IMAGES, attach_demo_image
-from apps.portfolio.models import PortfolioItem
+from apps.portfolio.inspiration import board_ids
+from apps.portfolio.selectors import discoverable_items
 from apps.reviews.models import Review
 from apps.vendors.demo import VENDOR_DEMO_COVERS, attach_demo_cover
 from apps.vendors.models import Vendor, VerificationStatus
@@ -39,16 +43,16 @@ def home(request: HttpRequest) -> HttpResponse:
     for vendor in vendors:
         attach_demo_cover(vendor)
 
-    portfolio = list(
-        PortfolioItem.objects.filter(is_published=True)
-        .select_related("vendor", "service", "city")
-        .order_by("-created_at")[:8]
-    )
+    portfolio = list(discoverable_items().order_by("-created_at")[:8])
     for item in portfolio:
         attach_demo_image(item)
 
     reviews = (
-        Review.objects.filter(is_published=True)
+        Review.objects.filter(
+            is_published=True,
+            vendor__is_active=True,
+            vendor__verification_status=VerificationStatus.APPROVED,
+        )
         .select_related("vendor", "customer")
         .order_by("-created_at")[:4]
     )
@@ -56,21 +60,54 @@ def home(request: HttpRequest) -> HttpResponse:
         request,
         "pages/home.html",
         {
+            "business_collections": [
+                {
+                    "title": "فروشگاه",
+                    "query": "فروشگاه",
+                    "description": "سردر و نما",
+                    "image": "img/references/novin-amir-chocolate.webp",
+                },
+                {
+                    "title": "رستوران",
+                    "query": "رستوران",
+                    "description": "نور و حروف",
+                    "image": "img/references/namatabesh-vozara.webp",
+                },
+                {
+                    "title": "شرکت",
+                    "query": "شرکت",
+                    "description": "نام و نشان",
+                    "image": "img/references/novin-gerad.webp",
+                },
+                {
+                    "title": "راهنما",
+                    "query": "راهنما",
+                    "description": "مسیر و طبقات",
+                    "image": "img/references/rangin-wayfinding.webp",
+                },
+            ],
             "services": services,
             "cities": cities,
             "vendors": vendors,
+            "industry_providers": industry_providers()[:4],
             "portfolio": portfolio,
+            "saved_ids": board_ids(request),
             "reviews": reviews,
+            "ideas": published_ideas()[:3],
+            "articles": published_articles()[:3],
+            "idea_saved_ids": saved_idea_ids(request),
+            "SEO_TITLE": "سفارش تابلو مغازه و مقایسه قیمت تابلوسازها",
+            "SEO_DESCRIPTION": (
+                "سفارش تابلو برای مغازه و شرکت؛ مقایسه پیشنهادهای ساخت و نصب "
+                "و متخصصان تابلوسازی؛ "
+                "از طرح‌های هوش مصنوعی و مفهومی تا اجرای پروژه."
+            ),
             "stats": {
                 "vendors": Vendor.objects.filter(
                     verification_status=VerificationStatus.APPROVED,
                     is_active=True,
                 ).count(),
-                "projects": Vendor.objects.aggregate(total=Sum("completed_projects"))[
-                    "total"
-                ]
-                or 0,
-                "cities": City.objects.filter(is_active=True).count(),
+                "cities": len(cities),
             },
         },
     )
@@ -97,3 +134,22 @@ def health_panel(request: HttpRequest) -> HttpResponse:
             "database": database,
         },
     )
+
+
+@require_GET
+def robots(request: HttpRequest) -> HttpResponse:
+    return render(
+        request,
+        'robots.txt',
+        {
+            'SITEMAP_URL': public_url(
+                request, reverse('django.contrib.sitemaps.views.sitemap')
+            )
+        },
+        content_type='text/plain; charset=utf-8',
+    )
+
+
+@require_GET
+def guide(request: HttpRequest) -> HttpResponse:
+    return render(request, "pages/guide.html", {"articles": published_articles()[:3]})

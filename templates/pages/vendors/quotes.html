@@ -16,12 +16,13 @@
           <p class="muted">
             {{ pending_count|fa_digits }} در انتظار ·
             {{ accepted_count|fa_digits }} پذیرفته‌شده ·
-            {{ quotes|length|fa_digits }} کل
+            {{ total_count|fa_digits }} کل
           </p>
         </div>
         <a class="btn btn--primary" href="{% url 'vendors:requests' %}">پیشنهاد جدید</a>
       </header>
 
+      <form class="ws-filter" method="get">{% include "partials/_form_errors.html" %}{% for field in form %}{% include "components/_field.html" with field=field %}{% endfor %}<button class="btn btn--secondary" type="submit">جست‌وجو</button></form>
       <div class="vp-feed vp-feed--cards">
         {% for q in quotes %}
           <article class="vp-req">
@@ -31,16 +32,16 @@
                 <span class="status-pill status-pill--{{ q.status }}">{{ q.get_status_display }}</span>
               </div>
               <p class="vp-req__meta">
-                {{ q.request.service.title }} · {{ q.request.city.name }} · {{ q.created_at|jalali }}
+                {{ q.request.service.title }} · {{ q.request.city.name }} · {{ q.created_at|jalali|fa_digits }}
               </p>
-              <p class="req-quote__price">{{ q.price|toman|fa_digits }}</p>
+              <p class="req-quote__price">{{ q.total_price|toman|fa_digits }}</p>
               <ul class="vp-req__facts">
                 <li>زمان اجرا: {{ q.estimated_delivery_days|fa_digits }} روز</li>
                 <li>گارانتی: {{ q.warranty|default:"—" }}</li>
               </ul>
             </div>
             <div class="vp-req__actions">
-              {% if q.has_chat %}
+              {% if q.has_chat or q.status == "accepted" and q.request.status == "accepted" %}
                 <a class="btn btn--primary" href="{% url 'chat:thread' quote_id=q.pk %}">ادامه گفتگو</a>
               {% else %}
                 <p class="muted vp-req__chat-wait">گفتگو را مشتری شروع می‌کند</p>
@@ -57,6 +58,7 @@
           </div>
         {% endfor %}
       </div>
+      {% include "pages/editorial/_pagination.html" %}
     </div>
   </section>
 </div>

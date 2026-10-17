@@ -1,7 +1,6 @@
 /* =========================================================================
    Design tokens — تابلو دات کام
-   Visual language inspired by commercial Iranian signage sites
-   (e.g. tablosepehrad.com): light page, charcoal chrome, crimson accent.
+   Reference palette: Jeddy blue/slate, with explicit light and dark modes.
    ========================================================================= */
 
 @font-face {
@@ -27,6 +26,14 @@
 }
 
 :root {
+  --atelier-bg: var(--color-bg);
+  --atelier-panel: var(--color-surface);
+  --atelier-line: var(--color-border);
+  --atelier-ink: var(--color-ink);
+  --atelier-muted: var(--color-muted);
+  --atelier-accent: var(--color-accent);
+  --atelier-accent-ink: var(--color-action-ink);
+
   --font-sans: "Vazirmatn", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: "Vazirmatn", ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -68,70 +75,75 @@
   --radius-xl: 2rem;
   --radius-pill: 999px;
 
-  --container: 90rem;
+  --container: 78rem;
   --container-narrow: 42rem;
   --measure: 68ch;
-  --header-h: 5rem;
-  --gutter: clamp(1rem, 2.2vw, 2rem);
+  --header-h: 5.5rem;
+  --gutter: clamp(1rem, 3.2vw, 3rem);
 
   --ease-out: cubic-bezier(0.22, 0.8, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-1: 140ms;
   --dur-2: 220ms;
   --dur-3: 360ms;
-
+  --dur-reveal: 560ms;
+  --dur-ambient: 7s;
+  --surface-sheen: linear-gradient(145deg, var(--color-surface), var(--color-surface-2));
+  --action-sheen: linear-gradient(135deg, color-mix(in srgb, var(--color-action) 86%, var(--color-accent-2)), var(--color-action), var(--color-action-hover));
+  --card-border-hover: color-mix(in srgb, var(--color-accent) 38%, var(--color-border));
+  --shadow-action: 0 8px 20px color-mix(in srgb, var(--color-action) 22%, transparent);
+  --blueprint-line: color-mix(in srgb, var(--color-accent) 9%, transparent);
+  --mobile-nav-h: 4.5rem;
   color-scheme: light;
-
-  /* Light commercial canvas (Sepehrad-like) */
-  --color-bg: #f4f4f5;
-  --color-bg-subtle: #ebebed;
+  --color-bg: #f8fafc;
+  --color-bg-subtle: #f0f4f9;
   --color-surface: #ffffff;
-  --color-surface-2: #fafafa;
-
-  --color-ink: #141416;
-  --color-ink-soft: #27272a;
-  --color-muted: #3f3f46;
-
-  --color-border: #e4e4e7;
-  --color-border-strong: #cfcfd4;
-
-  /* Crimson CTA like Sepehrad phone button */
-  --color-accent: #d0122d;
-  --color-accent-hover: #b10e26;
+  --color-surface-2: #f0f4f9;
+  --color-stage: #eaf3fc;
+  --color-glass: rgb(248 250 252 / 0.92);
+  --color-ink: #16263c;
+  --color-ink-soft: #243b55;
+  --color-muted: #596b80;
+  --color-border: #dfe7ef;
+  --color-border-strong: #c7d4e2;
+  --color-accent: #1464c4;
+  --color-accent-text: #1464c4;
+  --color-accent-hover: #1054a7;
+  --color-accent-soft: #edf4ff;
+  --color-accent-line: #bed8f5;
+  --color-accent-2: #068fab;
+  --color-action: #155db4;
+  --color-action-hover: #104e9a;
+  --color-action-ink: #ffffff;
   --color-accent-ink: #ffffff;
-  --color-accent-soft: #ffe8ec;
-  --color-accent-line: #f5a3b0;
-
-  /* Charcoal blocks */
-  --color-charcoal: #1a1a1d;
-  --color-charcoal-soft: #2a2a2e;
-
-  --color-secondary: #1a1a1d;
-  --color-secondary-soft: #f0f0f2;
-  --color-secondary-ink: #141416;
-
-  --color-ok: #15803d;
-  --color-ok-bg: #dcfce7;
-  --color-danger: #b91c1c;
-  --color-danger-bg: #fee2e2;
-  --color-warn: #b45309;
-  --color-warn-bg: #ffedd5;
-  --color-info: #1d4ed8;
-  --color-info-bg: #dbeafe;
-
-  --color-code-bg: #f4f4f5;
-  --color-code-ink: #141416;
-
-  --shadow-xs: 0 1px 2px rgb(20 20 22 / 0.05);
-  --shadow-sm: 0 4px 14px rgb(20 20 22 / 0.06);
-  --shadow-md: 0 10px 30px rgb(20 20 22 / 0.08);
-  --shadow-lg: 0 20px 50px rgb(20 20 22 / 0.12);
-
+  --color-charcoal: #111e32;
+  --color-charcoal-soft: #19283e;
+  --color-inverse-ink: #edf4ff;
+  --color-inverse-muted: #a5b6cd;
+  --color-secondary: #16263c;
+  --color-secondary-soft: #f0f4f9;
+  --color-secondary-ink: #16263c;
+  --color-ok: #087f75;
+  --color-ok-bg: #e8f7f3;
+  --color-danger: #be263f;
+  --color-danger-bg: #fff0f3;
+  --color-warn: #986219;
+  --color-warn-bg: #fff6e6;
+  --color-info: #1464c4;
+  --color-info-bg: #edf4ff;
+  --color-code-bg: #f0f4f9;
+  --color-code-ink: #16263c;
+  --color-overlay: rgb(12 20 36 / 0.6);
+  --shadow-xs: 0 1px 3px rgb(25 57 94 / 0.04);
+  --shadow-sm: 0 6px 18px rgb(25 57 94 / 0.06);
+  --shadow-md: 0 12px 32px rgb(25 57 94 / 0.08);
+  --shadow-lg: 0 22px 60px rgb(25 57 94 / 0.12);
+  --shadow-stage: 0 18px 46px rgb(25 57 94 / 0.07);
+  --shadow-float: 0 12px 36px rgb(25 57 94 / 0.09);
   --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-accent) 30%, transparent);
   --hairline: inset 0 0 0 1px var(--color-border);
-
-  --glow-1: color-mix(in srgb, var(--color-accent) 12%, transparent);
-  --glow-2: color-mix(in srgb, var(--color-charcoal) 8%, transparent);
+  --glow-1: color-mix(in srgb, var(--color-action) 12%, transparent);
+  --glow-2: color-mix(in srgb, var(--color-accent-2) 8%, transparent);
 }
 
 [dir="rtl"] {
@@ -144,8 +156,83 @@
   --leading-relaxed: 1.9;
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #0c1424;
+  --color-bg-subtle: #19283e;
+  --color-surface: #111e32;
+  --color-surface-2: #19283e;
+  --color-stage: #15243a;
+  --color-glass: rgb(12 20 36 / 0.92);
+  --color-ink: #edf4ff;
+  --color-ink-soft: #d7e5f7;
+  --color-muted: #a5b6cd;
+  --color-border: #2b3d55;
+  --color-border-strong: #405674;
+  --color-accent: #79b8ff;
+  --color-accent-text: #79b8ff;
+  --color-accent-hover: #a0cdff;
+  --color-accent-soft: #152b47;
+  --color-accent-line: #315479;
+  --color-accent-2: #52d0e1;
+  --color-secondary: #edf4ff;
+  --color-secondary-soft: #19283e;
+  --color-secondary-ink: #edf4ff;
+  --color-ok: #72d4bd;
+  --color-ok-bg: #143532;
+  --color-danger: #ff91a3;
+  --color-danger-bg: #3a1e2d;
+  --color-warn: #f8d395;
+  --color-warn-bg: #342c20;
+  --color-info: #79b8ff;
+  --color-info-bg: #152b47;
+  --color-code-bg: #19283e;
+  --color-code-ink: #edf4ff;
+  --shadow-xs: 0 1px 3px rgb(0 0 0 / 0.15);
+  --shadow-sm: 0 6px 18px rgb(0 0 0 / 0.18);
+  --shadow-md: 0 12px 32px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 22px 60px rgb(0 0 0 / 0.28);
+  --shadow-stage: 0 18px 46px rgb(0 0 0 / 0.2);
+  --shadow-float: 0 12px 36px rgb(0 0 0 / 0.25);
+}
 @media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: light;
+  :root:not([data-theme]) {
+  color-scheme: dark;
+  --color-bg: #0c1424;
+  --color-bg-subtle: #19283e;
+  --color-surface: #111e32;
+  --color-surface-2: #19283e;
+  --color-stage: #15243a;
+  --color-glass: rgb(12 20 36 / 0.92);
+  --color-ink: #edf4ff;
+  --color-ink-soft: #d7e5f7;
+  --color-muted: #a5b6cd;
+  --color-border: #2b3d55;
+  --color-border-strong: #405674;
+  --color-accent: #79b8ff;
+  --color-accent-text: #79b8ff;
+  --color-accent-hover: #a0cdff;
+  --color-accent-soft: #152b47;
+  --color-accent-line: #315479;
+  --color-accent-2: #52d0e1;
+  --color-secondary: #edf4ff;
+  --color-secondary-soft: #19283e;
+  --color-secondary-ink: #edf4ff;
+  --color-ok: #72d4bd;
+  --color-ok-bg: #143532;
+  --color-danger: #ff91a3;
+  --color-danger-bg: #3a1e2d;
+  --color-warn: #f8d395;
+  --color-warn-bg: #342c20;
+  --color-info: #79b8ff;
+  --color-info-bg: #152b47;
+  --color-code-bg: #19283e;
+  --color-code-ink: #edf4ff;
+  --shadow-xs: 0 1px 3px rgb(0 0 0 / 0.15);
+  --shadow-sm: 0 6px 18px rgb(0 0 0 / 0.18);
+  --shadow-md: 0 12px 32px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 22px 60px rgb(0 0 0 / 0.28);
+  --shadow-stage: 0 18px 46px rgb(0 0 0 / 0.2);
+  --shadow-float: 0 12px 36px rgb(0 0 0 / 0.25);
   }
 }

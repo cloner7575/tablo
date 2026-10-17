@@ -1,9 +1,12 @@
 {% extends "base.html" %}
+{% load seo %}
 {% load persian static %}
 
 {% block title %}تابلوسازی در {{ city.name }} | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}سفارش تابلو در {{ city.name }} از تابلو‌سازهای تأییدشده — مقایسه قیمت و نمونه‌کار{% endblock %}
 {% block body_class %}page-city{% endblock %}
+
+{% block structured_data %}{% structured_data breadcrumb_schema %}{% endblock %}
 
 {% block content %}
 <article class="city-page">
@@ -48,7 +51,7 @@
       {% empty %}
         <div class="empty">
           <strong>هنوز تابلو‌ساز تأییدشده‌ای در {{ city.name }} نیست</strong>
-          <p>درخواست را ثبت کنید تا به‌محض فعال شدن متخصصان محلی، پیشنهاد برسد.</p>
+          <p>درخواست را ثبت کنید تا به‌محض فعال شدن تابلوسازها محلی، پیشنهاد برسد.</p>
           <a class="btn btn--primary btn--sm" href="{% url 'requests:wizard_start' %}">ثبت درخواست</a>
         </div>
       {% endfor %}

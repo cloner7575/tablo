@@ -15,6 +15,11 @@ class QuoteStatus(models.TextChoices):
     EXPIRED = "expired", _("منقضی")
 
 
+class PriceKind(models.TextChoices):
+    ESTIMATE = "estimate", _("برآورد اولیه؛ پس از بررسی نهایی می‌شود")
+    FINAL = "final", _("قیمت نهایی برای مشخصات اعلام‌شده")
+
+
 class Quote(TimeStampedModel):
     request = models.ForeignKey(
         "requests.ProjectRequest",
@@ -28,7 +33,10 @@ class Quote(TimeStampedModel):
         related_name="quotes",
         verbose_name=_("تابلو‌ساز"),
     )
-    price = models.PositiveIntegerField(_("قیمت (تومان)"))
+    price = models.PositiveIntegerField(_("هزینه ساخت (تومان)"))
+    price_kind = models.CharField(
+        _("نوع قیمت"), max_length=12, choices=PriceKind.choices, default=PriceKind.FINAL
+    )
     estimated_delivery_days = models.PositiveSmallIntegerField(_("روز اجرا"))
     description = models.TextField(_("توضیحات"), blank=True)
     warranty = models.CharField(_("گارانتی"), max_length=120, blank=True)
@@ -56,6 +64,10 @@ class Quote(TimeStampedModel):
             models.Index(fields=["vendor", "status"]),
             models.Index(fields=["request", "status"]),
         ]
+
+    @property
+    def total_price(self) -> int:
+        return self.price + self.installation_cost
 
     def __str__(self) -> str:
         return f"{self.vendor} → {self.request} ({self.price})"

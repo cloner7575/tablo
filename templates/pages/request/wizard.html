@@ -67,6 +67,7 @@
                   required
                 >
                 <span class="wz-card__body">
+                  <span class="ux-choice-check" aria-hidden="true">{% include "components/_icon.html" with name="check-circle" size="sm" %}</span>
                   <span class="wz-card__title">{{ card.title }}</span>
                   {% if card.hint %}<span class="wz-card__hint">{{ card.hint }}</span>{% endif %}
                 </span>

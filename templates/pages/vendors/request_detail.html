@@ -217,7 +217,7 @@
           </p>
 
           {% if existing %}
-            <h2 id="vp-next-title">پیشنهاد شما ثبت شده</h2>
+            <h2 id="vp-next-title">{% if existing.status == "accepted" %}این پروژه با شماست{% else %}پیشنهاد شما ثبت شده{% endif %}</h2>
             <p class="req-quote__price">{{ existing.price|toman|fa_digits }}</p>
             <ul class="req-quote__facts">
               <li><span>زمان اجرا</span><strong>{{ existing.estimated_delivery_days|fa_digits }} روز</strong></li>
@@ -225,6 +225,7 @@
               <li><span>وضعیت</span><strong>{{ existing.get_status_display }}</strong></li>
             </ul>
             <div class="vp-req-next__actions">
+              {% if existing.status == "accepted" and project_request.status == "accepted" or existing.conversation %}<a class="btn btn--primary btn--block" href="{% url 'chat:thread' quote_id=existing.pk %}">گفت‌وگو و هماهنگی اجرا</a>{% endif %}
               <a class="btn btn--secondary btn--block" href="{% url 'vendors:my_quotes' %}">مشاهده همه پیشنهادها</a>
               <a class="vp-req-next__later" href="{% url 'vendors:requests' %}">بازگشت به لیست</a>
             </div>

@@ -59,6 +59,16 @@ class ProjectRequest(TimeStampedModel):
         null=True,
         blank=True,
     )
+    use_case = models.CharField(
+        _("محل استفاده"),
+        max_length=20,
+        blank=True,
+        choices=[
+            ("shop", _("سردر مغازه")),
+            ("inside", _("فضای داخل")),
+            ("building", _("ساختمان و راهنما")),
+        ],
+    )
     district = models.CharField(_("محله"), max_length=120, blank=True)
     business_type = models.CharField(_("نوع کسب‌وکار"), max_length=120, blank=True)
     width_cm = models.PositiveIntegerField(_("عرض (سانتی‌متر)"), null=True, blank=True)

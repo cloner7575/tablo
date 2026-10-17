@@ -10,7 +10,7 @@ from django.templatetags.static import static
 
 from apps.portfolio.demo import demo_image_path
 from apps.portfolio.models import MediaKind, PortfolioItem, PortfolioMedia
-from apps.vendors.models import Vendor
+from apps.vendors.models import Vendor, VerificationStatus
 
 VIDEO_KINDS = (MediaKind.VIDEO, MediaKind.APARAT)
 
@@ -136,3 +136,22 @@ def portfolio_slides(item: PortfolioItem) -> list[Slide]:
             is_cover=True,
         )
     ]
+
+
+def discoverable_items() -> QuerySet[PortfolioItem]:
+    return (
+        PortfolioItem.objects.filter(is_published=True)
+        .filter(
+            Q(
+                vendor__is_active=True,
+                vendor__verification_status=VerificationStatus.APPROVED,
+            )
+            | (
+                Q(vendor__isnull=True)
+                & ~Q(source_name="")
+                & ~Q(source_url="")
+                & ~Q(image="")
+            )
+        )
+        .select_related("vendor", "service", "city")
+    )

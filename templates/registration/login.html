@@ -1,10 +1,10 @@
 {% extends "registration/base_auth.html" %}
 {% load i18n %}
 
-{% block title %}{% translate "Sign in" %} · {{ SITE_NAME }}{% endblock %}
-{% block auth_heading %}{% translate "Sign in" %}{% endblock %}
+{% block title %}{% translate "ورود" %} · {{ SITE_NAME }}{% endblock %}
+{% block auth_heading %}{% translate "ورود" %}{% endblock %}
 {% block auth_intro %}
-  <p class="auth-card__aside">{% translate "Use the account that was created with the project." %}</p>
+  <p class="auth-card__aside">{% translate "با نام کاربری و رمز عبور حساب خود وارد شوید." %}</p>
 {% endblock %}
 
 {% block auth_body %}
@@ -13,9 +13,9 @@
     {% include "partials/_form_errors.html" %}
     {% for field in form %}{% include "components/_field.html" %}{% endfor %}
     {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
-    {% include "components/_button.html" with text=_("Sign in") full=True %}
+    {% include "components/_button.html" with text=_("ورود") full=True %}
   </form>
   <p class="auth-card__aside">
-    <a href="{% url 'accounts:password_reset' %}">{% translate "Forgot your password?" %}</a>
+    <a href="{% url 'accounts:password_reset' %}">{% translate "رمز عبور را فراموش کرده‌اید؟" %}</a>
   </p>
 {% endblock %}

@@ -1,27 +1,41 @@
-{% load static i18n persian %}
+{% load static i18n persian seo %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" dir="{{ TEXT_DIRECTION }}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light">
-    <meta name="theme-color" content="#f4f4f5">
-    <meta name="description" content="{% block meta_description %}برای تابلوی مغازه‌ات از چند تابلو‌ساز قیمت بگیر — {{ SITE_NAME }}{% endblock %}">
-    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
-    <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}{% block meta_description_og %}برای تابلوی مغازه‌ات از چند تابلو‌ساز قیمت بگیر{% endblock %}{% endblock %}">
-    <meta property="og:type" content="website">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#f8fafc" data-light="#f8fafc" data-dark="#0c1424">
+    <script src="{% static 'js/theme.js' %}?v=20261013-gallery-footer-1"></script>
+    <meta name="description" content="{% block meta_description %}{{ SEO_DESCRIPTION|default:"ایده‌های تابلو، راهنمای انتخاب و تابلوسازها تابلوسازی؛ از الهام تا اجرای پروژه." }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ CANONICAL_URL }}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ SEO_TITLE|default:SITE_NAME }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% block meta_description_og %}{{ SEO_DESCRIPTION|default:"ایده‌های تابلو و راهنمای انتخاب؛ از الهام تا اجرای پروژه." }}{% endblock %}{% endblock %}">
+    <meta property="og:type" content="{{ SEO_TYPE|default:'website' }}">
+    {% if article.published_at %}<meta property="article:published_time" content="{{ article.published_at|date:'c' }}"><meta property="article:modified_time" content="{{ article.updated_at|date:'c' }}">{% endif %}
+    <meta property="og:url" content="{{ CANONICAL_URL }}">
+    <meta property="og:site_name" content="{{ SITE_NAME }}">
+    <meta property="og:image" content="{{ SEO_IMAGE|default:DEFAULT_SOCIAL_IMAGE }}">
+    <meta property="og:image:alt" content="{{ SEO_IMAGE_ALT|default:SITE_NAME }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{{ SEO_IMAGE|default:DEFAULT_SOCIAL_IMAGE }}">
+    <meta name="robots" content="{% if PAGE_NOINDEX %}noindex, follow{% else %}index, follow, max-image-preview:large{% endif %}">
     <meta property="og:locale" content="fa_IR">
-    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    <title>{% block title %}{{ SEO_TITLE|default:SITE_NAME }}{% endblock %}</title>
     <link rel="preload" href="{% static 'fonts/vazirmatn-arabic.woff2' %}" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/tablo.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261013-gallery-footer-1">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=20261013-gallery-footer-1">
+    <link rel="stylesheet" href="{% static 'css/tablo.css' %}?v=20261013-gallery-footer-1">
+    <link rel="stylesheet" href="{% static 'css/atelier.css' %}?v=20261013-gallery-footer-1">
+    <link rel="stylesheet" href="{% static 'css/editorial.css' %}?v=20261013-gallery-footer-1">
+    <link rel="stylesheet" href="{% static 'css/experience.css' %}?v=20261013-gallery-footer-1">
+    <link rel="stylesheet" href="{% static 'css/workspaces.css' %}?v=20261013-gallery-footer-1">
+    <link rel="stylesheet" href="{% static 'css/polish.css' %}?v=20261013-gallery-footer-1">
     {% block extra_css %}{% endblock %}
     {% block structured_data %}{% endblock %}
   </head>
   <body class="has-mobile-chrome {% block body_class %}{% endblock %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <a class="skip-link" href="#main">{% translate "Skip to content" %}</a>
+    <a class="skip-link" href="#main">{% translate "رفتن به محتوای اصلی" %}</a>
     {% include "partials/_header.html" %}
     <main id="main" class="site-main" tabindex="-1">
       {% include "partials/_messages.html" %}
@@ -30,7 +44,8 @@
     {% include "partials/_footer.html" %}
     {% include "partials/_mobile_cta.html" %}
     <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
-    <script src="{% static 'js/app.js' %}" defer></script>
+    <script src="{% static 'js/app.js' %}?v=20261013-gallery-footer-1" defer></script>
+    <script src="{% static 'js/experience.js' %}?v=20261013-gallery-footer-1" defer></script>
     {% block extra_js %}{% endblock %}
   </body>
 </html>

@@ -23,6 +23,7 @@
         </div>
       </header>
 
+      <form class="ws-filter ws-filter--search" method="get">{% include "components/_field.html" with field=form.q %}<input type="hidden" name="status" value="{{ status }}"><input type="hidden" name="service" value="{{ service }}"><button class="btn btn--secondary" type="submit">جست‌وجو</button></form>
       {% if vendor.is_approved %}
         <div class="vp-toolbar vp-toolbar--stacked">
           <nav class="vp-status-tabs" aria-label="وضعیت پیشنهاد">
@@ -182,6 +183,7 @@
           <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:profile' %}">ویرایش خدمات</a>
         </div>
       {% endif %}
+      {% include "pages/editorial/_pagination.html" %}
     </div>
   </section>
 </div>

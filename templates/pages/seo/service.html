@@ -1,9 +1,12 @@
 {% extends "base.html" %}
+{% load seo %}
 {% load persian static %}
 
 {% block title %}{{ service.title }} | سفارش و مقایسه قیمت | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}{{ service.description|default:service.title }} — درخواست بدهید و از تابلو‌سازهای تأییدشده پیشنهاد بگیرید{% endblock %}
+{% block meta_description %}{{ SEO_DESCRIPTION }}{% endblock %}
 {% block body_class %}page-service{% endblock %}
+
+{% block structured_data %}{% structured_data breadcrumb_schema %}{% endblock %}
 
 {% block content %}
 <article class="svc-page">
@@ -13,16 +16,17 @@
       <h1 id="svc-title">{{ service.title }}</h1>
       <p class="svc-hero__lead">{{ service.description }}</p>
       <div class="svc-hero__actions">
-        <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">برای این نوع تابلو قیمت بگیر</a>
-        <a class="btn btn--ghost-outline" href="{% url 'vendors:list' %}">مشاهده تابلو‌سازها</a>
+        <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}?service={{ service.slug|urlencode }}">برای این نوع تابلو قیمت بگیر</a>
+        <a class="btn btn--ghost-outline" href="{% url 'vendors:list' %}?service={{ service.slug|urlencode }}">مشاهده تابلو‌سازها</a>
       </div>
     </div>
-    <div class="svc-hero__visual">
+    <div class="svc-hero__visual" {% if service.source_url %}data-source-photo{% endif %}>
       {% if service.icon %}
         <img src="{{ service.icon.url }}" alt="" width="900" height="640" decoding="async">
       {% else %}
         <img src="{% static service.demo_image %}" alt="" width="900" height="640" decoding="async">
       {% endif %}
+
     </div>
   </section>
 
@@ -32,7 +36,7 @@
     <div class="svc-related__rail" role="list">
       {% for s in related_services %}
         <a class="svc-related__item" href="{% url 'catalog:service' slug=s.slug %}" role="listitem">
-          <img src="{% static s.demo_image %}" alt="" loading="lazy" width="120" height="80">
+          {% if s.icon %}<img src="{{ s.icon.url }}" alt="" loading="lazy" width="120" height="80">{% else %}<img src="{% static s.demo_image %}" alt="" loading="lazy" width="120" height="80">{% endif %}
           <span>{{ s.title }}</span>
         </a>
       {% endfor %}
@@ -62,13 +66,13 @@
   <section class="section" aria-labelledby="svc-vendors-title">
     <div class="section__head section__head--row">
       <div>
-        <p class="section__eyebrow">شبکه متخصصان</p>
+        <p class="section__eyebrow">شبکه تابلوسازها</p>
         <h2 id="svc-vendors-title">تابلو‌سازان این خدمت</h2>
         {% if vendors_count %}
           <p class="svc-count">{{ vendors_count|fa_digits }} تابلو‌ساز تأییدشده</p>
         {% endif %}
       </div>
-      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:list' %}">همه تابلو‌سازها</a>
+      <a class="btn btn--ghost-outline btn--sm" href="{% url 'vendors:list' %}?service={{ service.slug|urlencode }}">همه تابلو‌سازها</a>
     </div>
     <div class="svc-vendors">
       {% for v in vendors %}
@@ -91,8 +95,8 @@
       {% empty %}
         <div class="empty">
           <strong>هنوز تابلو‌ساز تأییدشده‌ای برای این خدمت نیست</strong>
-          <p>درخواست را ثبت کنید؛ به‌محض فعال شدن متخصصان مرتبط، پیشنهاد می‌رسد.</p>
-          <a class="btn btn--primary btn--sm" href="{% url 'requests:wizard_start' %}">ثبت درخواست</a>
+          <p>درخواست را ثبت کنید؛ به‌محض فعال شدن تابلوسازها مرتبط، پیشنهاد می‌رسد.</p>
+          <a class="btn btn--primary btn--sm" href="{% url 'requests:wizard_start' %}?service={{ service.slug|urlencode }}">ثبت درخواست</a>
         </div>
       {% endfor %}
     </div>
@@ -113,7 +117,7 @@
           {% else %}
             <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="400">
           {% endif %}
-          <span>{{ item.title }}</span>
+          <span>{{ item.title }}{% if not item.is_reference %} · {{ item.creator_name }}{% endif %}</span>
         </a>
       {% empty %}
         <p class="empty">نمونه‌کار منتشرشده‌ای برای این خدمت نیست.</p>
@@ -144,8 +148,9 @@
         <h2 id="svc-cta">برای {{ service.title }} آماده سفارشید؟</h2>
         <p>ابعاد و شهر را بفرستید؛ چند تابلو‌ساز تأییدشده پیشنهاد قیمت می‌دهند.</p>
       </div>
-      <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}">دریافت پیشنهاد قیمت</a>
+      <a class="btn btn--primary btn--lg" href="{% url 'requests:wizard_start' %}?service={{ service.slug|urlencode }}">دریافت پیشنهاد قیمت</a>
     </div>
   </section>
 </article>
+{% if ideas or articles %}<section class="section"><div class="section__head"><h2>الهام و راهنمای انتخاب {{ service.title }}</h2></div>{% if ideas %}<div class="ed-idea-grid">{% for idea in ideas %}{% include "pages/editorial/_idea_card.html" %}{% endfor %}</div>{% endif %}{% if articles %}<div class="ed-article-grid">{% for article in articles %}{% include "pages/editorial/_article_card.html" %}{% endfor %}</div>{% endif %}</section>{% endif %}
 {% endblock %}

@@ -111,6 +111,7 @@ class ProjectRequestSerializer(serializers.ModelSerializer):
 
 
 class QuoteSerializer(serializers.ModelSerializer):
+    total_price = serializers.IntegerField(read_only=True)
     vendor = VendorSerializer(read_only=True)
 
     class Meta:
@@ -119,7 +120,9 @@ class QuoteSerializer(serializers.ModelSerializer):
             "id",
             "request",
             "vendor",
+            "total_price",
             "price",
+            "price_kind",
             "estimated_delivery_days",
             "description",
             "warranty",
@@ -137,6 +140,7 @@ class QuoteCreateSerializer(serializers.ModelSerializer):
         fields = (
             "request",
             "price",
+            "price_kind",
             "estimated_delivery_days",
             "description",
             "warranty",
@@ -165,6 +169,7 @@ class PortfolioMediaSerializer(serializers.ModelSerializer):
 
 class PortfolioSerializer(serializers.ModelSerializer):
     media = PortfolioMediaSerializer(many=True, read_only=True)
+    is_reference = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = PortfolioItem
@@ -178,6 +183,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
             "image",
             "media",
             "vendor",
+            "is_reference",
             "created_at",
         )
 

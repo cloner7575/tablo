@@ -26,7 +26,7 @@ def test_home_page_is_accessible(client) -> None:
     html = response.content.decode()
     assert 'href="#main"' in html
     assert "<main" in html
-    assert "Skip to content" in html
+    assert "رفتن به محتوای اصلی" in html
     assert 'lang="' in html
     assert 'dir="' in html
     assert "has-mobile-chrome" in html
@@ -46,14 +46,15 @@ def test_unknown_url_renders_the_project_404_page(client) -> None:
     assert response.status_code == 404
     html = response.content.decode()
     assert "404" in html
-    assert "We could not find that page." in html
+    assert "این صفحه را پیدا نکردیم." in html
 
 
 def test_500_template_renders_without_request_or_context() -> None:
     # Django renders handler500 with no context processors and no request.
     html = render_to_string("500.html")
     assert "500" in html
-    assert "Something went wrong" in html
+    assert "<h1>" in html
+    assert 'href="/"' in html
 
 
 def test_403_template_renders() -> None:
@@ -68,7 +69,7 @@ def test_csrf_failure_renders_the_friendly_page() -> None:
     strict = Client(enforce_csrf_checks=True)
     response = strict.post(reverse("accounts:login"), {"username": "x"})
     assert response.status_code == 403
-    assert "Your session expired" in response.content.decode()
+    assert "برای ارسال فرم، صفحه را تازه کنید." in response.content.decode()
 
 
 def test_health_panel_is_htmx_only(client) -> None:

@@ -31,7 +31,7 @@ def test_invalid_reset_link_explains_itself(client) -> None:
     )
     response = client.get(url)
     assert response.status_code == 200
-    assert "invalid or has already been used" in response.content.decode()
+    assert "این لینک معتبر نیست یا قبلاً استفاده شده است." in response.content.decode()
 
 
 def test_login_page_renders_a_csrf_protected_form(client) -> None:

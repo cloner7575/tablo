@@ -283,3 +283,117 @@ class ReviewForm(forms.Form):
         widget=forms.Textarea(attrs={"rows": 3}),
         required=False,
     )
+
+
+class WorkspaceFilterForm(forms.Form):
+    q = forms.CharField(
+        label=_("جست‌وجوی سفارش"),
+        required=False,
+        max_length=80,
+        widget=forms.TextInput(
+            attrs={"type": "search", "placeholder": _("نام پروژه یا کسب‌وکار")}
+        ),
+    )
+    status = forms.ChoiceField(
+        label=_("وضعیت پروژه"),
+        required=False,
+        choices=(
+            ("", _("همهٔ پروژه‌ها")),
+            ("offers", _("پیشنهاد دارد")),
+            ("active", _("در حال اجرا")),
+            ("completed", _("تکمیل‌شده")),
+            ("cancelled", _("لغوشده")),
+            ("draft", _("پیش‌نویس")),
+        ),
+    )
+
+
+class SimpleNeedForm(forms.Form):
+    city = forms.ModelChoiceField(
+        label=_("شهر محل نصب"),
+        queryset=City.objects.filter(is_active=True),
+        empty_label=_("شهر را انتخاب کنید"),
+    )
+    use_case = forms.ChoiceField(
+        label=_("تابلو برای کجاست؟"),
+        choices=(
+            ("shop", _("سردر مغازه")),
+            ("inside", _("داخل مغازه یا شرکت")),
+            ("building", _("ساختمان و راهنمای طبقات")),
+        ),
+        widget=forms.RadioSelect,
+    )
+    business_type = forms.CharField(
+        label=_("کسب‌وکارتان چیست؟"),
+        max_length=120,
+        help_text=_("مثلاً کافه، پوشاک، سالن زیبایی یا مطب"),
+    )
+    audience = forms.ChoiceField(label=_("چه کسی درخواست را دریافت کند؟"))
+
+    def __init__(self, *args: object, vendor_name: str = "", **kwargs: object) -> None:
+        super().__init__(*args, **kwargs)
+        choices = [("matched", _("تابلوسازهای مرتبط شهرم؛ برای مقایسه قیمت"))]
+        if vendor_name:
+            choices.insert(0, ("direct", _("فقط %(name)s") % {"name": vendor_name}))
+        self.fields["audience"].choices = choices
+        self.fields["audience"].initial = "direct" if vendor_name else "matched"
+        if not vendor_name:
+            self.fields["audience"].widget = forms.HiddenInput()
+
+
+class SimpleDetailsForm(
+    RequestWizardDescriptionForm,
+    RequestWizardImageForm,
+    RequestWizardBudgetForm,
+    RequestWizardServiceForm,
+):
+    business_type = None
+    budget_min = None
+    description = forms.CharField(
+        label=_("چه تابلویی می‌خواهید؟"),
+        max_length=2000,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 3,
+                "placeholder": (
+                    "برای سردر کافه تابلو می‌خواهم؛ "
+                    "شب روشن باشد و نوشته‌اش «کافه آبی» باشد."
+                ),
+            }
+        ),
+    )
+    text_content = forms.CharField(
+        label=_("نوشتهٔ روی تابلو"), max_length=300, required=False
+    )
+    district = forms.CharField(label=_("محله"), max_length=120, required=False)
+    width_cm = forms.IntegerField(
+        label=_("عرض تقریبی (سانتی‌متر)"), min_value=1, max_value=100000, required=False
+    )
+    height_cm = forms.IntegerField(
+        label=_("ارتفاع تقریبی (سانتی‌متر)"),
+        min_value=1,
+        max_value=100000,
+        required=False,
+    )
+    night_light = forms.ChoiceField(
+        label=_("شب روشن باشد؟"),
+        choices=(("unsure", _("راهنمایی می‌خواهم")), ("yes", _("بله")), ("no", _("نه"))),
+        required=False,
+        initial="unsure",
+    )
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["choice"].required = False
+        self.fields["choice"].widget = forms.Select()
+        self.fields["choice"].initial = SERVICE_UNSURE
+        self.fields["choice"].label = _("مدل تابلو، اگر می‌دانید")
+        self.fields["budget_max"].label = _("تا چه مبلغی در نظر دارید؟ (تومان)")
+
+    def clean(self) -> dict:
+        cleaned = super().clean()
+        if bool(cleaned.get("width_cm")) != bool(cleaned.get("height_cm")):
+            self.add_error(
+                "height_cm", _("هر دو اندازه را وارد کنید یا هر دو را خالی بگذارید.")
+            )
+        return cleaned

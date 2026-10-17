@@ -1,0 +1,9 @@
+{% load persian %}
+<article class="ed-idea-card">
+  <div class="ed-idea-card__image"><a href="{{ idea.get_absolute_url }}"><img src="{{ idea.display_image_url }}" alt="{{ idea.image_alt }}" width="800" height="600" loading="lazy" decoding="async"></a>
+  <span class="ed-source{% if idea.is_concept %} ed-source--concept{% endif %}">{{ idea.get_source_display }}</span>
+  <form class="ed-card-save" action="{% url 'editorial:idea_save' pk=idea.pk %}" method="post">{% csrf_token %}
+    {% if idea.pk in saved_ids %}<input type="hidden" name="action" value="remove"><button type="submit" aria-label="حذف {{ idea.title }} از ذخیره‌ها" title="حذف از ذخیره‌ها" class="at-save is-saved">{% include "components/_icon.html" with name="bookmark" size="sm" %}</button>{% else %}<input type="hidden" name="action" value="add"><button type="submit" aria-label="ذخیره {{ idea.title }} در ذخیره‌ها" title="ذخیره در ذخیره‌ها" class="at-save">{% include "components/_icon.html" with name="bookmark" size="sm" %}</button>{% endif %}
+  </form></div>
+  <div class="ed-idea-card__body"><p>{{ idea.category.name }} <span aria-hidden="true">/</span> {{ idea.get_style_display }}</p><h2><a href="{{ idea.get_absolute_url }}"><bdi>{{ idea.title }}</bdi></a></h2><p class="ed-idea-card__description">{{ idea.description|truncatechars:95 }}</p></div>
+</article>

@@ -1,7 +1,7 @@
 target-version = "py312"
 line-length = 88
 src = [".", "apps"]
-extend-exclude = [".cursor/skills/ui-ux-pro-max"]
+extend-exclude = [".cursor/skills/ui-ux-pro-max", ".agents/skills/ui-ux-pro-max"]
 
 [lint]
 select = ["E", "F", "I", "UP", "B"]

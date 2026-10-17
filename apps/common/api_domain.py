@@ -160,6 +160,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
                 vendor=request.user.vendor_profile,
                 project_request=serializer.validated_data["request"],
                 price=serializer.validated_data["price"],
+                price_kind=serializer.validated_data.get("price_kind", "estimate"),
                 estimated_delivery_days=serializer.validated_data[
                     "estimated_delivery_days"
                 ],

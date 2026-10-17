@@ -1,19 +1,24 @@
-{% load static %}
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
 {% comment %}
 Django renders 500 with no context processors and no request, so this page is
 deliberately standalone: no base.html, no context variables, no database.
 {% endcomment %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <title>Something went wrong</title>
+    <meta name="theme-color" content="#f8fafc" data-light="#f8fafc" data-dark="#0c1424">
+    <script src="{% static 'js/theme.js' %}?v=20261013-marketplace-2"></script>
+    <title>{% translate "خطایی در نمایش صفحه رخ داد" %}</title>
     <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/experience.css' %}">
   </head>
-  <body>
+  <body class="page-error error-500">
     <main id="main" class="site-main">
       <section class="stack error-page">
         <span class="error-page__mark">
@@ -21,13 +26,12 @@ deliberately standalone: no base.html, no context variables, no database.
             <use href="{% static 'img/icons.svg' %}#alert-triangle"></use>
           </svg>
         </span>
-        <p class="error-page__code">500</p>
-        <h1>Something went wrong on our side.</h1>
+        <p class="error-page__code">۵۰۰</p>
+        <h1>{% translate "این صفحه فعلاً در دسترس نیست." %}</h1>
         <p class="lede">
-          The error has been logged. Try again in a moment — if it keeps
-          happening, contact support.
+          {% translate "کمی بعد دوباره امتحان کنید. اگر مشکل ادامه داشت، از صفحهٔ اصلی شروع کنید." %}
         </p>
-        <a class="btn btn--primary" href="/">Back to home</a>
+        <a class="btn btn--primary" href="/">{% translate "بازگشت به خانه" %}</a>
       </section>
     </main>
   </body>
