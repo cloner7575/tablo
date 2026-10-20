@@ -50,5 +50,29 @@
   "workshop": [
     "demo/workshop-banner.png",
     "day"
+  ],
+  "reference-gerad": [
+    "references/novin-gerad.webp",
+    "day"
+  ],
+  "reference-vozara": [
+    "references/namatabesh-vozara.webp",
+    "day"
+  ],
+  "reference-jewels": [
+    "references/rangin-national-jewels.webp",
+    "day"
+  ],
+  "reference-doral": [
+    "references/doral-chalnium.webp",
+    "day"
+  ],
+  "reference-diba": [
+    "references/diba-office.webp",
+    "day"
+  ],
+  "reference-lasvegas": [
+    "references/novinlight-lasvegas.webp",
+    "night"
   ]
 }

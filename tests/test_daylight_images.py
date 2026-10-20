@@ -9,6 +9,17 @@ from django.template import Context, Template
 from apps.portfolio.models import PortfolioItem
 
 
+def test_provider_card_loads_its_own_scene_image_tags() -> None:
+    from django.template.loader import render_to_string
+
+    html = render_to_string(
+        'partials/_industry_provider_card.html',
+        {'provider': {'name': 'سازنده', 'image': 'gerad.webp'}},
+    )
+    assert 'data-clock-picture' in html
+    assert 'alt="سازنده"' in html
+
+
 def test_static_photographs_share_variants_and_every_variant_exists() -> None:
     from apps.common.daylight_images import SCENE_SOURCES, scene_variants
 

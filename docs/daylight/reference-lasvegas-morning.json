@@ -1,0 +1,7 @@
+{
+  "scene": "reference-lasvegas",
+  "phase": "morning",
+  "reference": "references/novinlight-lasvegas.webp",
+  "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-8fa96c06-ef0b-4229-a02f-c16b39dd437d.png",
+  "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. Also keep every existing watermark, attribution, phone number, decorative border, person, face and clothing exactly unchanged. This is a lighting preview of the same reference photograph; no redesign or cleanup. TARGET TIME: 08:00, soft fresh morning ambient illumination, gentle cool daylight only where physically visible."
+}

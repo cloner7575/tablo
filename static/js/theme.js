@@ -411,6 +411,18 @@
       });
     });
     dialog?.addEventListener('close', () => { opener?.setAttribute('aria-expanded', 'false'); opener?.focus(); });
+    const outsideDialog = event => {
+      if (event.target !== dialog) return false;
+      const { x, y, width, height } = dialog.getBoundingClientRect();
+      return event.clientX < x || event.clientX > x + width || event.clientY < y || event.clientY > y + height;
+    };
+    let startedOutside = false;
+    dialog?.addEventListener('pointerdown', event => { startedOutside = outsideDialog(event); });
+    dialog?.addEventListener('pointercancel', () => { startedOutside = false; });
+    dialog?.addEventListener('click', event => {
+      if (startedOutside && outsideDialog(event)) dialog.close();
+      startedOutside = false;
+    });
     document.querySelector('[data-clock-close]')?.addEventListener('click', () => dialog.close());
     document.querySelector('[data-clock-form]')?.addEventListener('submit', event => { event.preventDefault(); if (input.reportValidity()) setTime(input.value); });
     input?.addEventListener('input', () => { if (input.validity.valid) setTime(input.value); });

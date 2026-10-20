@@ -20,6 +20,12 @@ SCENE_SOURCES = {
     'img/demo/service-composite.png': 'composite',
     'img/demo/service-flexi.png': 'flexi',
     'img/demo/workshop-banner.png': 'workshop',
+    'img/references/novin-gerad.webp': 'reference-gerad',
+    'img/references/namatabesh-vozara.webp': 'reference-vozara',
+    'img/references/rangin-national-jewels.webp': 'reference-jewels',
+    'img/references/doral-chalnium.webp': 'reference-doral',
+    'img/references/diba-office.webp': 'reference-diba',
+    'img/references/novinlight-lasvegas.webp': 'reference-lasvegas',
 }
 
 

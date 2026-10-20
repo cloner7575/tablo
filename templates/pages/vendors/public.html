@@ -8,77 +8,76 @@
 
 {% block structured_data %}{% structured_data vendor_schema %}{% structured_data breadcrumb_schema %}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detail-pages.css' %}?v=20261020-1">
+{% endblock %}
+
 {% block content %}
 <article class="vn-profile">
-  <section class="vn-hero vn-hero--compact" aria-labelledby="vn-title">
-    <div class="vn-hero__media" aria-hidden="true">
-      {% if vendor.cover_image %}
-        {% scene_image vendor.cover_image.url alt="" width=1600 height=900 lazy=False high=True %}
-      {% else %}
-        {% scene_image vendor.demo_cover alt="" width=1600 height=900 lazy=False high=True %}
-      {% endif %}
-    </div>
-    <div class="vn-hero__shade" aria-hidden="true"></div>
-    <div class="vn-hero__content">
-      <div class="vn-hero__badges">
-        <span class="vn-badge vn-badge--light">تأییدشده</span>
-        {% if has_portfolio %}<span class="vn-badge vn-badge--light">نمونه‌کار مجموعه</span>{% endif %}
-        {% if vendor.is_featured %}<span class="vn-badge vn-badge--accent">منتخب</span>{% endif %}
-        <span class="vn-badge vn-badge--light">{{ vendor.city.name }}</span>
+  <nav class="pf-breadcrumb pf-wrap" aria-label="مسیر صفحه">
+    <a href="{% url 'common:home' %}">خانه</a><span aria-hidden="true">/</span>
+    <a href="{% url 'vendors:list' %}">تابلوسازها</a><span aria-hidden="true">/</span>
+    <span aria-current="page">{{ vendor.business_name }}</span>
+  </nav>
+  <section class="vn-intro pf-wrap" aria-labelledby="vn-title">
+    <div class="vn-intro__copy">
+      <p class="ed-kicker">تابلوساز در {{ vendor.city.name }}</p>
+      <div class="vn-intro__badges">
+        <span class="chip">{% include 'components/_icon.html' with name='check-circle' size='sm' %} تأییدشده</span>
+        {% if vendor.is_featured %}<span class="chip">منتخب</span>{% endif %}
       </div>
       <h1 id="vn-title">{{ vendor.business_name }}</h1>
-      <p class="vn-hero__lead">
-        {% if vendor.review_count %}
-          ★ {{ vendor.rating|fa_digits }}
-          ({{ vendor.review_count|fa_digits }} نظر)
-        {% else %}
-          هنوز نظری ثبت نشده
-        {% endif %}
-        {% if vendor.completed_projects %}
-          · {{ vendor.completed_projects|fa_digits }} پروژه تکمیل‌شده
-        {% endif %}
-      </p>
-      <div class="vn-hero__actions">
-        <a class="btn btn--primary btn--lg" href="{% url 'requests:from_vendor' slug=vendor.slug %}">
-          درخواست قیمت از این تابلو‌ساز
-        </a>
-        <a class="btn btn--ghost-light" href="#portfolio">مشاهده نمونه‌کارها</a>
+      <p class="vn-intro__lead">خدمات و نمونه‌کارهای این مجموعه را ببینید و برای اجرای تابلوی خود پیشنهاد قیمت بگیرید.</p>
+      <dl class="vn-intro__stats" aria-label="آمار تابلو‌ساز">
+        {% if vendor.years_of_experience %}<div><dt>سال تجربه</dt><dd>{{ vendor.years_of_experience|fa_digits }}</dd></div>{% endif %}
+        {% if has_portfolio %}<div><dt>نمونه‌کار</dt><dd>{{ portfolio|length|fa_digits }}</dd></div>{% endif %}
+        {% if vendor.completed_projects %}<div><dt>پروژه تکمیل‌شده</dt><dd>{{ vendor.completed_projects|fa_digits }}</dd></div>{% endif %}
+        {% if vendor.review_count %}<div><dt>امتیاز از {{ vendor.review_count|fa_digits }} نظر</dt><dd>{{ vendor.rating|fa_digits }}</dd></div>{% endif %}
+      </dl>
+      <div class="vn-intro__actions">
+        <a class="btn btn--primary" href="{% url 'requests:from_vendor' slug=vendor.slug %}">درخواست قیمت از این تابلو‌ساز</a>
+        <a class="btn btn--secondary" href="#portfolio">مشاهده نمونه‌کارها</a>
       </div>
     </div>
+    <a class="vn-intro__image" href="#portfolio" aria-label="مشاهده نمونه‌کارهای {{ vendor.business_name }}">
+      {% if vendor.cover_image %}
+        {% scene_image vendor.cover_image.url alt=vendor.business_name width=900 height=1000 lazy=False high=True %}
+      {% elif portfolio %}
+        {% time_image portfolio.0 width=900 height=1000 lazy=False high=True %}
+      {% else %}
+        {% scene_image vendor.demo_cover alt="تصویر مفهومی تابلو" width=900 height=1000 lazy=False high=True %}
+      {% endif %}
+      <span class="vn-intro__image-label">{% if vendor.cover_image %}تصویر مجموعه{% elif portfolio %}از نمونه‌کارهای مجموعه{% else %}تصویر مفهومی{% endif %} {% include 'components/_icon.html' with name='arrow-down' size='sm' %}</span>
+    </a>
   </section>
-
-  <section class="vn-stats section" aria-label="آمار تابلو‌ساز">
-    <div class="vn-stats__grid">
-      {% if vendor.review_count %}
-        <div>
-          <strong>{{ vendor.rating|fa_digits }}</strong>
-          <span>امتیاز</span>
-        </div>
-      {% endif %}
-      {% if vendor.completed_projects %}
-        <div>
-          <strong>{{ vendor.completed_projects|fa_digits }}</strong>
-          <span>پروژه موفق</span>
-        </div>
-      {% endif %}
-      {% if vendor.years_of_experience %}
-        <div>
-          <strong>{{ vendor.years_of_experience|fa_digits }}</strong>
-          <span>سال تجربه</span>
-        </div>
-      {% endif %}
-      {% if has_portfolio %}
-        <div>
-          <strong>{{ portfolio|length|fa_digits }}</strong>
-          <span>نمونه‌کار</span>
-        </div>
-      {% endif %}
-    </div>
-  </section>
+  <nav class="vn-sections pf-wrap" aria-label="بخش‌های پروفایل">
+    <a href="#portfolio">نمونه‌کارها <span>{{ portfolio|length|fa_digits }}</span></a>
+    <a href="#about-title">درباره مجموعه</a>
+    <a href="#reviews-title">نظرات مشتریان</a>
+  </nav>
 
   <section class="section">
     <div class="vn-layout">
       <div class="vn-main">
+        <section class="vn-block" id="portfolio" aria-labelledby="portfolio-title">
+          <div class="section__head section__head--row">
+            <div>
+              <p class="section__eyebrow">گالری اجرا</p>
+              <h2 id="portfolio-title">نمونه‌کارها</h2>
+            </div>
+          </div>
+          <div class="vn-gallery{% if portfolio|length == 1 %} vn-gallery--single{% endif %}">
+            {% for item in portfolio %}
+              <a class="vn-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
+                <span class="vn-gallery__image">{% time_image item width=800 height=700 %}</span>
+                <span class="vn-gallery__caption"><strong>{{ item.title }}</strong><span>مشاهده پروژه {% include 'components/_icon.html' with name='chevron-left' size='sm' flip=True %}</span></span>
+              </a>
+            {% empty %}
+              <p class="empty">هنوز نمونه‌کاری منتشر نشده است. برای بررسی امکان اجرا، جزئیات تابلوی موردنظرتان را بفرستید.</p>
+            {% endfor %}
+          </div>
+        </section>
+
         <section class="vn-block" aria-labelledby="about-title">
           <h2 id="about-title">درباره مجموعه</h2>
           {% if vendor.description %}
@@ -95,25 +94,6 @@
           {% endif %}
         </section>
 
-        <section class="vn-block" id="portfolio" aria-labelledby="portfolio-title">
-          <div class="section__head section__head--row">
-            <div>
-              <p class="section__eyebrow">گالری اجرا</p>
-              <h2 id="portfolio-title">نمونه‌کارها</h2>
-            </div>
-          </div>
-          <div class="vn-gallery">
-            {% for item in portfolio %}
-              <a class="vn-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
-                {% time_image item width=600 height=450 %}
-                <span>{{ item.title }}</span>
-              </a>
-            {% empty %}
-              <p class="empty">نمونه‌کاری ثبت نشده است. از این تابلو‌ساز قیمت بگیرید تا پروژه شما اولین نمونه‌کار باشد.</p>
-            {% endfor %}
-          </div>
-        </section>
-
         <section class="vn-block" aria-labelledby="reviews-title">
           <div class="section__head">
             <p class="section__eyebrow">اعتماد مشتریان</p>
@@ -122,8 +102,8 @@
           <div class="vn-reviews">
             {% for r in reviews %}
               <blockquote class="vn-review">
-                <p class="vn-review__stars">★ {{ r.rating|fa_digits }}</p>
-                <p>«{{ r.comment|default:"کار تمیز و حرفه‌ای بود." }}»</p>
+                <p class="vn-review__stars">{% include 'components/_icon.html' with name='star' size='sm' %} {{ r.rating|fa_digits }} از ۵</p>
+                <p>«{{ r.comment|default:"نظر متنی ثبت نشده است." }}»</p>
               </blockquote>
             {% empty %}
               <p class="empty">هنوز نظری از پروژه تکمیل‌شده ثبت نشده است.</p>
@@ -168,7 +148,7 @@
     </div>
     <div class="svc-vendors">
       {% for v in related_vendors %}
-        <a class="svc-vendor" href="{% url 'requests:from_vendor' slug=v.slug %}">
+        <a class="svc-vendor" href="{% url 'vendors:public' slug=v.slug %}">
           {% if v.cover_image %}
             {% scene_image v.cover_image.url alt="" width=160 height=160 %}
           {% else %}
@@ -181,7 +161,7 @@
               {{ v.city.name }}
               {% if v.completed_projects %} · {{ v.completed_projects|fa_digits }} پروژه{% endif %}
             </p>
-            <span class="btn btn--primary btn--sm">درخواست قیمت</span>
+            <span class="at-text-link">مشاهده پروفایل</span>
           </div>
         </a>
       {% endfor %}

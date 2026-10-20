@@ -1,0 +1,15 @@
+<form class="pf-image-save" method="post" action="{% url 'portfolio:board_toggle' pk=item.pk %}" data-busy-submit>
+  {% csrf_token %}
+  <input type="hidden" name="destination" value="detail">
+  {% if item.pk in saved_ids %}
+    <input type="hidden" name="action" value="remove">
+    <button class="pf-image-save__button is-saved" type="submit" aria-pressed="true" aria-label="ذخیرهٔ {{ item.title }}" title="حذف از ذخیره‌ها">
+      {% include 'components/_icon.html' with name='bookmark' %}
+    </button>
+  {% else %}
+    <input type="hidden" name="action" value="add">
+    <button class="pf-image-save__button" type="submit" aria-pressed="false" aria-label="ذخیرهٔ {{ item.title }}" title="ذخیره نمونه‌کار">
+      {% include 'components/_icon.html' with name='bookmark' %}
+    </button>
+  {% endif %}
+</form>

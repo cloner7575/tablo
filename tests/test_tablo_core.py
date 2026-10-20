@@ -443,7 +443,9 @@ def test_vendor_public_shows_rich_profile(client: Client, vendor, service):
     assert response.status_code == 200
     body = response.content.decode()
     assert "vn-profile" in body
-    assert "vn-hero--compact" in body
+    assert 'aria-label="بخش‌های پروفایل"' in body
+    assert 'href="#portfolio"' in body
+    assert body.index('id="portfolio-title"') < body.index('id="about-title"')
     assert vendor.business_name in body
     assert "درخواست قیمت از این تابلو‌ساز" in body
     assert service.title in body

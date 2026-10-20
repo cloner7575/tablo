@@ -277,10 +277,10 @@
 .clock-precise form { display: flex; align-items: center; gap: var(--space-3); padding-block-end: var(--space-3); }
 .clock-precise input { min-inline-size: 0; min-block-size: 2.75rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-ink); padding-inline: var(--space-2); font: inherit; }
 .clock-help { font-size: var(--text-2xs); color: var(--color-muted); text-align: center; }
-[data-clock-picture] { display: grid; inline-size: 100%; block-size: 100%; min-inline-size: 0; min-block-size: 0; isolation: isolate; }
+[data-clock-picture] { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); inline-size: 100%; block-size: 100%; min-inline-size: 0; min-block-size: 0; isolation: isolate; }
 [data-clock-picture] > picture { display: contents; }
 [data-clock-picture] > picture > img, .clock-image-layer { grid-area: 1 / 1; min-inline-size: 0; min-block-size: 0; }
-.clock-image-layer { display: grid; pointer-events: none; opacity: 0; }
+.clock-image-layer { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); overflow: hidden; pointer-events: none; opacity: 0; }
 .clock-image-layer img { grid-area: 1 / 1; inline-size: 100%; block-size: 100%; object-fit: inherit; }
 .jd-hero-scene > [data-clock-picture] { filter: brightness(var(--scene-brightness, 1)) sepia(var(--scene-warmth, 0)) saturate(var(--scene-saturation, 1)); }
 @media (max-width: 600px) {
@@ -309,7 +309,7 @@
   .jd-hero-scene > [data-clock-picture] { animation: none; }
 }
 
-.clock-image-snapshot { display: grid; grid-area: 1 / 1; z-index: 2; pointer-events: none; min-inline-size: 0; min-block-size: 0; }
+.clock-image-snapshot { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); grid-area: 1 / 1; z-index: 2; pointer-events: none; min-inline-size: 0; min-block-size: 0; overflow: hidden; }
 .clock-image-snapshot > img { grid-area: 1 / 1; inline-size: 100%; block-size: 100%; }
 
 /* Ordering guidance: useful before the first editorial article is published. */

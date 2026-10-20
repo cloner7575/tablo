@@ -207,6 +207,33 @@ def test_delete_media_removes_row_and_file(item):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("authenticated", [False, True])
+def test_detail_image_save_control_reflects_saved_state(
+    client: Client, item, vendor, authenticated: bool
+) -> None:
+    if authenticated:
+        client.force_login(vendor.user)
+    detail_url = reverse("portfolio:detail", kwargs={"slug": item.slug})
+    toggle_url = reverse("portfolio:board_toggle", kwargs={"pk": item.pk})
+    body = client.get(detail_url).content.decode()
+    assert 'aria-pressed="false"' in body
+    assert body.index('class="pf-image-save"') < body.index('class="pf-summary"')
+    assert "مشاهده بورد" not in body
+    assert "pf-summary__kicker" not in body
+
+    saved = client.post(
+        toggle_url, {"action": "add", "destination": "detail"}, follow=True
+    ).content.decode()
+    assert 'aria-pressed="true"' in saved
+    assert 'class="pf-image-save__button is-saved"' in saved
+
+    removed = client.post(
+        toggle_url, {"action": "remove", "destination": "detail"}, follow=True
+    ).content.decode()
+    assert 'aria-pressed="false"' in removed
+
+
+@pytest.mark.django_db
 def test_detail_renders_gallery_and_lightbox(client: Client, item, vendor):
     add_media(
         item=item,

@@ -8,6 +8,10 @@
 
 {% block structured_data %}{% structured_data work_schema %}{% structured_data breadcrumb_schema %}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detail-pages.css' %}?v=20261020-3">
+{% endblock %}
+
 {% block extra_js %}
 <script src="{% static 'js/portfolio-gallery.js' %}?v=20261020-site-clock-1" defer></script>
 {% endblock %}
@@ -51,6 +55,7 @@
             </li>
           {% endfor %}
         </ul>
+        {% if vendor.is_approved %}{% include 'components/_portfolio_save.html' %}{% endif %}
         <button class="pf-gallery__zoom" type="button" aria-label="نمایش گالری در اندازه بزرگ" data-gallery-zoom hidden>
           {% include "components/_icon.html" with name="maximize" size="sm" %}
         </button>
@@ -93,24 +98,9 @@
       {% endif %}
     </section>
 
+    <div class="pf-info">
     <div class="pf-summary">
-      <p class="pf-summary__kicker">
-        {% if item.service %}
-          <a href="{% url 'catalog:service' slug=item.service.slug %}">{{ item.service.title }}</a>
-        {% else %}نمونه‌کار{% endif %}
-        {% if item.city %}
-          <span aria-hidden="true">/</span>
-          <a href="{% url 'catalog:city' slug=item.city.slug %}">{{ item.city.name }}</a>
-        {% endif %}
-      </p>
       <h1 id="pf-title">{{ item.title }}</h1>
-      {% if vendor.is_approved %}
-      <form class="at-panel-tools" method="post" action="{% url 'portfolio:board_toggle' pk=item.pk %}">
-        {% csrf_token %}<input type="hidden" name="destination" value="detail">
-        {% if item.pk in request.session.inspiration_board %}<input type="hidden" name="action" value="remove"><button class="btn btn--secondary btn--sm" type="submit">{% include "components/_icon.html" with name="bookmark" size="sm" %} حذف از ذخیره‌ها</button>{% else %}<input type="hidden" name="action" value="add"><button class="btn btn--secondary btn--sm" type="submit">{% include "components/_icon.html" with name="bookmark" size="sm" %} ذخیره در ذخیره‌ها</button>{% endif %}
-        <a class="at-text-link" href="{% url 'editorial:saved' %}">مشاهده بورد</a>
-      </form>
-      {% endif %}
       <p class="pf-summary__count">
         {% include "components/_icon.html" with name="image" size="sm" %}
         {{ photo_count|fa_digits }} عکس
@@ -120,6 +110,31 @@
           {{ video_count|fa_digits }} ویدیو
         {% endif %}
       </p>
+
+    <aside class="pf-buybox" aria-labelledby="pf-vendor-title">
+      <p class="pf-buybox__eyebrow">تابلو‌ساز این پروژه</p>
+      <h2 id="pf-vendor-title">
+        <a href="{% url 'vendors:public' slug=vendor.slug %}">{{ vendor.business_name }}</a>
+      </h2>
+      <ul class="pf-buybox__facts">
+        {% if vendor.review_count %}<li>
+          {% include "components/_icon.html" with name="star" size="sm" %}
+          <span><strong>{{ vendor.rating|fa_digits }}</strong> امتیاز از {{ vendor.review_count|fa_digits }} نظر</span>
+        </li>{% endif %}
+        {% if vendor.completed_projects %}<li>
+          {% include "components/_icon.html" with name="check-circle" size="sm" %}
+          <span>{{ vendor.completed_projects|fa_digits }} پروژه انجام‌شده</span>
+        </li>{% endif %}
+        <li>
+          {% include "components/_icon.html" with name="home" size="sm" %}
+          <span>{{ vendor.city.name }}</span>
+        </li>
+      </ul>
+      <div class="pf-buybox__actions">
+        <a class="btn btn--primary btn--block" href="{% url 'requests:from_vendor' slug=vendor.slug %}">درخواست قیمت مشابه</a>
+        <a class="btn btn--ghost-outline btn--block" href="{% url 'vendors:public' slug=vendor.slug %}">پروفایل تابلو‌ساز</a>
+      </div>
+    </aside>
 
       <h2 class="pf-summary__title">ویژگی‌ها</h2>
       <dl class="pf-specs">
@@ -150,30 +165,8 @@
       {% endif %}
     </div>
 
-    <aside class="pf-buybox" aria-labelledby="pf-vendor-title">
-      <p class="pf-buybox__eyebrow">تابلو‌ساز این پروژه</p>
-      <h2 id="pf-vendor-title">
-        <a href="{% url 'vendors:public' slug=vendor.slug %}">{{ vendor.business_name }}</a>
-      </h2>
-      <ul class="pf-buybox__facts">
-        <li>
-          {% include "components/_icon.html" with name="star" size="sm" %}
-          <span><strong>{{ vendor.rating|fa_digits }}</strong> امتیاز از {{ vendor.review_count|fa_digits }} نظر</span>
-        </li>
-        <li>
-          {% include "components/_icon.html" with name="check-circle" size="sm" %}
-          <span>{{ vendor.completed_projects|fa_digits }} پروژه انجام‌شده</span>
-        </li>
-        <li>
-          {% include "components/_icon.html" with name="home" size="sm" %}
-          <span>{{ vendor.city.name }}</span>
-        </li>
-      </ul>
-      <div class="pf-buybox__actions">
-        <a class="btn btn--primary btn--block" href="{% url 'requests:from_vendor' slug=vendor.slug %}">درخواست قیمت مشابه</a>
-        <a class="btn btn--ghost-outline btn--block" href="{% url 'vendors:public' slug=vendor.slug %}">پروفایل تابلو‌ساز</a>
-      </div>
-    </aside>
+
+    </div>
   </div>
 
   <dialog class="pf-lightbox" aria-labelledby="pf-lightbox-title" data-lightbox>

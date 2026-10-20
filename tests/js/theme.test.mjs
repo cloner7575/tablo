@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 const source = readFileSync(new URL('../../static/js/theme.js', import.meta.url), 'utf8');
 
-function harness({ time = '12:00', stored = null, blocked = false, reduced = true, dial = null, imageSupport = false } = {}) {
+function harness({ time = '12:00', stored = null, blocked = false, reduced = true, dial = null, dialog = null, imageSupport = false } = {}) {
   const styles = new Map();
   const tokens = new Map([...readFileSync(new URL('../../static/css/tokens.css', import.meta.url), 'utf8').matchAll(/(--clock-[\w-]+):\s*([^;]+);/g)].map(m => [m[1], m[2]]));
   const root = { dataset: {}, style: { setProperty: (key, value) => styles.set(key, value) } };
@@ -15,7 +15,7 @@ function harness({ time = '12:00', stored = null, blocked = false, reduced = tru
   const meta = { dataset: { light: '#f8fafc', dark: '#0c1424' } };
   const document = {
     documentElement: root, readyState: 'complete', hidden: false,
-    querySelector: s => s.includes('theme-color') ? meta : null,
+    querySelector: s => s.includes('theme-color') ? meta : s === '[data-clock-dialog]' ? dialog : null,
     querySelectorAll: s => s === '[data-clock-picture]' ? pictures : s === '[data-clock-dial]' && dial ? [dial] : [],
     addEventListener: (name, fn) => documentEvents.set(name, fn),
   };
@@ -47,6 +47,29 @@ function harness({ time = '12:00', stored = null, blocked = false, reduced = tru
   const flush = (count = 180) => { for (let i = 0; i < count && frames.size; i++) { const batch = [...frames.values()]; frames.clear(); batch.forEach(fn => fn(i * 16)); } };
   return { clock: window.TabloClock, root, state, events, documentEvents, pictures, meta, styles, flush, frames, pendingImages };
 }
+
+test('clock closes only after a click beginning and ending outside its bounds', () => {
+  const events = new Map();
+  let closed = 0;
+  const dialog = {
+    open: true,
+    addEventListener: (name, fn) => events.set(name, fn),
+    getBoundingClientRect: () => ({ x: 100, y: 100, width: 300, height: 500 }),
+    close: () => { closed++; },
+  };
+  harness({ dialog });
+  const inside = { target: dialog, clientX: 120, clientY: 120 };
+  const outside = { target: dialog, clientX: 50, clientY: 50 };
+  events.get('pointerdown')(inside);
+  events.get('click')(inside);
+  assert.equal(closed, 0, 'padding inside dialog stays open');
+  events.get('pointerdown')(inside);
+  events.get('click')(outside);
+  assert.equal(closed, 0, 'dragging out of dialog stays open');
+  events.get('pointerdown')(outside);
+  events.get('click')(outside);
+  assert.equal(closed, 1, 'backdrop click closes dialog');
+});
 
 for (const [time, phase] of [
   ['00:00', 'night', 'dark'], ['05:59', 'night', 'dark'],

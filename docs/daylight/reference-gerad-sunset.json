@@ -1,0 +1,7 @@
+{
+  "scene": "reference-gerad",
+  "phase": "sunset",
+  "reference": "references/novin-gerad.webp",
+  "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-b32e98c1-bf44-473b-8210-a18cfb670c58.png",
+  "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. Also keep every existing watermark, attribution, phone number, decorative border, person, face and clothing exactly unchanged. This is a lighting preview of the same reference photograph; no redesign or cleanup. TARGET TIME: 18:00, restrained warm early-evening ambient illumination, cool shaded areas, existing lamps illuminated."
+}

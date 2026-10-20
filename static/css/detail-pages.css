@@ -1,0 +1,97 @@
+/* Project photographs lead the detail page; information stays within reach. */
+.page-portfolio .pf-product {
+  grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.9fr);
+  gap: var(--space-8);
+}
+
+.pf-info { display: grid; gap: var(--space-6); min-inline-size: 0; }
+.page-portfolio .pf-gallery__stage { aspect-ratio: auto; block-size: clamp(34rem, 48vw, 46rem); }
+.page-portfolio .pf-summary { gap: var(--space-4); }
+.page-portfolio .pf-summary h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); }
+.page-portfolio .pf-buybox { position: static; grid-column: auto; background: var(--color-surface); }
+.page-portfolio .pf-buybox__facts { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.page-portfolio .pf-buybox__facts li { padding: 0; border: 0; }
+.page-portfolio .pf-buybox__actions { grid-template-columns: 1fr 1fr; }
+.page-portfolio .pf-buybox__actions .btn { min-inline-size: 0; padding-inline: var(--space-3); }
+.pf-image-save { position: absolute; inset-block-start: var(--space-4); inset-inline-start: var(--space-4); z-index: 2; margin: 0; }
+.pf-image-save__button { display: grid; place-items: center; inline-size: 3rem; block-size: 3rem; padding: 0; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-ink); box-shadow: var(--shadow-sm); cursor: pointer; }
+.pf-image-save__button:hover { border-color: var(--color-accent-text); color: var(--color-accent-text); }
+.pf-image-save__button.is-saved { background: var(--color-action); color: var(--color-action-ink); border-color: var(--color-action); }
+.pf-image-save__button.is-saved .icon { fill: currentColor; }
+.pf-image-save__button:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.pf-image-save__button:disabled { opacity: 0.6; cursor: wait; }
+.page-reference .ir-reference__image { position: relative; }
+.page-portfolio .pf-summary .pf-buybox { gap: var(--space-2); }
+.page-portfolio .pf-summary .pf-buybox h2 { margin: 0; }
+.page-portfolio .pf-summary .pf-buybox__facts { margin: 0; padding-block: var(--space-2); }
+
+/* A profile combines the maker's identity and real work in a quiet split hero. */
+.vn-intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); align-items: center; padding-block: var(--space-4) var(--space-8); }
+.vn-intro__copy { display: grid; gap: var(--space-5); padding-inline-end: var(--space-6); }
+.vn-intro__copy > p, .vn-intro h1 { margin: 0; }
+.vn-intro h1 { color: var(--color-ink); font-size: clamp(2rem, 4vw, 3.25rem); line-height: var(--leading-snug); }
+.vn-intro__lead { max-inline-size: 44ch; color: var(--color-muted); line-height: var(--leading-relaxed); }
+.vn-intro__badges, .vn-intro__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.vn-intro__badges .chip { display: inline-flex; align-items: center; gap: var(--space-2); }
+.vn-intro__stats { display: flex; flex-wrap: wrap; gap: var(--space-6); margin: 0; padding-block: var(--space-5); border-block: 1px solid var(--color-border); }
+.vn-intro__stats > div { display: flex; flex-direction: column-reverse; gap: var(--space-1); }
+.vn-intro__stats dd { margin: 0; color: var(--color-ink); font-size: var(--text-2xl); font-weight: 800; }
+.vn-intro__stats dt { color: var(--color-muted); font-size: var(--text-sm); }
+.vn-intro__stats:empty { display: none; }
+.vn-intro__image { position: relative; display: block; block-size: clamp(24rem, 36vw, 32rem); overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-charcoal); }
+.vn-intro__image img { inline-size: 100%; block-size: 100%; object-fit: contain; }
+.vn-intro__image-label { position: absolute; inset-block-end: var(--space-4); inset-inline: var(--space-4); display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-ink); font-size: var(--text-sm); font-weight: 600; }
+.vn-sections { display: flex; flex-wrap: wrap; gap: var(--space-6); border-block-end: 1px solid var(--color-border); }
+.vn-sections a { display: inline-flex; align-items: center; gap: var(--space-2); min-block-size: 3.5rem; color: var(--color-ink); font-weight: 600; text-decoration: none; }
+.vn-sections span { display: grid; place-items: center; min-inline-size: 1.75rem; border-radius: var(--radius-pill); background: var(--color-bg-subtle); color: var(--color-muted); font-size: var(--text-xs); }
+.vn-sections a:hover { color: var(--color-accent-text); }
+.page-vendor .vn-layout { grid-template-columns: minmax(0, 1fr) 20rem; gap: var(--space-8); }
+.page-vendor .vn-main { min-inline-size: 0; }
+.page-vendor .vn-block { padding: var(--space-6); margin-block-end: var(--space-6); box-shadow: none; }
+.page-vendor .vn-block .section__head { margin-block-end: var(--space-5); }
+.page-vendor .vn-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.page-vendor .vn-gallery--single { grid-template-columns: minmax(0, 1fr); }
+.page-vendor :is(.vn-gallery, .vn-reviews) > .empty { grid-column: 1 / -1; }
+.page-vendor .vn-gallery__item { overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-bg-subtle); gap: 0; }
+.vn-gallery__image { display: block; block-size: 20rem; background: var(--color-charcoal); }
+.vn-gallery--single .vn-gallery__image { block-size: 26rem; }
+.page-vendor .vn-gallery__image img { inline-size: 100%; block-size: 100%; aspect-ratio: auto; border-radius: 0; object-fit: contain; }
+.vn-gallery__caption { display: grid; gap: var(--space-2); padding: var(--space-4); }
+.vn-gallery__caption > span { display: flex; align-items: center; gap: var(--space-2); color: var(--color-accent-text); font-size: var(--text-xs); }
+.page-vendor .vn-side { position: sticky; inset-block-start: calc(var(--header-h) + var(--space-5)); }
+.page-vendor .vn-side__card { position: static; background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); padding: var(--space-6); gap: var(--space-4); }
+.page-vendor .vn-side__card :is(h2, p, li) { color: var(--color-ink); }
+.page-vendor .vn-side__card .muted { color: var(--color-muted); }
+.page-vendor .vn-side__card .section__eyebrow { color: var(--color-accent-text); }
+.page-vendor .vn-side__card .btn--ghost-outline { color: var(--color-ink); border-color: var(--color-border-strong); }
+.page-vendor .vn-side__facts { padding-block: var(--space-4); border-block: 1px solid var(--color-border); line-height: var(--leading-relaxed); overflow-wrap: anywhere; }
+.page-vendor :is(#portfolio, #about-title, #reviews-title) { scroll-margin-block-start: calc(var(--header-h) + var(--space-6)); }
+.vn-review__stars { display: flex; align-items: center; gap: var(--space-2); }
+
+@media (max-width: 1000px) {
+  .page-portfolio .pf-product { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5); }
+  .page-portfolio .pf-buybox__actions { grid-template-columns: 1fr; }
+  .page-vendor .vn-layout { grid-template-columns: minmax(0, 1fr) 17rem; gap: var(--space-5); }
+  .page-vendor .vn-gallery { grid-template-columns: 1fr; }
+  .vn-intro { gap: var(--space-5); }
+  .vn-intro__copy { padding-inline-end: 0; }
+}
+
+@media (max-width: 720px) {
+  .page-portfolio .pf-product { grid-template-columns: minmax(0, 1fr); }
+  .page-portfolio .pf-gallery__stage { block-size: min(115vw, 34rem); border-radius: 0; }
+  .page-portfolio .pf-summary { margin: 0; padding: 0; }
+  .pf-info { margin-inline: var(--gutter); gap: var(--space-5); }
+  .page-portfolio .pf-buybox { margin: 0; }
+  .vn-intro { grid-template-columns: minmax(0, 1fr); padding-block: var(--space-3) var(--space-6); }
+  .vn-intro__copy { gap: var(--space-4); }
+  .vn-intro__image { block-size: 22rem; }
+  .vn-intro__actions { display: grid; grid-template-columns: 1fr; }
+  .vn-intro__stats { gap: var(--space-5); }
+  .vn-sections { gap: var(--space-4); }
+  .vn-sections a { font-size: var(--text-sm); }
+  .page-vendor .vn-layout { grid-template-columns: minmax(0, 1fr); }
+  .page-vendor .vn-side { position: static; }
+  .page-vendor .vn-block { padding: var(--space-4); }
+  .vn-gallery--single .vn-gallery__image { block-size: 22rem; }
+}
