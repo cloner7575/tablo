@@ -74,7 +74,7 @@ def _related_items(item: PortfolioItem) -> list[PortfolioItem]:
         published_items()
         .exclude(pk=item.pk)
         .select_related("vendor", "service", "city")
-    ).order_by("-created_at")
+    )
     related = list(related_qs.filter(vendor_id=item.vendor_id)[:RELATED_LIMIT])
     if len(related) < RELATED_LIMIT and item.service_id:
         related.extend(
@@ -379,9 +379,14 @@ def gallery(request: HttpRequest) -> HttpResponse:
     if city:
         items = items.filter(city__slug=city)
     items = (
-        items.order_by(F("vendor__rating").desc(nulls_last=True), "-created_at", "-pk")
+        items.order_by(
+            '-has_complete_time_images',
+            F("vendor__rating").desc(nulls_last=True),
+            "-created_at",
+            "-pk",
+        )
         if order == "maker"
-        else items.order_by("-created_at", "-pk")
+        else items
     )
     page = Paginator(items, 12).get_page(request.GET.get("page"))
     for item in page:

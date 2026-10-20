@@ -30,7 +30,7 @@ from apps.common.serializers_domain import (
     VendorSerializer,
 )
 from apps.locations.models import City
-from apps.portfolio.models import PortfolioItem
+from apps.portfolio.selectors import published_items
 from apps.quotes.models import Quote
 from apps.quotes.services import accept_quote, create_quote
 from apps.requests.models import ProjectRequest
@@ -185,7 +185,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
 class PortfolioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
-        PortfolioItem.objects.filter(is_published=True)
+        published_items()
         .select_related("vendor", "service", "city")
         .prefetch_related("media")
     )

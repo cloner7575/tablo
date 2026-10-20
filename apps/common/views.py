@@ -43,7 +43,7 @@ def home(request: HttpRequest) -> HttpResponse:
     for vendor in vendors:
         attach_demo_cover(vendor)
 
-    portfolio = list(discoverable_items().order_by("-created_at")[:8])
+    portfolio = list(discoverable_items()[:8])
     for item in portfolio:
         attach_demo_image(item)
 

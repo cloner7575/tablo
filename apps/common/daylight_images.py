@@ -1,5 +1,6 @@
 """One set of lighting edits per shared scene, with no request-time I/O."""
 
+from django.conf import settings
 from django.templatetags.static import static
 
 PHASES = ('morning', 'day', 'sunset', 'night')
@@ -31,6 +32,12 @@ SCENE_SOURCES = {
 
 def scene_variants(source: str) -> dict[str, str]:
     """Only registered site photographs have generated lighting variants."""
+    # The importer copies bundled references to this exact media directory.
+    # Resolve that namespace only; an unrelated upload with the same basename
+    # must never inherit a reference photograph's lighting edits.
+    reference_prefix = f'{settings.MEDIA_URL}industry/references/'
+    if source.startswith(reference_prefix):
+        source = f'img/references/{source.removeprefix(reference_prefix)}'
     slug = SCENE_SOURCES.get(source)
     if not slug:
         return {}

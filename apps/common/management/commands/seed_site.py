@@ -7,6 +7,6 @@ from apps.common.management.commands.import_industry_content import (
 
 class Command(ImportIndustryCommand):
     help = (
-        "Seed the site with 12 sign types, 11 photographed examples and "
+        "Seed the site with 12 sign types, 18 photographed examples and "
         "7 business categories. Repeatable and offline; no fake member accounts."
     )

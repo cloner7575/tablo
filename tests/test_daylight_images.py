@@ -9,6 +9,45 @@ from django.template import Context, Template
 from apps.portfolio.models import PortfolioItem
 
 
+def test_seeded_media_urls_resolve_without_matching_unrelated_uploads(settings) -> None:
+    from apps.common.daylight_images import scene_variants
+
+    settings.MEDIA_URL = 'https://media.example.test/uploads/'
+    original = scene_variants('img/references/novin-gerad.webp')
+    assert original
+    assert (
+        scene_variants(
+            'https://media.example.test/uploads/industry/references/novin-gerad.webp'
+        )
+        == original
+    )
+    assert scene_variants('/media/industry/references/novin-gerad.webp') == {}
+    assert (
+        scene_variants(
+            'https://other.example.test/uploads/industry/references/novin-gerad.webp'
+        )
+        == {}
+    )
+    assert (
+        scene_variants('https://media.example.test/uploads/portfolio/novin-gerad.webp')
+        == {}
+    )
+
+
+def test_imported_portfolio_cover_follows_clock_and_keeps_uploaded_override() -> None:
+    from apps.portfolio.templatetags.time_images import time_image
+
+    item = PortfolioItem(
+        title='تابلو',
+        image='industry/references/novin-gerad.webp',
+        image_night='portfolio/custom-night.webp',
+    )
+    result = time_image(item)
+    assert set(result['variants']) == {'morning', 'day', 'sunset', 'night'}
+    assert result['variants']['night'] == item.image_night.url
+    assert result['single_exposure'] is True
+
+
 def test_provider_card_loads_its_own_scene_image_tags() -> None:
     from django.template.loader import render_to_string
 

@@ -475,6 +475,76 @@
       "source_name": "نما تابش",
       "source_url": "https://namatabesh.com/",
       "source_image_url": "https://namatabesh.com/storages/sample/oUuYUiWdu4u0CRydUoPbCBdaFk1VvL66oTm6fNvw.jpg"
+    },
+    {
+      "slug": "reference-doral-chalnium",
+      "title": "حروف چلنیوم داروخانه",
+      "description": "حروف برجستهٔ آبی و طلایی داروخانه روی زمینهٔ سفید؛ نمونهٔ معرفی‌شده توسط دورال.",
+      "service": "chalnium",
+      "image": "doral-chalnium.webp",
+      "source_name": "دورال",
+      "source_url": "https://www.doralsign.com/",
+      "source_image_url": ""
+    },
+    {
+      "slug": "reference-doral-flex",
+      "title": "تابلو فلکسی فروشگاه روغن موتور اسپیدی",
+      "description": "تابلوی سردر فروشگاه روغن موتور اسپیدی با زمینهٔ زرد و مشکی و روشنایی بیرونی.",
+      "service": "flexi",
+      "image": "doral-flex.webp",
+      "source_name": "دورال",
+      "source_url": "https://www.doralsign.com/",
+      "source_image_url": ""
+    },
+    {
+      "slug": "reference-novinlight-lightbox",
+      "title": "لایت‌باکس کلینیک مانارزا",
+      "description": "لایت‌باکس دیواری کلینیک با تصویر چاپی و نور یکنواخت پس‌زمینه.",
+      "service": "lightbox",
+      "image": "novinlight-lightbox.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "source_image_url": ""
+    },
+    {
+      "slug": "reference-novinlight-neon",
+      "title": "تابلو نئون فلکسی زرد و آبی",
+      "description": "نوشتهٔ نئون فلکسی زرد و آبی روی زمینهٔ تیره؛ نمونه‌ای از ترکیب خطوط نوری.",
+      "service": "neon",
+      "image": "novinlight-neon.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "source_image_url": ""
+    },
+    {
+      "slug": "reference-novinlight-wood",
+      "title": "حروف برجسته روی زمینهٔ چوبی SEALEVEL",
+      "description": "حروف سفید SEALEVEL روی تخته‌های چوبی با بافت طبیعی.",
+      "service": "wood",
+      "image": "novinlight-wood.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "source_image_url": ""
+    },
+    {
+      "slug": "reference-novinlight-swedish",
+      "title": "حروف سوئدی رومینا",
+      "description": "حروف برجستهٔ سفید ROMINA با بدنهٔ تیره روی زمینهٔ چوبی.",
+      "service": "swedish",
+      "image": "novinlight-swedish.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "source_image_url": ""
+    },
+    {
+      "slug": "reference-novinlight-lasvegas",
+      "title": "تابلو لاسوگاسی بستنی با لامپ‌های نقطه‌ای",
+      "description": "حروف لامپی روی زمینهٔ شبکه‌ای تیره در کنار نشان بستنی.",
+      "service": "lasvegas",
+      "image": "novinlight-lasvegas.webp",
+      "source_name": "نوین لایت",
+      "source_url": "https://novinlight.com/",
+      "source_image_url": ""
     }
   ]
 }

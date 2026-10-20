@@ -73,8 +73,7 @@ def service_detail(request: HttpRequest, slug: str) -> HttpResponse:
     portfolio = list(
         discoverable_items()
         .filter(service=service)
-        .select_related("vendor", "city")
-        .order_by("-created_at")[:8]
+        .select_related("vendor", "city")[:8]
     )
     for item in portfolio:
         attach_demo_image(item)

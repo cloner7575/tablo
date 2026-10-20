@@ -1,11 +1,15 @@
 """Public source projects must never impersonate registered marketplace vendors."""
 
+from pathlib import Path
+
 import pytest
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.urls import reverse
 
 from apps.accounts.models import User
+from apps.catalog.industry import industry_content
 from apps.catalog.models import Service
 from apps.common.industry_services import refresh_industry_content
 from apps.locations.models import City, Province
@@ -13,6 +17,39 @@ from apps.orders.models import Order
 from apps.portfolio.models import PortfolioItem
 from apps.portfolio.selectors import discoverable_items
 from apps.vendors.models import Vendor
+
+
+def test_every_bundled_signage_photo_has_a_seed_project() -> None:
+    bundled = {
+        path.name
+        for path in (Path(settings.BASE_DIR) / 'static/img/references').glob('*.webp')
+    }
+    # This is a photograph of the provider's office, not an installed sign.
+    provider_only = {'diba-office.webp'}
+    project_images = [entry['image'] for entry in industry_content()['projects']]
+    assert set(project_images) == bundled - provider_only
+    assert len(project_images) == len(set(project_images))
+
+
+@pytest.mark.django_db
+def test_seed_republishes_its_projects_and_lists_them_across_all_pages(client) -> None:
+    call_command('seed_site')
+    PortfolioItem.objects.filter(vendor__isnull=True).update(is_published=False)
+    call_command('seed_site')
+    expected = {entry['slug'] for entry in industry_content()['projects']}
+    visible = set(discoverable_items().values_list('slug', flat=True))
+    assert expected == visible
+    listed = set()
+    page_number = 1
+    while True:
+        response = client.get(reverse('portfolio:list'), {'page': page_number})
+        assert response.status_code == 200
+        page = response.context['page_obj']
+        listed.update(item.slug for item in page)
+        if not page.has_next():
+            break
+        page_number += 1
+    assert listed == expected
 
 
 @pytest.fixture
@@ -98,7 +135,7 @@ def test_site_seed_works_on_an_empty_database_and_is_repeatable() -> None:
     call_command("seed_site")
     call_command("seed_site")
     assert Service.objects.filter(is_active=True).count() == 12
-    assert PortfolioItem.objects.filter(vendor__isnull=True).count() == 11
+    assert PortfolioItem.objects.filter(vendor__isnull=True).count() == 18
     assert City.objects.get(slug="tehran").province.slug == "tehran"
     assert City.objects.count() == 3
     assert not User.objects.exists()
@@ -110,7 +147,7 @@ def test_site_seed_works_on_an_empty_database_and_is_repeatable() -> None:
 def test_import_is_repeatable_and_creates_no_fake_accounts_or_orders() -> None:
     call_command("import_industry_content")
     call_command("import_industry_content")
-    assert PortfolioItem.objects.filter(vendor__isnull=True).count() == 11
+    assert PortfolioItem.objects.filter(vendor__isnull=True).count() == 18
     assert Service.objects.filter(is_active=True).count() == 12
     assert not User.objects.exists()
     assert not Vendor.objects.exists()

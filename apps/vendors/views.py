@@ -15,6 +15,7 @@ from apps.analytics.services import track
 from apps.common.seo import breadcrumbs, public_url
 from apps.orders.models import Order, OrderStatus
 from apps.portfolio.demo import attach_demo_image
+from apps.portfolio.selectors import published_items
 from apps.quotes.forms import QuoteForm
 from apps.quotes.models import Quote, QuoteStatus
 from apps.quotes.services import create_quote
@@ -81,7 +82,7 @@ def vendor_public(request: HttpRequest, slug: str) -> HttpResponse:
             / Decimal(len(published_reviews))
         ).quantize(Decimal("0.1"))
     track("vendor_profile_view", {"slug": slug})
-    portfolio = list(vendor.portfolio_items.filter(is_published=True)[:12])
+    portfolio = list(published_items().filter(vendor=vendor)[:12])
     for item in portfolio:
         attach_demo_image(item)
     attach_demo_cover(vendor)

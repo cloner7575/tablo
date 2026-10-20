@@ -24,7 +24,8 @@ def time_image(
     fallback = source or (
         item.image.url if item.image else static(demo_image_path(item))
     )
-    variants = scene_variants(demo_image_path(item)) if not item.image else {}
+    variants = scene_variants(item.image.url if item.image else demo_image_path(item))
+    shared_scene = bool(variants)
     variants.update(
         {
             name.removeprefix("image_"): getattr(item, name).url
@@ -41,7 +42,7 @@ def time_image(
         "lazy": lazy,
         "high": high,
         "deferred": deferred,
-        "single_exposure": not item.image,
+        "single_exposure": shared_scene or not item.image,
     }
 
 

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from django.db.models import Count, Prefetch, Q, QuerySet
 from django.templatetags.static import static
 
+from apps.common.daylight_images import SCENE_SOURCES
 from apps.portfolio.demo import demo_image_path
 from apps.portfolio.models import (
     TIME_IMAGE_FIELDS,
@@ -38,7 +39,22 @@ class Slide:
 
 
 def published_items() -> QuerySet[PortfolioItem]:
-    return PortfolioItem.objects.filter(is_published=True)
+    """Prioritize complete clock previews before applying limits or pagination."""
+    uploaded = Q()
+    for field in TIME_IMAGE_FIELDS:
+        uploaded &= ~Q(**{field: ''})
+    bundled_references = [
+        source.replace('img/references/', 'industry/references/', 1)
+        for source in SCENE_SOURCES
+        if source.startswith('img/references/')
+    ]
+    # Covers without uploads use a registered four-exposure demo scene.
+    complete = uploaded | Q(image__in=bundled_references) | Q(image='')
+    return (
+        PortfolioItem.objects.filter(is_published=True)
+        .alias(has_complete_time_images=complete)
+        .order_by('-has_complete_time_images', '-created_at', '-pk')
+    )
 
 
 def detail_queryset() -> QuerySet[PortfolioItem]:
@@ -145,7 +161,7 @@ def portfolio_slides(item: PortfolioItem) -> list[Slide]:
 
 def discoverable_items() -> QuerySet[PortfolioItem]:
     return (
-        PortfolioItem.objects.filter(is_published=True)
+        published_items()
         .filter(
             Q(
                 vendor__is_active=True,
