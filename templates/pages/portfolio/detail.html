@@ -164,12 +164,6 @@
           {% include "components/_icon.html" with name="check-circle" size="sm" %}
           <span>{{ vendor.completed_projects|fa_digits }} پروژه انجام‌شده</span>
         </li>
-        {% if vendor.response_time_hours %}
-          <li>
-            {% include "components/_icon.html" with name="clock" size="sm" %}
-            <span>پاسخ حدود {{ vendor.response_time_hours|fa_digits }} ساعت</span>
-          </li>
-        {% endif %}
         <li>
           {% include "components/_icon.html" with name="home" size="sm" %}
           <span>{{ vendor.city.name }}</span>

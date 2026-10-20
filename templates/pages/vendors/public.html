@@ -37,9 +37,6 @@
         {% if vendor.completed_projects %}
           · {{ vendor.completed_projects|fa_digits }} پروژه تکمیل‌شده
         {% endif %}
-        {% if vendor.response_time_hours %}
-          · پاسخ حدود {{ vendor.response_time_hours|fa_digits }} ساعت
-        {% endif %}
       </p>
       <div class="vn-hero__actions">
         <a class="btn btn--primary btn--lg" href="{% url 'requests:from_vendor' slug=vendor.slug %}">
@@ -62,12 +59,6 @@
         <div>
           <strong>{{ vendor.completed_projects|fa_digits }}</strong>
           <span>پروژه موفق</span>
-        </div>
-      {% endif %}
-      {% if vendor.response_time_hours %}
-        <div>
-          <strong>{{ vendor.response_time_hours|fa_digits }}س</strong>
-          <span>میانگین پاسخ</span>
         </div>
       {% endif %}
       {% if vendor.years_of_experience %}
@@ -152,9 +143,6 @@
           <p class="muted">ابعاد، شهر و عکس محل را بفرستید؛ این تابلو‌ساز پیشنهاد می‌دهد.</p>
           <ul class="vn-side__facts">
             <li>شهر: {{ vendor.city.name }}</li>
-            {% if vendor.response_time_hours %}
-              <li>پاسخ: حدود {{ vendor.response_time_hours|fa_digits }} ساعت</li>
-            {% endif %}
             {% if vendor.instagram %}
               <li>اینستاگرام: <bdi dir="ltr">@{{ vendor.instagram }}</bdi></li>
             {% endif %}

@@ -5405,14 +5405,15 @@ body.lightbox-open {
 }
 
 .vn-side__card .btn--ghost-outline {
+  background: transparent;
   border-color: rgb(255 255 255 / 0.35);
-  color: #fff;
+  color: var(--color-accent-ink);
 }
 
 .vn-side__card .btn--ghost-outline:hover {
-  background: rgb(255 255 255 / 0.1);
-  border-color: #fff;
-  color: #fff;
+  background: var(--color-charcoal-soft);
+  border-color: var(--color-accent-ink);
+  color: var(--color-accent-ink);
 }
 
 @media (max-width: 1200px) {
