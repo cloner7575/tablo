@@ -26,6 +26,11 @@
   const nightAccent = rgb(token('--clock-night-accent'));
   const warmAccent = rgb(token('--clock-warm-accent'));
   const coolAccent = rgb(token('--clock-cool-accent'));
+  const dayAction = rgb(token('--clock-action-day'));
+  const duskAction = rgb(token('--clock-action-dusk'));
+  const nightAction = rgb(token('--clock-action-night'));
+  const dayShadow = rgb(token('--clock-shadow-day'));
+  const nightShadow = rgb(token('--clock-shadow-night'));
   const labels = { morning: 'صبح', day: 'روز', sunset: 'غروب', night: 'شب' };
   const valid = value => typeof value === 'string' && /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
   const read = () => {
@@ -75,7 +80,16 @@
     const muted = readable(mix(ink, bg, .22));
     const accent = readable(mix(nightAccent, dayAccent, light));
     const warmth = Math.exp(-(((m - 1065) / 100) ** 2));
-    const secondaryAccent = readable(mix(coolAccent, warmAccent, warmth));
+    const secondaryAccent = readable(mix(coolAccent, warmAccent, warmth * .22));
+    // Keep the same white label across the complete button gradient all day.
+    const buttonSafe = candidate => {
+      let result = candidate;
+      while (contrast(result, white) < 4.6) result = mix(result, black, .04);
+      return result;
+    };
+    const action = buttonSafe(mix(mix(nightAction, dayAction, light), duskAction, warmth * .65));
+    const actionStart = buttonSafe(mix(action, white, .035));
+    const shadow = mix(nightShadow, dayShadow, light);
     let accentSoft = mix(bg, accent, .08);
     if (contrast(accent, accentSoft) < 4.5) accentSoft = bg;
     const values = {
@@ -89,8 +103,19 @@
       '--color-accent-2': secondaryAccent, '--color-border': mix(bg, ink, .16),
       '--color-border-strong': mix(bg, ink, .32), '--color-code-bg': surface2,
       '--color-code-ink': ink, '--color-info': accent, '--color-info-bg': mix(bg, accent, .08),
+      '--color-action': action, '--color-action-start': actionStart,
+      '--color-action-hover': mix(action, black, .14), '--color-action-ink': white,
+      '--shadow-color': shadow,
     };
     for (const [name, value] of Object.entries(values)) root.style.setProperty(name, color(value));
+    const shade = alpha => `rgb(${shadow.map(v => v.toFixed(2)).join(' ')} / ${alpha.toFixed(4)})`;
+    for (const [name, geometry, dayAlpha, nightAlpha] of [
+      ['xs', '0 1px 3px', .04, .15], ['sm', '0 6px 18px', .06, .18],
+      ['md', '0 12px 32px', .08, .24], ['lg', '0 22px 60px', .12, .34],
+      ['stage', '0 18px 46px', .09, .28], ['float', '0 12px 36px', .09, .28],
+    ]) root.style.setProperty(`--shadow-${name}`, `${geometry} ${shade(nightAlpha + (dayAlpha - nightAlpha) * light)}`);
+    root.style.setProperty('--glow-1', `color-mix(in srgb, ${color(action)} ${(12 + 8 * (1 - light)).toFixed(2)}%, transparent)`);
+    root.style.setProperty('--glow-2', `color-mix(in srgb, ${color(secondaryAccent)} ${(6 + 3 * warmth).toFixed(2)}%, transparent)`);
     root.style.setProperty('--color-glass', `rgb(${bg.map(v => v.toFixed(2)).join(' ')} / .94)`);
     root.style.setProperty('--scene-brightness', (.95 + .07 * light).toFixed(4));
     root.style.setProperty('--scene-warmth', (.075 * warmth).toFixed(4));

@@ -9,7 +9,7 @@
   let syncAmbient = () => {};
   let observeAmbient = () => {};
   const revealSelector = [
-    ".lp-copy > *", ".lp-stage", ".lp-section-head", ".lp-collection", ".lp-steps li",
+    ".lp-copy > *", ".lp-stage", ".lp-section-head", ".lp-collection", ".lp-steps li", ".lp-final__surface > div", ".lp-final__visual",
     ".at-hero__copy > *", ".at-art__image", ".jd-hero-art", ".at-tool", ".at-section-head", ".gd-gallery-head", ".gd-business-card",
     ".at-project", ".at-maker", ".mp-service-card", ".mp-journey li", ".so-journey li", ".mp-page-head", ".at-reviews blockquote", ".at-workshop__image",
     ".ed-gallery-hero__copy > *", ".ed-gallery-hero__visual", ".ed-idea-card",
@@ -23,9 +23,13 @@
   function reveal(element) {
     if (preference.matches || revealed.has(element) || typeof element.animate !== "function") return;
     revealed.add(element);
+    const photograph = element.matches?.('.lp-stage, .lp-collection, .lp-final__visual');
+    const frames = photograph
+      ? [{ opacity: .6, translate: '0 26px', scale: '.965' }, { opacity: 1, translate: '0 0', scale: '1' }]
+      : [{ opacity: .72, translate: '0 18px' }, { opacity: 1, translate: '0 0' }];
     const animation = element.animate(
-      [{ opacity: 0.72, translate: "0 18px" }, { opacity: 1, translate: "0 0" }],
-      { duration: compact.matches ? 400 : 560, delay: Number(element.dataset.revealDelay || 0), easing: "cubic-bezier(.22,.8,.3,1)", fill: "backwards" },
+      frames,
+      { duration: compact.matches ? 480 : photograph ? 850 : 620, delay: Number(element.dataset.revealDelay || 0), easing: "cubic-bezier(.16,1,.3,1)", fill: "backwards" },
     );
     running.add(animation);
     const release = () => running.delete(animation);
@@ -38,6 +42,7 @@
     if (preference.matches || typeof window.IntersectionObserver !== "function") return;
     if (!observer) {
       observer = new IntersectionObserver((entries) => {
+        if (preference.matches || !observer) return;
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           observer.unobserve(entry.target);

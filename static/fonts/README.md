@@ -1,19 +1,13 @@
-# Fonts
+# Site fonts
 
-Self-hosted so the shell renders identically offline, in CI, and behind a
-firewall — no Google Fonts request, no layout shift, no third-party origin.
+All active fonts are self-hosted; there are no runtime requests to font CDNs.
 
-| File | Family | Licence |
-|------|--------|---------|
-| `ibm-plex-sans-latin.woff2` | IBM Plex Sans (variable, 100–700, latin subset) | SIL Open Font Licence 1.1 — Copyright © 2017 IBM Corp. |
-| `jetbrains-mono-latin.woff2` | JetBrains Mono (variable, 100–800, latin subset) | SIL Open Font Licence 1.1 — Copyright © 2020 JetBrains s.r.o. |
+- Vazirmatn Arabic and Latin variable subsets: body text and UI, 100–900.
+- Estedad variable WOFF2: headings and category names, 100–900, `--font-display`.
+  Official source: https://github.com/aminabedi68/Estedad
+  Downloaded 2026-10-20 from `fonts/webfonts/Estedad[wght].woff2`.
+  SIL Open Font License 1.1 is retained in `Estedad-OFL.txt`.
+- IBM Plex Sans Latin and JetBrains Mono Latin are retained starter assets;
+  they are not used by the Persian UI. Both use SIL Open Font License 1.1.
 
-Both are declared with `@font-face` in `static/css/tokens.css` and reached
-through `--font-sans` / `--font-mono`. Licence text:
-<https://openfontlicense.org>.
-
-## Swapping them
-
-Change `--font-sans` / `--font-mono` in `tokens.css` and add the matching
-`@font-face` blocks. Persian products replace the sans face with Vazirmatn or
-Estedad (see the `persian-ui` skill) and may drop these latin files entirely.
+Declarations and fallbacks live in `static/css/tokens.css` with `font-display: swap`.

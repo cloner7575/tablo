@@ -197,6 +197,41 @@ test('all intermediate times keep readable foregrounds on every surface', () => 
   }
 });
 
+test('daylight also controls buttons and shadows, with readable button labels all day', () => {
+  const h = harness();
+  const lum = value => value.match(/[\d.]+/g).slice(0, 3).map(Number).reduce((sum, c, i) => {
+    c /= 255;
+    return sum + (c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4) * [.2126, .7152, .0722][i];
+  }, 0);
+  const actions = new Set(), shadows = new Set();
+  for (let minute = 0; minute < 1440; minute += 3) {
+    h.clock.setTime(`${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`);
+    assert.ok(h.styles.has('--color-action'), 'clock paints action colours');
+    for (const token of ['--color-action', '--color-action-hover', '--color-action-start']) {
+      const a = lum(h.styles.get(token)), b = lum(h.styles.get('--color-action-ink'));
+      assert.ok((Math.max(a, b) + .05) / (Math.min(a, b) + .05) >= 4.5, `${minute}: ${token}`);
+    }
+    actions.add(h.styles.get('--color-action'));
+    shadows.add(h.styles.get('--shadow-stage'));
+  }
+  assert.ok(actions.size > 100);
+  assert.ok(shadows.size > 30);
+});
+
+test('afternoon stays in the blue family and shadows do not jump at theme switches', () => {
+  const h = harness();
+  const rgb = value => value.match(/[\d.]+/g).slice(0, 3).map(Number);
+  let previous = null;
+  for (let minute = 930; minute <= 1110; minute++) {
+    h.clock.setTime(`${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`);
+    const background = rgb(h.styles.get('--color-bg'));
+    assert.ok(background[2] >= background[0], `cool afternoon at ${minute}`);
+    const shadow = rgb(h.styles.get('--shadow-color'));
+    if (previous) assert.ok(Math.max(...shadow.map((v, i) => Math.abs(v - previous[i]))) < 4);
+    previous = shadow;
+  }
+});
+
 test('smooth changes paint intermediate frames and reduced motion settles immediately', () => {
   const h = harness({ reduced: false });
   const start = h.styles.get('--color-bg');

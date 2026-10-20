@@ -46,13 +46,15 @@
 .lp-link:hover { text-decoration: underline; }
 .lp-link .icon { flex-shrink: 0; }
 .lp-collections { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
-.lp-collection { position: relative; isolation: isolate; overflow: hidden; aspect-ratio: 1.05; border-radius: var(--radius-lg); background: var(--color-charcoal); color: var(--color-inverse-ink); text-decoration: none; box-shadow: var(--shadow-sm); }
-.lp-collection img { inline-size: 100%; block-size: 100%; object-fit: cover; transition: scale var(--dur-reveal) var(--ease-out); }
-.lp-collection__shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 20%, color-mix(in srgb, var(--color-charcoal) 92%, transparent)); }
-.lp-collection__copy { position: absolute; inset-inline: var(--space-5); inset-block-end: var(--space-5); display: grid; gap: var(--space-1); z-index: 1; }
-.lp-collection__copy small { color: var(--color-inverse-ink); font-size: var(--text-2xs); }
-.lp-collection__copy strong { color: var(--color-inverse-ink); font-size: var(--text-xl); font-weight: 800; }
-.lp-collection__arrow { position: absolute; z-index: 1; inset-inline-end: var(--space-4); inset-block-end: var(--space-5); display: grid; place-items: center; inline-size: 2.25rem; block-size: 2.25rem; border: 1px solid color-mix(in srgb, var(--color-inverse-ink) 35%, transparent); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--color-charcoal) 60%, transparent); color: var(--color-inverse-ink); }
+.lp-collection { min-inline-size: 0; display: flex; flex-direction: column; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--surface-sheen); color: var(--color-ink); text-decoration: none; box-shadow: var(--shadow-sm); transition: translate var(--dur-reveal) var(--ease-out), box-shadow var(--dur-reveal), border-color var(--dur-2); }
+.lp-collection__image { display: block; position: relative; aspect-ratio: 1.15; overflow: hidden; border-radius: var(--radius-md); }
+.lp-collection img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center 28%; transition: scale 800ms var(--ease-out); }
+.lp-collection__number { position: absolute; inset-block-start: var(--space-3); inset-inline-start: var(--space-3); display: grid; place-items: center; min-inline-size: 2rem; block-size: 2rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-glass); color: var(--color-ink); backdrop-filter: blur(12px); font-size: var(--text-2xs); }
+.lp-collection__body { display: flex; flex: 1; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-4) var(--space-2) var(--space-2); }
+.lp-collection__copy { display: grid; gap: var(--space-1); min-inline-size: 0; }
+.lp-collection__copy small { color: var(--color-muted); font-size: var(--text-2xs); line-height: 1.9; }
+.lp-collection__copy strong { font-family: var(--font-display); color: var(--color-ink); font-size: var(--text-lg); font-weight: 750; }
+.lp-collection__arrow { flex-shrink: 0; display: grid; place-items: center; inline-size: 2.25rem; block-size: 2.25rem; border: 1px solid var(--color-accent-line); border-radius: var(--radius-pill); background: var(--color-accent-soft); color: var(--color-accent-text); transition: background var(--dur-2), color var(--dur-2), rotate var(--dur-reveal); }
 .lp-work-section { margin-block: var(--space-5); background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
 .lp-work-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
 .lp-work-grid .at-project { padding: var(--space-2); border-radius: var(--radius-lg); background: var(--color-surface); }
@@ -93,22 +95,22 @@
 .lp-faq details[open] summary { border-block-end: 1px solid var(--color-border); }
 .lp-faq details p { padding: var(--space-4) var(--space-5); color: var(--color-muted); line-height: 2.1; font-size: var(--text-sm); }
 .lp-final { padding-block: var(--space-6) var(--space-8); }
-.lp-final__surface { display: grid; grid-template-columns: 1.4fr 0.6fr; gap: var(--space-7); align-items: center; padding: var(--space-8); border-radius: var(--radius-xl); background: radial-gradient(ellipse at 0% 100%, var(--glow-1), transparent 65%), var(--color-accent-soft); border: 1px solid var(--color-accent-line); overflow: hidden; }
+.lp-final__surface { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: center; padding: var(--space-8); border-radius: var(--radius-xl); background: radial-gradient(ellipse at 100% 0%, var(--glow-1), transparent 65%), var(--color-surface); box-shadow: var(--shadow-stage); border: 1px solid var(--color-accent-line); overflow: hidden; }
 .lp-final h2 { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.6; font-weight: 850; margin: 0; }
 .lp-final h2 em { color: var(--color-accent-text); font-style: normal; }
 .lp-final p:not(.lp-kicker) { color: var(--color-muted); font-size: var(--text-sm); line-height: 2; margin-block: var(--space-4) var(--space-5); }
 .lp-final .lp-actions { gap: var(--space-5); }
-.lp-final__art { display: grid; place-items: center; position: relative; isolation: isolate; min-block-size: 17rem; }
-.lp-final__ring { position: absolute; inline-size: 17rem; block-size: 17rem; border: 1px dashed var(--color-accent-line); border-radius: var(--radius-pill); }
-.lp-final__ring::after { content: ''; position: absolute; inset: var(--space-5); border: 1px solid var(--color-accent-line); border-radius: inherit; }
-.lp-final__mark { display: grid; place-items: center; inline-size: 8.5rem; block-size: 8.5rem; background: var(--action-sheen); border-radius: var(--radius-xl); box-shadow: var(--shadow-action); color: var(--color-action-ink); rotate: -8deg; }
-.lp-final__mark .icon { inline-size: 4rem; block-size: 4rem; }
-.lp-final__chip { position: absolute; inset-block-end: var(--space-4); display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--color-accent-line); background: var(--color-surface); font-size: var(--text-sm); color: var(--color-accent-text); rotate: 3deg; }
+.lp-final__visual { position: relative; margin: 0; min-inline-size: 0; padding: var(--space-2); border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-surface-2); box-shadow: var(--shadow-lg); rotate: -2deg; transition: rotate 800ms var(--ease-out), box-shadow 800ms var(--ease-out); }
+.lp-final__visual img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1; border-radius: var(--radius-md); object-fit: cover; }
+.lp-final__visual figcaption { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-2) var(--space-1); color: var(--color-muted); font-size: var(--text-2xs); }
+.lp-final__visual figcaption .icon { color: var(--color-accent-text); }
 .lp-home :is(a, button, summary):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
 .lp-process :is(a, button):focus-visible { outline-color: var(--color-inverse-ink); }
 @media (hover: hover) and (pointer: fine) {
   .lp-collection:hover img { scale: 1.05; }
-  .lp-collection:hover .lp-collection__arrow { background: var(--color-action); }
+  .lp-collection:hover { translate: 0 -6px; box-shadow: var(--shadow-lg); border-color: var(--color-accent-line); }
+  .lp-collection:hover .lp-collection__arrow { background: var(--color-action); color: var(--color-action-ink); rotate: -35deg; }
+  .lp-final__visual:hover { rotate: 0deg; box-shadow: var(--shadow-float); }
 }
 @media (max-width: 1100px) {
   .lp-hero { gap: var(--space-6); }
@@ -151,11 +153,12 @@
   .lp-kicker { font-size: var(--text-2xs); margin-block-end: var(--space-2); }
   .lp-link { font-size: var(--text-2xs); }
   .lp-collections { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
-  .lp-collection { aspect-ratio: 1.15; border-radius: var(--mobile-radius); }
-  .lp-collection__copy { inset-inline: var(--space-3); inset-block-end: var(--space-3); }
+  .lp-collection { border-radius: var(--mobile-radius); padding: var(--space-1); }
+  .lp-collection__image { aspect-ratio: 1; border-radius: var(--mobile-control-radius); }
+  .lp-collection__body { padding: var(--space-3) var(--space-2); align-items: flex-start; }
   .lp-collection__copy small { font-size: 0.65rem; }
-  .lp-collection__copy strong { font-size: var(--text-lg); }
-  .lp-collection__arrow { inline-size: 1.75rem; block-size: 1.75rem; inset-inline-end: var(--space-2); inset-block-end: var(--space-3); }
+  .lp-collection__copy strong { font-size: var(--text-sm); }
+  .lp-collection__arrow { inline-size: 1.75rem; block-size: 1.75rem;  }
   .lp-work-section { margin-block: var(--space-3); }
   .lp-work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
   .lp-work-grid .at-project { position: relative; padding: var(--space-1); border-radius: var(--mobile-radius); }
@@ -188,11 +191,8 @@
   .lp-final { padding-block: var(--space-5) var(--space-6); }
   .lp-final__surface { grid-template-columns: minmax(0, 1fr); padding: var(--space-5); border-radius: var(--mobile-radius); gap: var(--space-5); }
   .lp-final h2 { font-size: 2.25rem; }
-  .lp-final__art { min-block-size: 9rem; grid-row: 1; }
-  .lp-final__ring { inline-size: 11rem; block-size: 11rem; }
-  .lp-final__mark { inline-size: 5rem; block-size: 5rem; border-radius: var(--radius-lg); }
-  .lp-final__mark .icon { inline-size: 2.5rem; block-size: 2.5rem; }
-  .lp-final__chip { inset-block-end: 0; font-size: var(--text-2xs); padding: var(--space-2) var(--space-3); }
+  .lp-final__visual { grid-row: 1; rotate: 0deg; }
+  .lp-final__visual img { aspect-ratio: 1.15; object-position: center 38%; }
   .lp-final .lp-actions { display: grid; gap: var(--space-3); }
   .lp-final .lp-actions .lp-link { justify-content: center; }
 }
@@ -204,6 +204,9 @@
   .lp-stage__foot { gap: var(--space-1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lp-collection img, .lp-faq summary > .icon { transition: none; }
+  .lp-collection, .lp-collection img, .lp-collection__arrow, .lp-final__visual, .lp-faq summary > .icon { transition: none; }
   .lp-collection:hover img { scale: 1; }
+  .lp-collection:hover { translate: none; }
+  .lp-collection:hover .lp-collection__arrow { rotate: none; }
+  .lp-final__visual { rotate: none; }
 }

@@ -5,11 +5,12 @@ import { runInNewContext } from 'node:vm';
 
 const source = readFileSync(new URL('../../static/js/experience.js', import.meta.url), 'utf8');
 
-function harness({ reduced = false, supported = true, reading = false, ambient = false } = {}) {
+function harness({ reduced = false, supported = true, reading = false, ambient = false, photograph = false } = {}) {
   const preferences = { matches: reduced, listeners: [], addEventListener(name, fn) { this.listeners.push(fn); } };
   const animations = [];
   const targets = [0, 1].map(() => ({
     dataset: {}, style: {},
+    matches() { return photograph; },
     animate(frames, options) {
       const listeners = new Map();
       const animation = {
@@ -97,6 +98,20 @@ test('missing observer API falls back to readable static content', () => {
   assert.equal(h.observers.length, 0);
   assert.equal(h.animations.length, 0);
   assert.deepEqual(h.targets[0].style, {});
+});
+
+test('photograph entrances settle without layout animation and stop on reduced motion', () => {
+  const h = harness({ photograph: true });
+  h.enter(h.targets[0]);
+  const animation = h.animations[0];
+  assert.equal(animation.frames.at(-1).scale, '1');
+  assert.equal(animation.frames.at(-1).translate, '0 0');
+  assert.ok(animation.options.duration < 1000);
+  assert.ok(animation.frames.every(frame => !('width' in frame) && !('height' in frame)));
+  h.changePreference(true);
+  assert.ok(animation.cancelled);
+  h.enter(h.targets[1]);
+  assert.equal(h.animations.length, 1);
 });
 
 test('reading progress is clamped to the article body even with reduced motion', () => {
