@@ -9,7 +9,12 @@ from django.db.models import Count, Prefetch, Q, QuerySet
 from django.templatetags.static import static
 
 from apps.portfolio.demo import demo_image_path
-from apps.portfolio.models import MediaKind, PortfolioItem, PortfolioMedia
+from apps.portfolio.models import (
+    TIME_IMAGE_FIELDS,
+    MediaKind,
+    PortfolioItem,
+    PortfolioMedia,
+)
 from apps.vendors.models import Vendor, VerificationStatus
 
 VIDEO_KINDS = (MediaKind.VIDEO, MediaKind.APARAT)
@@ -110,8 +115,8 @@ def portfolio_slides(item: PortfolioItem) -> list[Slide]:
     Expects ``item.media`` to be prefetched.
     """
     slides: list[Slide] = []
-    if item.image:
-        url = item.image.url
+    if item.image or any(getattr(item, name) for name in TIME_IMAGE_FIELDS):
+        url = item.image.url if item.image else static(demo_image_path(item))
         slides.append(
             Slide(
                 kind=MediaKind.IMAGE,

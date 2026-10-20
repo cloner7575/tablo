@@ -58,7 +58,7 @@ def request_otp(*, phone: str, purpose: str = "login") -> PhoneOTP:
 
     otp = PhoneOTP.create_for_phone(phone=phone, purpose=purpose)
     provider = get_sms_provider()
-    provider.send(phone, f"کد ورود تابلو دات کام: {otp.code}")
+    provider.send(phone, f"کد ورود {settings.SITE_NAME}: {otp.code}")
     cache.set(key, count + 1, timeout=window)
     logger.info("OTP requested phone=%s purpose=%s", phone, purpose)
     return otp

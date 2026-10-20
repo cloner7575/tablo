@@ -1,7 +1,7 @@
-{% load static %}
+{% load static time_images %}
 <article class="at-project{% if item.is_reference %} at-project--reference{% endif %}">
   <a class="at-project__image" href="{% url 'portfolio:detail' slug=item.slug %}">
-    {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="800" height="600">{% else %}<img src="{% static item.demo_image %}" alt="تصویر الهام برای {{ item.title }}" loading="lazy" width="800" height="600"><span class="at-demo">تصویر الهام</span>{% endif %}
+    {% time_image item %}{% if not item.image %}<span class="at-demo">تصویر الهام</span>{% endif %}
     {% if item.service %}<span class="at-project__tag">{{ item.service.title }}</span>{% endif %}
     <span class="pl-image-action" aria-hidden="true">دیدن جزئیات {% include 'components/_icon.html' with name='arrow-right' size='sm' %}</span>
   </a>

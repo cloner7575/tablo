@@ -2,7 +2,7 @@
 
 ## Identity
 
-- Brand name: تابلو دات کام
+- Brand name: خانه تابلو سازان
 - Project slug: tablo
 - Pitch (one sentence): سفارش راحت تابلو؛ ثبت نیاز، مقایسه پیشنهاد تابلوسازها و پیگیری طرح تا نصب
 - Audience: صاحبان مغازه و کسب‌وکار برای سفارش ساده؛ تابلوسازها و شرکت‌های تابلوسازی برای دریافت درخواست و مدیریت اجرا
@@ -39,6 +39,8 @@
   - Customer dashboard (requests, quote totals, chat, design and final-price approval, installation, delivery, review)
   - Vendor dashboard (matched requests, quotes, chat, portfolio, profile)
   - Public vendor / service / city / portfolio SEO pages
+  - Local visitor clock with a brass/ivory analog dial, draggable hands and keyboard/tap alternatives; continuous minute-by-minute daylight colors and blended time-of-day cover images; manual preview stays fixed for the browser tab, with a real-time reset
+  - Time-aware hero and optional morning/day/sunset/night portfolio cover uploads; missing variants use the original cover
   - Admin management
   - Quote-linked WebSocket chat (Django Channels)
   - Notifications + analytics stubs

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load seo %}
+{% load seo time_images %}
 {% load persian static %}
 
 {% block title %}{{ service.title }} | سفارش و مقایسه قیمت | {{ SITE_NAME }}{% endblock %}
@@ -112,11 +112,7 @@
     <div class="svc-gallery">
       {% for item in portfolio %}
         <a class="svc-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
-          {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="600" height="400">
-          {% else %}
-            <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="400">
-          {% endif %}
+          {% time_image item width=600 height=400 %}
           <span>{{ item.title }}{% if not item.is_reference %} · {{ item.creator_name }}{% endif %}</span>
         </a>
       {% empty %}

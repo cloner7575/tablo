@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load persian static seo %}
+{% load persian static seo time_images %}
 
 {% block title %}{{ item.title }} | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}{{ item.description|default:item.title|truncatechars:150 }}{% endblock %}
@@ -9,7 +9,7 @@
 {% block structured_data %}{% structured_data work_schema %}{% structured_data breadcrumb_schema %}{% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/portfolio-gallery.js' %}" defer></script>
+<script src="{% static 'js/portfolio-gallery.js' %}?v=20261020-site-clock-1" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -29,13 +29,13 @@
           {% for slide in slides %}
             <li class="pf-gallery__slide" id="pf-slide-{{ forloop.counter }}" data-gallery-slide="{{ forloop.counter0 }}">
               <a class="pf-tile{% if slide.is_video %} pf-tile--video{% endif %}"
-                 href="{{ slide.href }}"
+                 {% if slide.is_cover %}data-clock-link{% endif %} href="{{ slide.href }}"
                  data-gallery-open="{{ forloop.counter0 }}"
                  {% if slide.kind == "aparat" %}target="_blank" rel="noopener"{% endif %}
                  aria-label="{% if slide.is_video %}پخش ویدیو{% else %}بزرگ‌نمایی عکس{% endif %} {{ forloop.counter|fa_digits }} از {{ slides|length|fa_digits }}">
                 {% if slide.thumb %}
-                  <img src="{{ slide.thumb }}" alt="{{ slide.caption|default:item.title }}" width="1000" height="1000"
-                       {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+                  {% if slide.is_cover %}{% time_image item source=slide.thumb width=1000 height=1000 lazy=False high=True %}{% else %}<img src="{{ slide.thumb }}" alt="{{ slide.caption|default:item.title }}" width="1000" height="1000"
+                       {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>{% endif %}
                 {% elif slide.kind == "video" %}
                   <video src="{{ slide.src }}#t=0.1" preload="metadata" muted playsinline tabindex="-1" aria-hidden="true"></video>
                 {% else %}
@@ -69,7 +69,7 @@
                  aria-label="نمایش مورد {{ forloop.counter|fa_digits }}{% if slide.is_video %}، ویدیو{% endif %}"
                  {% if forloop.first %}aria-current="true"{% endif %}>
                 {% if slide.thumb %}
-                  <img src="{{ slide.thumb }}" alt="" width="160" height="160" loading="lazy">
+                  {% if slide.is_cover %}{% time_image item source=slide.thumb alt="" width=160 height=160 %}{% else %}<img src="{{ slide.thumb }}" alt="" width="160" height="160" loading="lazy">{% endif %}
                 {% else %}
                   {% include "components/_icon.html" with name="film" %}
                 {% endif %}
@@ -214,7 +214,7 @@
                             allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="origin"></iframe>
                   </div>
                 {% else %}
-                  <img data-src="{{ slide.src }}" alt="{{ slide.caption|default:item.title }}" decoding="async">
+                  {% if slide.is_cover %}{% time_image item source=slide.src width=1000 height=1000 deferred=True %}{% else %}<img data-src="{{ slide.src }}" alt="{{ slide.caption|default:item.title }}" decoding="async">{% endif %}
                 {% endif %}
                 {% if slide.caption and not slide.is_cover %}
                   <figcaption>{{ slide.caption }}</figcaption>
@@ -242,7 +242,7 @@
                 <button type="button" data-lightbox-go="{{ forloop.counter0 }}"
                         aria-label="مورد {{ forloop.counter|fa_digits }}{% if slide.is_video %}، ویدیو{% endif %}">
                   {% if slide.thumb %}
-                    <img src="{{ slide.thumb }}" alt="" loading="lazy" width="120" height="120">
+                    {% if slide.is_cover %}{% time_image item source=slide.thumb alt="" width=120 height=120 %}{% else %}<img src="{{ slide.thumb }}" alt="" loading="lazy" width="120" height="120">{% endif %}
                   {% else %}
                     {% include "components/_icon.html" with name="film" %}
                   {% endif %}
@@ -278,11 +278,7 @@
       {% for rel in related %}
         <a class="svc-gallery__item pf-related" href="{% url 'portfolio:detail' slug=rel.slug %}">
           <span class="pf-related__media">
-            {% if rel.image %}
-              <img src="{{ rel.image.url }}" alt="{{ rel.title }}" loading="lazy" width="600" height="400">
-            {% else %}
-              <img src="{% static rel.demo_image %}" alt="{{ rel.title }}" loading="lazy" width="600" height="400">
-            {% endif %}
+            {% time_image rel width=600 height=400 %}
             {% if rel.image_count or rel.video_count %}
               <span class="pf-count">
                 {% include "components/_icon.html" with name="image" size="sm" %}

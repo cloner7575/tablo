@@ -24,7 +24,9 @@ def test_component_css_declares_no_raw_colors() -> None:
 
 def test_tokens_define_both_themes() -> None:
     css = (STATIC / "css" / "tokens.css").read_text(encoding="utf-8")
-    assert "prefers-color-scheme: dark" in css
+    for phase in ("morning", "sunset"):
+        assert f':root[data-day-phase="{phase}"]' in css
+    assert '@media (prefers-color-scheme: dark)' not in css
     assert "--color-accent:" in css
     assert "--space-4:" in css
 

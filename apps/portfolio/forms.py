@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.common.forms import MultipleFileInput, MultipleImageField
 from apps.common.persian import to_persian_digits
 from apps.common.validators import validate_uploaded_image, validate_uploaded_video
-from apps.portfolio.models import PortfolioItem, parse_aparat_hash
+from apps.portfolio.models import TIME_IMAGE_FIELDS, PortfolioItem, parse_aparat_hash
 
 IMAGE_ACCEPT = "image/jpeg,image/png,image/webp"
 VIDEO_ACCEPT = "video/mp4,video/webm"
@@ -118,7 +118,15 @@ class VideoInputsMixin:
 class PortfolioForm(forms.ModelForm):
     class Meta:
         model = PortfolioItem
-        fields = ["title", "description", "service", "city", "image", "is_published"]
+        fields = [
+            "title",
+            "description",
+            "service",
+            "city",
+            "image",
+            *TIME_IMAGE_FIELDS,
+            "is_published",
+        ]
         labels = {
             "service": _("نوع تابلو"),
             "city": _("شهر اجرا"),
@@ -136,6 +144,14 @@ class PortfolioForm(forms.ModelForm):
 
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
+        for name in TIME_IMAGE_FIELDS:
+            self.fields[name].widget = forms.ClearableFileInput(
+                attrs={"accept": IMAGE_ACCEPT}
+            )
+            self.fields[name].help_text = _(
+                "اختیاری؛ نمای همین تابلو در این زمان. "
+                "بدون آن، عکس کاور نمایش داده می‌شود."
+            )
         self.fields["service"].empty_label = _("انتخاب نوع تابلو")
         self.fields["city"].empty_label = _("انتخاب شهر")
 

@@ -594,3 +594,141 @@ def test_api_portfolio_includes_media(client: Client, item):
     media = response.json()["media"]
     assert [m["kind"] for m in media] == ["image", "aparat"]
     assert media[1]["embed_url"].endswith("/videohash/abC123/vt/frame")
+
+
+@pytest.mark.django_db
+def test_time_variant_form_accepts_uploads_and_clear(item) -> None:
+    from apps.portfolio.forms import PortfolioForm
+
+    data = {"title": item.title, "is_published": True}
+    form = PortfolioForm(data, {"image_night": _jpeg("night.jpg")}, instance=item)
+    assert "image_night" in form.fields
+    assert form.is_valid(), form.errors
+    saved = form.save()
+    assert saved.image_night.name.endswith("night.jpg")
+    form = PortfolioForm({**data, "image_night-clear": "on"}, instance=saved)
+    assert form.is_valid(), form.errors
+    assert not form.save().image_night
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "field", ["image_morning", "image_day", "image_sunset", "image_night"]
+)
+def test_time_variants_validate_file_and_size(item, field, settings) -> None:
+    from apps.portfolio.forms import PortfolioForm
+
+    data = {"title": item.title}
+    invalid = SimpleUploadedFile("bad.jpg", b"not an image", content_type="image/jpeg")
+    form = PortfolioForm(data, {field: invalid}, instance=item)
+    assert not form.is_valid()
+    assert field in form.errors
+    settings.IMAGE_UPLOAD_MAX_BYTES = 1
+    form = PortfolioForm(data, {field: _jpeg()}, instance=item)
+    assert not form.is_valid()
+    assert field in form.errors
+
+
+@pytest.mark.django_db
+def test_owner_can_create_and_edit_time_variants_but_rival_cannot(
+    vendor_client, item, other_vendor, client
+) -> None:
+    response = vendor_client.post(
+        reverse("portfolio:create"),
+        {
+            "title": "نمای چند زمان",
+            "image_day": _jpeg("day.jpg"),
+            "image_night": _jpeg("new-night.jpg"),
+        },
+    )
+    assert response.status_code == 302
+    created = PortfolioItem.objects.get(title="نمای چند زمان")
+    assert created.image_day and created.image_night
+    response = vendor_client.post(
+        reverse("portfolio:edit", kwargs={"pk": item.pk}),
+        {"title": item.title, "image_sunset": _jpeg("sunset.jpg")},
+    )
+    assert response.status_code == 302
+    item.refresh_from_db()
+    name = item.image_sunset.name
+    client.force_login(other_vendor.user)
+    response = client.post(
+        reverse("portfolio:edit", kwargs={"pk": item.pk}),
+        {"title": "changed", "image_sunset-clear": "on"},
+    )
+    assert response.status_code == 404
+    item.refresh_from_db()
+    assert item.image_sunset.name == name
+
+
+@pytest.mark.django_db
+def test_variants_replace_clear_and_delete_files_after_commit(
+    item, django_capture_on_commit_callbacks
+) -> None:
+    from apps.portfolio.models import TIME_IMAGE_FIELDS
+    from apps.portfolio.services import delete_item, update_item
+
+    for name in TIME_IMAGE_FIELDS:
+        setattr(item, name, _jpeg(f"{name}.jpg"))
+    item.save()
+    storage = item.image.storage
+    originals = [getattr(item, name).name for name in TIME_IMAGE_FIELDS]
+    item.image_night = _jpeg("replaced-night.jpg")
+    with django_capture_on_commit_callbacks(execute=True):
+        update_item(item=item)
+        assert storage.exists(originals[-1])
+    assert not storage.exists(originals[-1])
+    replacement = item.image_night.name
+    item.image_night = ""
+    with django_capture_on_commit_callbacks(execute=True):
+        update_item(item=item)
+    assert not storage.exists(replacement)
+    with django_capture_on_commit_callbacks(execute=True):
+        delete_item(item=item)
+    assert all(not storage.exists(name) for name in originals)
+
+
+@pytest.mark.django_db
+def test_cover_variants_reach_cards_stage_thumbnails_and_deferred_lightbox(
+    client, item
+) -> None:
+    from apps.portfolio.selectors import portfolio_slides
+
+    item.image_night = _jpeg("public-night.jpg")
+    item.save()
+    add_media(item=item, images=[_jpeg("extra-gallery.jpg")])
+    body = client.get(
+        reverse("portfolio:detail", kwargs={"slug": item.slug})
+    ).content.decode()
+    assert body.count(f'data-clock-night="{item.image_night.url}"') >= 4
+    assert 'data-clock-deferred="true"' in body
+    # Additional gallery photographs retain their original source, not night variants.
+    assert 'extra-gallery' in body
+    slides = portfolio_slides(item)
+    assert slides[0].is_cover
+    assert not slides[1].is_cover
+    body = client.get(reverse("portfolio:list")).content.decode()
+    assert f'data-clock-night="{item.image_night.url}"' in body
+    # Optional variants also work when the original cover is still a demo image.
+    item.image = ""
+    item.save()
+    assert portfolio_slides(item)[0].is_cover
+
+
+@pytest.mark.django_db
+def test_time_variants_keep_discovery_query_count_flat(client, item, vendor) -> None:
+    item.image_night = _jpeg("query-night.jpg")
+    item.save()
+    url = reverse("portfolio:list")
+    with CaptureQueriesContext(connection) as few:
+        client.get(url)
+    for n in range(5):
+        PortfolioItem.objects.create(
+            vendor=vendor,
+            title=f"extra {n}",
+            slug=f"extra-time-{n}",
+            image_night=_jpeg(f"extra-time-{n}.jpg"),
+        )
+    with CaptureQueriesContext(connection) as many:
+        client.get(url)
+    assert len(many) == len(few)

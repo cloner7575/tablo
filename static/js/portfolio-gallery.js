@@ -107,6 +107,7 @@
     const lazy = slide?.querySelector("img[data-src]");
     if (lazy && !lazy.getAttribute("src")) {
       lazy.src = lazy.dataset.src;
+      window.TabloClock?.refreshImages();
     }
   }
 

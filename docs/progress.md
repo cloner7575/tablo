@@ -1,4 +1,4 @@
-# Progress — تابلو دات کام
+# Progress — خانه تابلو سازان
 
 | Phase | Status | Notes |
 |-------|--------|-------|

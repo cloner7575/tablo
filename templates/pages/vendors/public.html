@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load persian static seo %}
+{% load persian static seo time_images %}
 
 {% block title %}{{ vendor.business_name }} | تابلو‌ساز در {{ vendor.city.name }} | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}{{ SEO_DESCRIPTION }}{% endblock %}
@@ -105,11 +105,7 @@
           <div class="vn-gallery">
             {% for item in portfolio %}
               <a class="vn-gallery__item" href="{% url 'portfolio:detail' slug=item.slug %}">
-                {% if item.image %}
-                  <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
-                {% else %}
-                  <img src="{% static item.demo_image %}" alt="{{ item.title }}" loading="lazy" width="600" height="450">
-                {% endif %}
+                {% time_image item width=600 height=450 %}
                 <span>{{ item.title }}</span>
               </a>
             {% empty %}

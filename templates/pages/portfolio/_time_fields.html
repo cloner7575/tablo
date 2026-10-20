@@ -1,0 +1,10 @@
+<details class="pf-time-variants"{% if form.image_morning.errors or form.image_day.errors or form.image_sunset.errors or form.image_night.errors %} open{% endif %}>
+  <summary>نمای تابلو در زمان‌های مختلف <span class="muted">(اختیاری)</span></summary>
+  <p>عکس همین تابلو در صبح، روز، غروب یا شب را اضافه کنید. با ساعت سایت، نمای مناسب نمایش داده می‌شود. برای زمان‌های بدون عکس، کاور اصلی باقی می‌ماند.</p>
+  <div class="pf-form-grid">
+    {% include "components/_field.html" with field=form.image_morning %}
+    {% include "components/_field.html" with field=form.image_day %}
+    {% include "components/_field.html" with field=form.image_sunset %}
+    {% include "components/_field.html" with field=form.image_night %}
+  </div>
+</details>

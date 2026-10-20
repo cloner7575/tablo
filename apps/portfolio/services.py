@@ -16,6 +16,7 @@ from django.utils.translation import gettext as _
 
 from apps.portfolio.forms import max_media
 from apps.portfolio.models import (
+    TIME_IMAGE_FIELDS,
     MediaKind,
     PortfolioItem,
     PortfolioMedia,
@@ -153,8 +154,29 @@ def delete_media(*, media: PortfolioMedia) -> None:
 
 @transaction.atomic
 def delete_item(*, item: PortfolioItem) -> None:
-    files: list[FieldFile] = [item.image]
+    files: list[FieldFile] = [
+        item.image,
+        *(getattr(item, name) for name in TIME_IMAGE_FIELDS),
+    ]
     for media in item.media.all():
         files.extend(_media_files(media))
     item.delete()
     _delete_files_on_commit(files)
+
+
+@transaction.atomic
+def update_item(*, item: PortfolioItem) -> PortfolioItem:
+    """Save edits and remove replaced image files only after the DB commit."""
+    original = PortfolioItem.objects.select_for_update().get(pk=item.pk)
+    old_files = [
+        getattr(original, name)
+        for name in ("image", *TIME_IMAGE_FIELDS)
+        if getattr(original, name)
+        and (
+            not getattr(item, name)._committed
+            or getattr(original, name).name != getattr(item, name).name
+        )
+    ]
+    item.save()
+    _delete_files_on_commit(old_files)
+    return item

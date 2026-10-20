@@ -1,1 +1,46 @@
-{% extends 'base.html' %}{% block title %}راهنمای سفارش تابلو؛ قیمت، طرح و نصب | {{ SITE_NAME }}{% endblock %}{% block meta_description %}برای سفارش تابلو چه اطلاعاتی لازم است؟ مراحل دریافت قیمت، انتخاب تابلوساز، تأیید طرح، ساخت و نصب را با زبان ساده بخوانید.{% endblock %}{% block content %}<header class="at-page-head"><div><p class="ed-kicker">راهنمای سفارش تابلو</p><h1>لازم نیست<br>متخصص تابلو باشید.</h1><p>از یک عکس و توضیح ساده شروع کنید. مدل، اندازه و شرایط اجرا را با تابلوساز نهایی کنید.</p></div><a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">درخواست قیمت تابلو</a></header><div class="so-guide-grid"><section class="so-proposal"><h2>چه اطلاعاتی آماده کنم؟</h2><p>شهر و کسب‌وکارتان، نوشتهٔ تابلو و توضیحی از چیزی که می‌خواهید. عکس محل و نمونهٔ دلخواه کمک می‌کند، اما اجباری نیست.</p><p>اگر اندازه یا بودجه را نمی‌دانید، خالی بگذارید. اندازهٔ نهایی با بررسی محل مشخص می‌شود.</p></section><section class="so-proposal"><h2>پیشنهاد قیمت را چطور بخوانم؟</h2><p>مبلغ ساخت و نصب را با هم ببینید. بررسی کنید چه جنس، زمینه و زیرسازی‌ای شامل قیمت است؛ حمل، تجهیزات نصب و هزینه‌های دیگر را هم بپرسید.</p><p>برآورد اولیه، قیمت قطعی نیست. زمان اجرا و شرایط ضمانت را قبل از انتخاب روشن کنید.</p></section><section class="so-proposal"><h2>بعد از انتخاب چه می‌شود؟</h2><p>تابلوساز طرح و مشخصات و مبلغ نهایی را ارسال می‌کند. می‌توانید تغییر بخواهید؛ پس از تأیید شما، ساخت شروع می‌شود. مراحل ساخت و نصب در حساب شما قابل پیگیری‌اند.</p><p>پس از تحویل و بررسی تابلو، تحویل را تأیید و نظر خود را ثبت کنید.</p></section><section class="so-proposal"><h2>کدام تابلو مناسب من است؟</h2><p>اول محل استفاده و ظاهر دلخواه را مشخص کنید. جنس حروف، زمینهٔ تابلو و نور سه انتخاب متفاوت‌اند؛ لازم نیست همه را در شروع بدانید.</p><div class="ws-project-actions"><a class="btn btn--secondary" href="{% url 'portfolio:list' %}">دیدن نمونه تابلوها</a><a class="at-text-link" href="{% url 'catalog:services' %}">آشنایی با انواع تابلو</a></div></section></div><section class="ed-related"><div class="at-section-head"><h2>راهنماهای بیشتر</h2><a href="{% url 'editorial:articles' %}">همهٔ مقاله‌ها</a></div><div class="ed-article-grid">{% for article in articles %}{% include 'pages/editorial/_article_card.html' %}{% empty %}<p>مقاله‌های راهنما در حال تکمیل‌اند.</p>{% endfor %}</div></section>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}راهنمای سفارش تابلو؛ قیمت، طرح و نصب | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}چک‌لیست سفارش تابلو، روش مقایسه قیمت ساخت و نصب و مراحل تأیید طرح تا تحویل؛ راهنمای ساده خانه تابلو سازان.{% endblock %}
+{% block body_class %}page-order-guide{% endblock %}
+{% block content %}
+<div class="og-page">
+  <header class="og-hero">
+    <div>
+      <p class="at-eyebrow">راهنمای سفارش در {{ SITE_NAME }}</p>
+      <h1>از اولین ایده،<br><span>تا روشن‌شدن تابلوت.</span></h1>
+      <p class="og-lead">لازم نیست متخصص تابلو باشی. اینجا بخوان چطور نیازت را توضیح بدهی، پیشنهادها را مقایسه کنی و با خیال روشن‌تری سفارش بدهی.</p>
+      <a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">شروع درخواست قیمت {% include 'components/_icon.html' with name='arrow-right' size='sm' %}</a>
+      <p class="og-hint">درخواست اولیه تعهد خرید نیست.</p>
+    </div>
+    <nav class="og-roadmap" aria-label="بخش‌های راهنمای سفارش">
+      <p class="og-roadmap__label">مسیر سفارش تو</p>
+      <a href="#prepare"><span>۱</span><div><strong>نیازت را مشخص کن</strong><small>اطلاعات و عکس محل</small></div>{% include 'components/_icon.html' with name='chevron-left' size='sm' %}</a>
+      <a href="#price"><span>۲</span><div><strong>پیشنهادها را مقایسه کن</strong><small>قیمت، مشخصات و شرایط اجرا</small></div>{% include 'components/_icon.html' with name='chevron-left' size='sm' %}</a>
+      <a href="#approval"><span>۳</span><div><strong>طرح را تأیید و اجرا را پیگیری کن</strong><small>ساخت، نصب و تحویل</small></div>{% include 'components/_icon.html' with name='chevron-left' size='sm' %}</a>
+    </nav>
+  </header>
+
+  <section class="og-section" id="prepare" aria-labelledby="prepare-title">
+    <div class="og-section__intro"><span class="og-number">۰۱ / پیش از درخواست</span><h2 id="prepare-title">از یک عکس و<br>توضیح ساده شروع کن.</h2><p>نوع تابلو یا اندازهٔ دقیق را نمی‌دانی؟ اشکالی ندارد. اندازه و مشخصات نهایی را با بررسی محل و کمک تابلوساز مشخص می‌کنی.</p><a class="at-text-link" href="{% url 'portfolio:list' %}">برای ایده‌گرفتن، نمونه‌ها را ببین {% include 'components/_icon.html' with name='arrow-right' size='sm' %}</a></div>
+    <div class="og-panel"><h3>این اطلاعات کمک می‌کند</h3><ul class="og-checklist">
+      <li>{% include 'components/_icon.html' with name='map-pin' %}<div><strong>شهر و محل استفاده</strong><p>مثلاً سردر کافه، نمای فروشگاه یا فضای داخل شرکت.</p></div></li>
+      <li>{% include 'components/_icon.html' with name='image' %}<div><strong>عکس محل و نمونهٔ دلخواه</strong><p>یک عکس روبه‌رو و یک نمای باز از محل نصب مفید است؛ بارگذاری عکس اجباری نیست.</p></div></li>
+      <li>{% include 'components/_icon.html' with name='pencil' %}<div><strong>نوشته، ظاهر و نور دلخواه</strong><p>نام کسب‌وکار، لوگو و اینکه تابلو در شب هم دیده شود یا نه.</p></div></li>
+      <li>{% include 'components/_icon.html' with name='ruler' %}<div><strong>اندازه، بودجه و زمان موردنظر</strong><p>اگر می‌دانی بنویس؛ اگر مطمئن نیستی، در توضیحات بگو که راهنمایی می‌خواهی.</p></div></li>
+    </ul></div>
+  </section>
+
+  <section class="og-section" id="price" aria-labelledby="price-title">
+    <div class="og-section__intro"><span class="og-number">۰۲ / هنگام انتخاب</span><h2 id="price-title">پشت هر قیمت،<br>چه چیزی قرار دارد؟</h2><p>دو پیشنهاد فقط وقتی قابل مقایسه‌اند که مشخصات یکسانی داشته باشند. قیمت کمتر ممکن است بعضی هزینه‌ها یا جزئیات اجرا را شامل نشود.</p><p>نمونه‌کارهای تابلوساز را هم ببین؛ به اجرای حروف، تمیزی اتصالات و نمای روز و شب توجه کن.</p></div>
+    <div class="og-panel og-price"><p class="at-eyebrow">چک‌لیست مقایسهٔ پیشنهاد</p><h3>مبلغ ساخت + نصب + هزینه‌های جانبی</h3><dl><div><dt>ساخت تابلو</dt><dd>جنس و ضخامت حروف، ابعاد، زمینه و زیرسازی</dd></div><div><dt>نورپردازی</dt><dd>نوع نور، منبع تغذیه و دسترسی برای تعمیر</dd></div><div><dt>نصب و حمل</dt><dd>اجرت نصب، حمل، تجهیزات ارتفاع و آماده‌سازی محل</dd></div><div><dt>شرایط همکاری</dt><dd>زمان اجرا، نحوهٔ پرداخت و محدوده و مدت ضمانت</dd></div></dl><p class="og-note">{% include 'components/_icon.html' with name='info' size='sm' %} برآورد اولیه را با قیمت قطعی اشتباه نگیر؛ مبلغ نهایی را پیش از ساخت تأیید کن.</p></div>
+  </section>
+
+  <section class="og-section" id="approval" aria-labelledby="approval-title">
+    <div class="og-section__intro"><span class="og-number">۰۳ / پس از انتخاب</span><h2 id="approval-title">اول تأیید طرح،<br>بعد شروع ساخت.</h2><p>قبل از تأیید، هر تغییری در نوشته، رنگ، ابعاد یا نور می‌خواهی مطرح کن. جزئیات توافق را در گفت‌وگوی پروژه نگه دار تا بعداً قابل مراجعه باشد.</p></div>
+    <ol class="og-timeline"><li><strong>طرح و مبلغ نهایی را بررسی کن</strong><p>املای نوشته، لوگو، ابعاد، جنس، رنگ و نور را با طرح پیشنهادی تطبیق بده؛ هزینهٔ نصب و زمان تحویل را هم روشن کن.</p></li><li><strong>ساخت و نصب را پیگیری کن</strong><p>پس از تأیید، مراحل اجرا را در حساب خودت دنبال کن و برای زمان نصب و دسترسی به محل هماهنگ شو.</p></li><li><strong>تابلو را بررسی و تحویل را تأیید کن</strong><p>نوشته، کیفیت نصب و روشنایی را بررسی کن. اگر ایرادی هست با تابلوساز مطرح کن؛ بعد از تحویل، نظرت را ثبت کن.</p></li></ol>
+  </section>
+
+  {% if articles %}<section class="og-reading" aria-labelledby="reading-title"><div class="at-section-head"><h2 id="reading-title">بیشتر بخوان</h2><a class="at-text-link" href="{% url 'editorial:articles' %}">همهٔ مقاله‌ها</a></div><div class="ed-article-grid">{% for article in articles %}{% include 'pages/editorial/_article_card.html' %}{% endfor %}</div></section>{% endif %}
+  <section class="og-start"><div><p class="at-eyebrow">حالا نوبت تابلوی توست</p><h2>همین‌قدر که بدانی چه می‌خواهی، کافی است.</h2><p>شهر و نیازت را ثبت کن؛ جزئیات فنی را با کمک تابلوساز نهایی کن.</p></div><a class="btn btn--primary" href="{% url 'requests:wizard_start' %}">درخواست قیمت تابلو {% include 'components/_icon.html' with name='arrow-right' size='sm' %}</a></section>
+</div>
+{% endblock %}

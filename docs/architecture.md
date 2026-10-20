@@ -1,4 +1,4 @@
-# Architecture — تابلو دات کام
+# Architecture — خانه تابلو سازان
 
 ## Stack
 

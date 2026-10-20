@@ -46,6 +46,7 @@ from apps.portfolio.services import (
     delete_media,
     move_media,
     set_cover,
+    update_item,
 )
 from apps.vendors.models import Vendor
 from apps.vendors.panel import panel_context
@@ -277,7 +278,7 @@ def portfolio_edit(request: HttpRequest, pk: int) -> HttpResponse:
     form = PortfolioForm(request.POST, request.FILES, instance=item)
     if not form.is_valid():
         return _render_edit(request, vendor, item, form=form, status=400)
-    form.save()
+    update_item(item=form.save(commit=False))
     messages.success(request, "اطلاعات نمونه‌کار ذخیره شد.")
     return redirect("portfolio:edit", pk=item.pk)
 

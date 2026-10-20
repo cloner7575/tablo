@@ -147,7 +147,7 @@ VENDOR_NAMES = [
 
 
 class Command(BaseCommand):
-    help = "Seed realistic demo data for تابلو دات کام"
+    help = "Seed realistic demo data for خانه تابلو سازان"
 
     @transaction.atomic
     def handle(self, *args, **options):

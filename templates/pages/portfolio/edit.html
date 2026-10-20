@@ -220,6 +220,7 @@
               {% include "pages/portfolio/_drop_field.html" with field=form.image icon="image" compact=True hint="برای عوض کردن کاور، عکس تازه رها کنید یا انتخاب کنید" %}
             </div>
           </div>
+          {% include "pages/portfolio/_time_fields.html" %}
           <div class="pf-form-footer">
             {% include "pages/portfolio/_publish_field.html" with field=form.is_published %}
             <button class="btn btn--primary" type="submit" data-busy-label="در حال ذخیره…">ذخیره تغییرات</button>

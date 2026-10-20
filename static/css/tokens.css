@@ -1,5 +1,5 @@
 /* =========================================================================
-   Design tokens — تابلو دات کام
+   Design tokens — خانه تابلو سازان
    Reference palette: Jeddy blue/slate, with explicit light and dark modes.
    ========================================================================= */
 
@@ -195,44 +195,66 @@
   --shadow-stage: 0 18px 46px rgb(0 0 0 / 0.2);
   --shadow-float: 0 12px 36px rgb(0 0 0 / 0.25);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-  color-scheme: dark;
-  --color-bg: #0c1424;
-  --color-bg-subtle: #19283e;
-  --color-surface: #111e32;
-  --color-surface-2: #19283e;
-  --color-stage: #15243a;
-  --color-glass: rgb(12 20 36 / 0.92);
-  --color-ink: #edf4ff;
-  --color-ink-soft: #d7e5f7;
-  --color-muted: #a5b6cd;
-  --color-border: #2b3d55;
-  --color-border-strong: #405674;
-  --color-accent: #79b8ff;
-  --color-accent-text: #79b8ff;
-  --color-accent-hover: #a0cdff;
-  --color-accent-soft: #152b47;
-  --color-accent-line: #315479;
-  --color-accent-2: #52d0e1;
-  --color-secondary: #edf4ff;
-  --color-secondary-soft: #19283e;
-  --color-secondary-ink: #edf4ff;
-  --color-ok: #72d4bd;
-  --color-ok-bg: #143532;
-  --color-danger: #ff91a3;
-  --color-danger-bg: #3a1e2d;
-  --color-warn: #f8d395;
-  --color-warn-bg: #342c20;
-  --color-info: #79b8ff;
-  --color-info-bg: #152b47;
-  --color-code-bg: #19283e;
-  --color-code-ink: #edf4ff;
-  --shadow-xs: 0 1px 3px rgb(0 0 0 / 0.15);
-  --shadow-sm: 0 6px 18px rgb(0 0 0 / 0.18);
-  --shadow-md: 0 12px 32px rgb(0 0 0 / 0.2);
-  --shadow-lg: 0 22px 60px rgb(0 0 0 / 0.28);
-  --shadow-stage: 0 18px 46px rgb(0 0 0 / 0.2);
-  --shadow-float: 0 12px 36px rgb(0 0 0 / 0.25);
-  }
+/* Without JavaScript the base light palette stays readable, even when
+   prefers-color-scheme: dark is set on the device. The clock owns JS themes. */
+:root[data-day-phase="morning"] {
+  --color-bg: #f0f7ff;
+  --color-bg-subtle: #e7f1fc;
+  --color-surface-2: #eaf3fd;
+  --color-stage: #dfedfc;
+  --color-glass: rgb(240 247 255 / 0.94);
+}
+:root[data-day-phase="sunset"] {
+  --color-bg: #211c28;
+  --color-bg-subtle: #302737;
+  --color-surface: #2b2433;
+  --color-surface-2: #392d3b;
+  --color-stage: #3c2c3c;
+  --color-glass: rgb(33 28 40 / 0.94);
+  --color-ink: #fff3e9;
+  --color-ink-soft: #f3e3d9;
+  --color-muted: #cbb4b1;
+  --color-border: #59434d;
+  --color-border-strong: #795b63;
+  --color-accent-soft: #3d3042;
+  --color-accent-line: #65516e;
+  --color-accent-2: #efb27f;
+  --color-inverse-muted: #cbb4b1;
+}
+
+/* Continuous daylight anchors. Intermediate minutes are blended by the clock. */
+:root {
+  --clock-sky-0: #0b1324;
+  --clock-sky-240: #14273a;
+  --clock-sky-330: #31485b;
+  --clock-sky-390: #c8d8e6;
+  --clock-sky-480: #edf5ff;
+  --clock-sky-720: #f8fafc;
+  --clock-sky-900: #f5f1eb;
+  --clock-sky-1020: #e3c6a6;
+  --clock-sky-1080: #a0837a;
+  --clock-sky-1140: #504755;
+  --clock-sky-1200: #1c283b;
+  --clock-sky-1320: #0e1829;
+  --clock-sky-1440: #0b1324;
+  --clock-white: #ffffff;
+  --clock-black: #000000;
+  --clock-paper: #f4edda;
+  --clock-paper-center: #fffaf0;
+  --clock-paper-shade: #d5c6a6;
+  --clock-brass: #a17c42;
+  --clock-brass-light: #e0c48d;
+  --clock-brass-dark: #664921;
+  --clock-rim: #27323a;
+  --clock-dial-ink: #303944;
+  --clock-dial-muted: #72644d;
+  --clock-hand: #243b50;
+  --clock-hand-minute: #715129;
+  --clock-night-accent: #9bc8ff;
+  --clock-day-accent: #1256aa;
+  --clock-warm-accent: #edb580;
+  --clock-cool-accent: #068fab;
+  --clock-shadow: rgb(5 10 18 / 0.32);
+  --clock-glint: rgb(255 250 240 / 0.55);
+  --clock-halo: rgb(161 124 66 / 0.16);
 }

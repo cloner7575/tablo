@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 load_dotenv(BASE_DIR / ".env")
 
-SITE_NAME = os.getenv("DJANGO_SITE_NAME", "Core")
+SITE_NAME = os.getenv("DJANGO_SITE_NAME", "خانه تابلو سازان")
 PUBLIC_SITE_URL = os.getenv("DJANGO_SITE_URL", "").strip().rstrip("/")
 if PUBLIC_SITE_URL:
     public_parts = urlparse(PUBLIC_SITE_URL)
@@ -309,7 +309,7 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Tablo.com API",
-    "DESCRIPTION": "REST API for تابلو دات کام marketplace",
+    "DESCRIPTION": f"REST API for {SITE_NAME} marketplace",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }

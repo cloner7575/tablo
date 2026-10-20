@@ -1,4 +1,4 @@
-# تابلو دات کام
+# خانه تابلو سازان
 
 فضای تخصصی الهام، طراحی و ساخت تابلو برای طراح‌ها، تابلوسازها و کسب‌وکارها.
 
@@ -31,7 +31,7 @@ See [`.env.example`](.env.example). Important keys:
 | Variable | Purpose |
 |----------|---------|
 | `DJANGO_SECRET_KEY` | Secret key |
-| `DJANGO_SITE_NAME` | Brand (تابلو دات کام) |
+| `DJANGO_SITE_NAME` | Brand (خانه تابلو سازان) |
 | `DJANGO_LANGUAGE_CODE` | `fa` |
 | `DJANGO_TEXT_DIRECTION` | `rtl` |
 | `DATABASE_URL` | `sqlite:///...` or `postgres://...` |

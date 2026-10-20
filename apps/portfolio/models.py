@@ -10,6 +10,9 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from apps.common.models import TimeStampedModel
+from apps.common.validators import validate_uploaded_image
+
+TIME_IMAGE_FIELDS = ("image_morning", "image_day", "image_sunset", "image_night")
 
 APARAT_HOSTS = frozenset({"aparat.com", "www.aparat.com", "m.aparat.com"})
 APARAT_PATHS = (
@@ -65,6 +68,30 @@ class PortfolioItem(TimeStampedModel):
         related_name="portfolio_items",
     )
     image = models.ImageField(_("تصویر"), upload_to="portfolio/", blank=True)
+    image_morning = models.ImageField(
+        _("نمای صبح"),
+        upload_to="portfolio/times/",
+        blank=True,
+        validators=[validate_uploaded_image],
+    )
+    image_day = models.ImageField(
+        _("نمای روز"),
+        upload_to="portfolio/times/",
+        blank=True,
+        validators=[validate_uploaded_image],
+    )
+    image_sunset = models.ImageField(
+        _("نمای غروب"),
+        upload_to="portfolio/times/",
+        blank=True,
+        validators=[validate_uploaded_image],
+    )
+    image_night = models.ImageField(
+        _("نمای شب"),
+        upload_to="portfolio/times/",
+        blank=True,
+        validators=[validate_uploaded_image],
+    )
     source_name = models.CharField(_("نام سازنده در منبع"), max_length=160, blank=True)
     source_url = models.URLField(_("صفحهٔ منبع"), max_length=1000, blank=True)
     source_image_url = models.URLField(_("نشانی عکس اصلی"), max_length=1000, blank=True)

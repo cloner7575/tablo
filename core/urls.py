@@ -44,6 +44,6 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-admin.site.site_header = "تابلو دات کام"
-admin.site.site_title = "تابلو دات کام"
+admin.site.site_header = settings.SITE_NAME
+admin.site.site_title = settings.SITE_NAME
 admin.site.index_title = "مدیریت پلتفرم"

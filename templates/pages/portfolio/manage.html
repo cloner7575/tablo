@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load persian static %}
+{% load persian static time_images %}
 
 {% block title %}مدیریت نمونه‌کارها | {{ SITE_NAME }}{% endblock %}
 {% block body_class %}page-vendor-panel{% endblock %}
@@ -48,11 +48,7 @@
           {% for item in items %}
             <li class="pf-manage__card">
               <a class="pf-manage__thumb" href="{% url 'portfolio:edit' pk=item.pk %}" tabindex="-1" aria-hidden="true">
-                {% if item.image %}
-                  <img src="{{ item.image.url }}" alt="" loading="lazy" width="480" height="360">
-                {% else %}
-                  <img src="{% static item.demo_image %}" alt="" loading="lazy" width="480" height="360">
-                {% endif %}
+                {% time_image item width=480 height=360 %}
                 {% if item.is_published %}
                   <span class="status-pill status-pill--approved">منتشر شده</span>
                 {% else %}
