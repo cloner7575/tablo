@@ -73,3 +73,9 @@
 - Owner requested actual industry examples and removal of fake public data. Added 11 attributed source projects, 12 researched service types, 7 official-site provider references and an original photographic AI hero; source providers have no invented marketplace membership, ratings or prices. Exact demo identities were archived on the local preview after a backup. See `docs/industry-content.md`.
 
 - Owner clarified that imported material is seed data, with no public source credits or links to the original sites. Public templates, article captions and portfolio API omit source information; internal provenance remains available for maintenance.
+
+- 2026-10-20: Refined the shared mobile layout with a photograph in the first homepage viewport, a bottom-sheet menu, five-destination navigation, consistent cards and touch controls, selected form options, and compact specialist metrics. Mobile styles extend the existing components in `static/css/mobile.css`.
+
+- Owner refined the mobile direction: keep a prominent complete hero photograph with a crafted frame and strong short headline, shorten homepage copy, place work immediately after the hero and use a two-column visual project grid on the homepage. Detailed guidance stays on the guide page. Hero time exposures crossfade briefly instead of remaining overlaid, preserving clear signage lettering while daylight colors stay continuous.
+
+- Owner rejected the stripped-back homepage and requested a complete, elegant landing page. Current direction: a crafted photographic hero with meaningful introductory copy, visible quote and gallery actions, a shared clock preview, photographic business collections, work, a three-step ordering section, makers, guidance, FAQ and a complete final call to action. Keep the hero photograph uncropped. Page-specific composition lives in `static/css/landing.css`.

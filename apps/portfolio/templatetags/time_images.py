@@ -49,6 +49,7 @@ def hero_time_image() -> dict[str, object]:
             for phase in ("morning", "day", "sunset", "night")
         },
         "alt": "تصویر مفهومی نمای کافه با حروف برجسته، کامپوزیت و زمینهٔ چوبی",
+        "single_exposure": True,
         "width": 1254,
         "height": 1254,
         "high": True,

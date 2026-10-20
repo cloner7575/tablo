@@ -110,6 +110,10 @@
       const variant = picture.dataset[`clock${phase[0].toUpperCase()}${phase.slice(1)}`];
       return variant && !failures.get(picture)?.has(variant) ? variant : picture.dataset.clockDefault;
     };
+    if (picture.dataset.clockExposure === 'single') {
+      const selected = url(phaseFor(m));
+      return { first: selected, second: selected, weight: 0 };
+    }
     return { first: url(first), second: url(second), weight: smooth((m - start) / (end - start)) };
   }
   const prepare = picture => {
@@ -168,6 +172,28 @@
       if (!img.getAttribute('src')) return;
       // Leave lazy gallery cards lazy; blend only once the browser has loaded them.
       const blendable = typeof window.Image === 'function' && (img.loading !== 'lazy' || (img.complete && img.naturalWidth));
+      if (picture.dataset.clockExposure === 'single' && blendable && !preference.matches) {
+        // Independent hero exposures must not ghost their lettering for hours.
+        const nextKey = `single|${dominant}`;
+        if (state.key === nextKey) return;
+        state.key = nextKey; state.ready = false;
+        const version = ++state.version;
+        load(dominant).then(ok => {
+          if (state.version !== version) return;
+          if (!ok && dominant !== picture.dataset.clockDefault) {
+            if (!failures.has(picture)) failures.set(picture, new Set());
+            failures.get(picture).add(dominant);
+            state.key = '';
+            refreshImages();
+            return;
+          }
+          if (source.srcset !== dominant) fadePrevious(picture, img, null);
+          source.srcset = dominant;
+          if (state.layer) state.layer.style.opacity = '0';
+          state.ready = true;
+        });
+        return;
+      }
       if (!blendable || pair.first === pair.second || preference.matches) {
         if (source.srcset !== dominant) source.srcset = dominant;
         if (state.layer) state.layer.style.opacity = '0';

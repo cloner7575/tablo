@@ -21,6 +21,7 @@ def test_mobile_navigation_has_native_modal_and_real_destinations(client):
     for route in [
         'common:home',
         'portfolio:list',
+        'vendors:list',
         'requests:wizard_start',
         'accounts:login',
     ]:
@@ -68,3 +69,14 @@ def test_home_prioritizes_service_request_and_keeps_discovery_available(client) 
     assert reverse('editorial:ideas') not in hero
     assert reverse('requests:wizard_start') in hero
     assert 'تصویر مفهومی' in hero
+
+
+@pytest.mark.django_db
+def test_landing_photo_offers_an_accessible_clock_preview(client) -> None:
+    html = client.get(reverse('common:home')).content.decode()
+    figure = re.search(r'<figure[^>]*>(.*?)</figure>', html, re.S)[1]
+    trigger = re.search(r'<button[^>]+data-clock-open[^>]*>', figure)
+    assert trigger is not None
+    assert 'aria-controls="site-clock-dialog"' in trigger[0]
+    assert 'aria-haspopup="dialog"' in trigger[0]
+    assert 'id="site-clock-dialog"' in html

@@ -94,6 +94,9 @@
   --shadow-action: 0 8px 20px color-mix(in srgb, var(--color-action) 22%, transparent);
   --blueprint-line: color-mix(in srgb, var(--color-accent) 9%, transparent);
   --mobile-nav-h: 4.5rem;
+  --mobile-gutter: 1rem;
+  --mobile-radius: 1.25rem;
+  --mobile-control-radius: 0.875rem;
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-bg-subtle: #f0f4f9;

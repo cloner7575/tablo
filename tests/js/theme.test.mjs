@@ -328,3 +328,57 @@ test('changing the hour does not spin the minute hand through whole revolutions'
   h.flush();
   assert.equal(Number.parseFloat(h.styles.get('--clock-minute-angle')), start);
 });
+
+test('single-exposure hero stays sharp between time stops instead of overlaying two signs', async () => {
+  const h = harness({ time: '13:30', reduced: false, imageSupport: true });
+  const a = picture();
+  a.p.dataset.clockExposure = 'single';
+  a.p.dataset.clockDay = '/day.webp';
+  a.p.dataset.clockSunset = '/sunset.webp';
+  h.pictures.push(a.p);
+  h.clock.refreshImages();
+  assert.deepEqual(h.pendingImages.map(p => p.url), ['/day.webp']);
+  h.pendingImages[0].image.onload();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(a.source.srcset, '/day.webp');
+  assert.equal(a.p.layer, undefined);
+});
+
+test('single-exposure hero falls back to the original when its selected variant fails', async () => {
+  const h = harness({ time: '13:30', reduced: false, imageSupport: true });
+  const a = picture();
+  a.p.dataset.clockExposure = 'single';
+  a.p.dataset.clockDay = '/day.webp';
+  h.pictures.push(a.p);
+  h.clock.refreshImages();
+  h.pendingImages[0].image.onerror();
+  await new Promise(resolve => setImmediate(resolve));
+  h.pendingImages.find(p => p.url === '/original.webp').image.onload();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(a.source.srcset, '/original.webp');
+});
+
+test('a slow single hero exposure cannot replace a newer selected time', async () => {
+  const h = harness({ time: '13:30', reduced: false, imageSupport: true });
+  const a = picture();
+  a.p.dataset.clockExposure = 'single';
+  a.p.dataset.clockDay = '/day.webp';
+  h.pictures.push(a.p); h.clock.refreshImages();
+  h.clock.setTime('22:00'); h.flush();
+  h.pendingImages.find(p => p.url === '/night.webp').image.onload();
+  await new Promise(resolve => setImmediate(resolve));
+  h.pendingImages[0].image.onload();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(a.source.srcset, '/night.webp');
+});
+
+for (const [time, phase] of [['05:59', 'night'], ['06:00', 'morning'], ['09:59', 'morning'], ['10:00', 'day'], ['16:59', 'day'], ['17:00', 'sunset'], ['19:59', 'sunset'], ['20:00', 'night']]) {
+  test(`single hero at ${time} follows the named ${phase} phase`, () => {
+    const h = harness({ time });
+    const a = picture();
+    a.p.dataset.clockExposure = 'single';
+    for (const name of ['Morning', 'Day', 'Sunset', 'Night']) a.p.dataset[`clock${name}`] = `/${name.toLowerCase()}.webp`;
+    h.pictures.push(a.p); h.clock.refreshImages();
+    assert.equal(a.source.srcset, `/${phase}.webp`);
+  });
+}

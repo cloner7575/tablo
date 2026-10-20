@@ -9,6 +9,7 @@
   let syncAmbient = () => {};
   let observeAmbient = () => {};
   const revealSelector = [
+    ".lp-copy > *", ".lp-stage", ".lp-section-head", ".lp-collection", ".lp-steps li",
     ".at-hero__copy > *", ".at-art__image", ".jd-hero-art", ".at-tool", ".at-section-head", ".gd-gallery-head", ".gd-business-card",
     ".at-project", ".at-maker", ".mp-service-card", ".mp-journey li", ".so-journey li", ".mp-page-head", ".at-reviews blockquote", ".at-workshop__image",
     ".ed-gallery-hero__copy > *", ".ed-gallery-hero__visual", ".ed-idea-card",
