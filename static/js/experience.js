@@ -106,17 +106,11 @@
 
   function initAmbient() {
     const scene = document.querySelector("[data-ambient-motion]");
-    const control = document.querySelector("[data-motion-toggle]");
     if (!scene) return;
     let visible = false;
-    let paused = false;
     let ambientObserver = null;
     syncAmbient = () => {
-      scene.dataset.ambient = visible && !paused && !preference.matches && !document.hidden ? "running" : "paused";
-      if (!control) return;
-      control.hidden = preference.matches || !ambientObserver;
-      control.setAttribute("aria-pressed", String(paused));
-      control.textContent = paused ? "ادامهٔ حرکت" : "توقف حرکت";
+      scene.dataset.ambient = visible && !preference.matches && !document.hidden ? "running" : "paused";
     };
     observeAmbient = () => {
       if (preference.matches || ambientObserver || typeof window.IntersectionObserver !== "function") return;
@@ -126,7 +120,6 @@
       }, { threshold: 0.15 });
       ambientObserver.observe(scene);
     };
-    control?.addEventListener("click", () => { paused = !paused; syncAmbient(); });
     document.addEventListener("visibilitychange", syncAmbient);
     observeAmbient();
     syncAmbient();

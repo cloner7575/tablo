@@ -31,8 +31,6 @@ function harness({ reduced = false, supported = true, reading = false, ambient =
   const progress = { style: {} };
   const bounds = { top: 1600, height: 2000 };
   const documentEvents = new Map();
-  const controlEvents = new Map();
-  const control = { attributes: {}, textContent: '', hidden: true, addEventListener(name, fn) { controlEvents.set(name, fn); }, setAttribute(name, value) { this.attributes[name] = value; } };
   const scene = { dataset: {} };
   const document = {
     readyState: 'complete', hidden: false, documentElement: { dataset: {} },
@@ -40,7 +38,6 @@ function harness({ reduced = false, supported = true, reading = false, ambient =
     addEventListener(name, fn) { documentEvents.set(name, fn); },
     querySelector(selector) {
       if (selector === '[data-ambient-motion]') return ambient ? scene : null;
-      if (selector === '[data-motion-toggle]') return ambient ? control : null;
       if (!reading) return null;
       if (selector === '[data-reading-progress] span') return progress;
       if (selector === '.ed-article-body') return { getBoundingClientRect: () => bounds };
@@ -62,7 +59,7 @@ function harness({ reduced = false, supported = true, reading = false, ambient =
     preferences.listeners.forEach((fn) => fn({ matches: value }));
   };
   const enter = (target, observer = observers.at(-1)) => observer.callback([{ target, isIntersecting: true }]);
-  return { targets, animations, observers, document, enter, changePreference, events, progress, bounds, scene, control, controlEvents, documentEvents };
+  return { targets, animations, observers, document, enter, changePreference, events, progress, bounds, scene, documentEvents };
 }
 
 test('reduced motion never hides content or starts an observer/animation', () => {
@@ -126,33 +123,16 @@ test('ambient motion runs only on screen and pauses when the page is hidden', ()
   assert.equal(h.scene.dataset.ambient, 'paused');
 });
 
-test('manual pause survives visibility and reduced-motion changes', () => {
-  const h = harness({ ambient: true });
-  h.enter(h.scene);
-  h.controlEvents.get('click')();
-  assert.equal(h.control.attributes['aria-pressed'], 'true');
-  assert.equal(h.scene.dataset.ambient, 'paused');
-  h.changePreference(true);
-  h.changePreference(false);
-  assert.equal(h.scene.dataset.ambient, 'paused');
-  h.controlEvents.get('click')();
-  assert.equal(h.scene.dataset.ambient, 'running');
-  h.changePreference(true);
-  assert.equal(h.scene.dataset.ambient, 'paused');
-});
-
 test('ambient motion stays static without observer support or with reduced motion', () => {
   for (const options of [{ supported: false }, { reduced: true }]) {
     const h = harness({ ambient: true, ...options });
     assert.equal(h.scene.dataset.ambient, 'paused');
-    assert.equal(h.control.hidden, true);
   }
 });
 
 test('enabling motion after a reduced-motion load still waits for visibility', () => {
   const h = harness({ ambient: true, reduced: true });
   h.changePreference(false);
-  assert.equal(h.control.hidden, false);
   assert.equal(h.scene.dataset.ambient, 'paused');
   h.enter(h.scene);
   assert.equal(h.scene.dataset.ambient, 'running');
