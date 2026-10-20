@@ -1,0 +1,7 @@
+{
+  "scene": "composite",
+  "phase": "night",
+  "reference": "demo/service-composite.png",
+  "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-6685761f-4bc1-456c-8f2d-481c14ebf9e8.png",
+  "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. TARGET TIME: 22:00 deep night, dark blue sky and window reflections where visible, existing sign lighting and interior lights glowing naturally, rich photographic detail, no new lighting fixtures."
+}

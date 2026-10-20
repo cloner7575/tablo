@@ -1,0 +1,7 @@
+{
+  "scene": "office",
+  "phase": "morning",
+  "reference": "demo/portfolio-office.png",
+  "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-893f0803-2922-4672-bfb8-7180647099ce.png",
+  "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. TARGET TIME: 08:00 early morning, soft fresh daylight through existing windows or outdoors, gentle directional sun and long soft shadows; existing sign illumination subtle against natural light."
+}

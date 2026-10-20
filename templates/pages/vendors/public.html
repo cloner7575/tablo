@@ -13,9 +13,9 @@
   <section class="vn-hero vn-hero--compact" aria-labelledby="vn-title">
     <div class="vn-hero__media" aria-hidden="true">
       {% if vendor.cover_image %}
-        <img src="{{ vendor.cover_image.url }}" alt="" width="1600" height="900" fetchpriority="high">
+        {% scene_image vendor.cover_image.url alt="" width=1600 height=900 lazy=False high=True %}
       {% else %}
-        <img src="{% static vendor.demo_cover %}" alt="" width="1600" height="900" fetchpriority="high">
+        {% scene_image vendor.demo_cover alt="" width=1600 height=900 lazy=False high=True %}
       {% endif %}
     </div>
     <div class="vn-hero__shade" aria-hidden="true"></div>
@@ -170,9 +170,9 @@
       {% for v in related_vendors %}
         <a class="svc-vendor" href="{% url 'requests:from_vendor' slug=v.slug %}">
           {% if v.cover_image %}
-            <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="160" height="160">
+            {% scene_image v.cover_image.url alt="" width=160 height=160 %}
           {% else %}
-            <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="160" height="160">
+            {% scene_image v.demo_cover alt="" width=160 height=160 %}
           {% endif %}
           <div class="svc-vendor__body">
             <h3>{{ v.business_name }}</h3>

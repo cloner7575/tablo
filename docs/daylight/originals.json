@@ -1,0 +1,54 @@
+{
+  "signature": [
+    "landing-signature-v1.webp",
+    "sunset"
+  ],
+  "wayfinding": [
+    "landing-wayfinding-v1.webp",
+    "day"
+  ],
+  "cafe": [
+    "demo/portfolio-cafe.png",
+    "night"
+  ],
+  "boutique": [
+    "demo/portfolio-boutique.png",
+    "day"
+  ],
+  "office": [
+    "demo/portfolio-office.png",
+    "night"
+  ],
+  "restaurant": [
+    "demo/portfolio-restaurant.png",
+    "night"
+  ],
+  "chalnium": [
+    "demo/service-chalnium.png",
+    "sunset"
+  ],
+  "neon": [
+    "demo/service-neon.png",
+    "night"
+  ],
+  "led": [
+    "demo/service-led.png",
+    "night"
+  ],
+  "steel": [
+    "demo/service-steel.png",
+    "day"
+  ],
+  "composite": [
+    "demo/service-composite.png",
+    "day"
+  ],
+  "flexi": [
+    "demo/service-flexi.png",
+    "sunset"
+  ],
+  "workshop": [
+    "demo/workshop-banner.png",
+    "day"
+  ]
+}

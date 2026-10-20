@@ -24,8 +24,9 @@ def test_component_css_declares_no_raw_colors() -> None:
 
 def test_tokens_define_both_themes() -> None:
     css = (STATIC / "css" / "tokens.css").read_text(encoding="utf-8")
-    for phase in ("morning", "sunset"):
-        assert f':root[data-day-phase="{phase}"]' in css
+    assert '[data-theme="dark"]' in css
+    for minute in (0, 390, 720, 1020, 1080, 1440):
+        assert f'--clock-sky-{minute}:' in css
     assert '@media (prefers-color-scheme: dark)' not in css
     assert "--color-accent:" in css
     assert "--space-4:" in css
@@ -33,7 +34,11 @@ def test_tokens_define_both_themes() -> None:
 
 def test_fonts_are_self_hosted() -> None:
     css = (STATIC / "css" / "tokens.css").read_text(encoding="utf-8")
-    for family in ("vazirmatn-arabic.woff2", "vazirmatn-latin.woff2"):
+    for family in (
+        "vazirmatn-arabic.woff2",
+        "vazirmatn-latin.woff2",
+        "estedad-variable.woff2",
+    ):
         assert family in css
         assert (STATIC / "fonts" / family).is_file()
 

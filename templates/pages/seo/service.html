@@ -22,9 +22,9 @@
     </div>
     <div class="svc-hero__visual" {% if service.source_url %}data-source-photo{% endif %}>
       {% if service.icon %}
-        <img src="{{ service.icon.url }}" alt="" width="900" height="640" decoding="async">
+        {% scene_image service.icon.url alt="" width=900 height=640 lazy=False %}
       {% else %}
-        <img src="{% static service.demo_image %}" alt="" width="900" height="640" decoding="async">
+        {% scene_image service.demo_image alt="" width=900 height=640 lazy=False %}
       {% endif %}
 
     </div>
@@ -36,7 +36,7 @@
     <div class="svc-related__rail" role="list">
       {% for s in related_services %}
         <a class="svc-related__item" href="{% url 'catalog:service' slug=s.slug %}" role="listitem">
-          {% if s.icon %}<img src="{{ s.icon.url }}" alt="" loading="lazy" width="120" height="80">{% else %}<img src="{% static s.demo_image %}" alt="" loading="lazy" width="120" height="80">{% endif %}
+          {% if s.icon %}{% scene_image s.icon.url alt="" width=120 height=80 %}{% else %}{% scene_image s.demo_image alt="" width=120 height=80 %}{% endif %}
           <span>{{ s.title }}</span>
         </a>
       {% endfor %}
@@ -78,9 +78,9 @@
       {% for v in vendors %}
         <a class="svc-vendor" href="{% url 'requests:from_vendor' slug=v.slug %}">
           {% if v.cover_image %}
-            <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="160" height="160">
+            {% scene_image v.cover_image.url alt="" width=160 height=160 %}
           {% else %}
-            <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="160" height="160">
+            {% scene_image v.demo_cover alt="" width=160 height=160 %}
           {% endif %}
           <div class="svc-vendor__body">
             <h3>{{ v.business_name }}</h3>

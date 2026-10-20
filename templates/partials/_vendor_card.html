@@ -1,10 +1,10 @@
-{% load persian static %}
+{% load time_images persian static %}
 <article class="vn-card">
   <a class="vn-card__media" href="{% url 'vendors:public' slug=v.slug %}">
     {% if v.cover_image %}
-      <img src="{{ v.cover_image.url }}" alt="" loading="lazy" width="700" height="440">
+      {% scene_image v.cover_image.url alt="" width=700 height=440 %}
     {% else %}
-      <img src="{% static v.demo_cover %}" alt="" loading="lazy" width="700" height="440">
+      {% scene_image v.demo_cover alt="" width=700 height=440 %}
     {% endif %}
     {% if v.is_featured %}
       <span class="vn-badge">منتخب</span>

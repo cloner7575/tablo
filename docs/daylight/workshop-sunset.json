@@ -1,0 +1,7 @@
+{
+  "scene": "workshop",
+  "phase": "sunset",
+  "reference": "demo/workshop-banner.png",
+  "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-2b41a240-a17c-475a-903e-040dda1c4ab2.png",
+  "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. TARGET TIME: 18:00 sunset / early blue hour, elegant mix of soft warm low sun and cool shadows, existing sign and interior lights on, no excessive orange cast."
+}

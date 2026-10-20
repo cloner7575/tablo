@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load time_images i18n static %}
 
 {% block body_class %}page-auth{% endblock %}
 
 {% block content %}
   <div class="ux-auth-layout">
-    <aside class="ux-auth-story" aria-label="از ایده تا اجرا"><img src="{% static 'img/demo/portfolio-cafe.png' %}" alt="نمای مفهومی کافه با نور گرم" width="700" height="900"><div><p>خانهٔ ایده‌های روشن</p><h2>ایده‌ات را<br>به یک شروع<br><em>روشن وصل کن.</em></h2><span>الهام / طراحی / ساخت</span></div></aside>
+    <aside class="ux-auth-story" aria-label="از ایده تا اجرا">{% scene_image 'img/demo/portfolio-cafe.png' alt="نمای مفهومی کافه با نور گرم" width=700 height=900 lazy=False %}<div><p>خانهٔ ایده‌های روشن</p><h2>ایده‌ات را<br>به یک شروع<br><em>روشن وصل کن.</em></h2><span>الهام / طراحی / ساخت</span></div></aside>
     <section class="auth-card stack">
     <a class="brand" href="{% url 'common:home' %}">
       <span class="brand__mark" aria-hidden="true">{% include "components/_icon.html" with name="zap" %}</span>

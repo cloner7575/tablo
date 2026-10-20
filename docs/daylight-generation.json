@@ -1,0 +1,26 @@
+{
+  "tool": "built-in ImageGen",
+  "records": [
+    {
+      "scene": "signature",
+      "phase": "morning",
+      "reference": "landing-signature-v1.webp",
+      "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-96c039ce-7d3f-4a1e-8d98-581c8b2ae14b.png",
+      "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. TARGET TIME: 08:00 morning, soft cool daylight, gentle low-angle sun, white stone natural, sign halo dim in daylight."
+    },
+    {
+      "scene": "signature",
+      "phase": "day",
+      "reference": "landing-signature-v1.webp",
+      "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-0c53050d-4bb5-4ef5-9959-469694fa8946.png",
+      "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. TARGET TIME: 13:00 noon, clean neutral daylight, bright natural architectural photo, same existing sign, halo barely visible in daylight."
+    },
+    {
+      "scene": "signature",
+      "phase": "night",
+      "reference": "landing-signature-v1.webp",
+      "generated": "/home/alisafari/.codex/generated_images/01a1586e-fda4-7643-925e-355d592c362b/exec-b23c42f8-99c3-4c70-95d4-bddd6c375f0d.png",
+      "prompt": "Use case: lighting-weather. The attached image is the EDIT TARGET. Create one photorealistic lighting-only variant. STRICT INVARIANTS: identical camera, framing, aspect ratio, architecture, all objects, plants, exact sign lettering, logos, numbers and their positions. Do not redesign or add or remove any object or person. Change only ambient light, sky/window reflections, physically consistent shadows and illumination of existing lights. No new text, labels, borders or watermark. Preserve the entire original composition. TARGET TIME: 22:00 deep night, dark blue sky and reflections, illuminated existing sign halo and interior warm white, realistic atmospheric lighting, preserve readability and detail."
+    }
+  ]
+}

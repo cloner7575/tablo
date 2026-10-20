@@ -3,6 +3,7 @@
 from django import template
 from django.templatetags.static import static
 
+from apps.common.daylight_images import scene_source, scene_variants
 from apps.portfolio.demo import demo_image_path
 from apps.portfolio.models import TIME_IMAGE_FIELDS, PortfolioItem
 
@@ -23,11 +24,14 @@ def time_image(
     fallback = source or (
         item.image.url if item.image else static(demo_image_path(item))
     )
-    variants = {
-        name.removeprefix("image_"): getattr(item, name).url
-        for name in TIME_IMAGE_FIELDS
-        if getattr(item, name)
-    }
+    variants = scene_variants(demo_image_path(item)) if not item.image else {}
+    variants.update(
+        {
+            name.removeprefix("image_"): getattr(item, name).url
+            for name in TIME_IMAGE_FIELDS
+            if getattr(item, name)
+        }
+    )
     return {
         "source": fallback,
         "variants": variants,
@@ -37,6 +41,29 @@ def time_image(
         "lazy": lazy,
         "high": high,
         "deferred": deferred,
+        "single_exposure": not item.image,
+    }
+
+
+@register.inclusion_tag("components/_time_image.html")
+def scene_image(
+    source: str,
+    alt: str = "",
+    width: int = 800,
+    height: int = 600,
+    lazy: bool = True,
+    high: bool = False,
+) -> dict[str, object]:
+    """Render shared public photography through the existing site clock."""
+    return {
+        "source": scene_source(source),
+        "variants": scene_variants(source),
+        "alt": alt,
+        "width": width,
+        "height": height,
+        "lazy": lazy,
+        "high": high,
+        "single_exposure": True,
     }
 
 
