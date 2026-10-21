@@ -101,6 +101,7 @@
     <div class="pf-info">
     <div class="pf-summary">
       <h1 id="pf-title">{{ item.title }}</h1>
+      {% if item.is_ai_concept %}<p class="badge">طرح مفهومی تولیدشده با هوش مصنوعی</p>{% endif %}
       <p class="pf-summary__count">
         {% include "components/_icon.html" with name="image" size="sm" %}
         {{ photo_count|fa_digits }} عکس

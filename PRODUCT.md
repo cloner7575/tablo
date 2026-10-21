@@ -79,3 +79,5 @@
 - Owner refined the mobile direction: keep a prominent complete hero photograph with a crafted frame and strong short headline, shorten homepage copy, place work immediately after the hero and use a two-column visual project grid on the homepage. Detailed guidance stays on the guide page. Hero time exposures crossfade briefly instead of remaining overlaid, preserving clear signage lettering while daylight colors stay continuous.
 
 - Owner rejected the stripped-back homepage and requested a complete, elegant landing page. Current direction: a crafted photographic hero with meaningful introductory copy, visible quote and gallery actions, a shared clock preview, photographic business collections, work, a three-step ordering section, makers, guidance, FAQ and a complete final call to action. Keep the hero photograph uncropped. Page-specific composition lives in `static/css/landing.css`.
+
+- 2026-10-21: Added owner-scoped vendor MCP integration with OAuth/PKCE, private ChatGPT image imports, operation previews, profile/portfolio/project/chat tools and a Persian connection guide. Deployment and real ChatGPT acceptance steps: `docs/vendor-mcp.md`.

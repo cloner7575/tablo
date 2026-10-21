@@ -1,0 +1,184 @@
+.mcp-panel .vp-main {
+  align-content: start;
+}
+
+.mcp-connect {
+  display: block;
+  padding: var(--space-6);
+}
+
+.mcp-intro h1 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-2xl, 1.5rem);
+}
+
+.mcp-intro p,
+.mcp-step-content p,
+.mcp-connection p,
+.mcp-extra-content p {
+  margin: 0;
+}
+
+.mcp-steps {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4) 0;
+}
+
+.mcp-steps > li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+}
+
+.mcp-steps > li + li {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.mcp-step-number {
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-accent);
+  font-weight: 800;
+}
+
+.mcp-step-content {
+  display: grid;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.mcp-step-content h2 {
+  margin: 0;
+  font-size: var(--text-lg, 1.125rem);
+  line-height: 1.8;
+}
+
+.mcp-address-control {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.mcp-panel #mcp-address {
+  flex: 1;
+  min-inline-size: 0;
+  inline-size: 100%;
+  min-block-size: 3rem;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+  padding: var(--space-3);
+  font: inherit;
+  unicode-bidi: isolate;
+}
+
+.mcp-address-control button {
+  flex-shrink: 0;
+}
+
+.mcp-open-chatgpt {
+  justify-self: start;
+}
+
+.mcp-copy-status,
+.mcp-note,
+.mcp-reassurance {
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-ink-soft);
+}
+
+.mcp-copy-status:empty {
+  display: none;
+}
+
+.mcp-first-message {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+}
+
+.mcp-reassurance {
+  margin: var(--space-4) 0 0;
+}
+
+.mcp-form-help summary,
+.mcp-extra summary {
+  min-block-size: 2.75rem;
+  padding-block: var(--space-2);
+  cursor: pointer;
+}
+
+.mcp-form-help summary {
+  color: var(--color-ink-soft);
+}
+
+.mcp-fields {
+  display: grid;
+  gap: var(--space-3);
+  margin-block: var(--space-2) var(--space-4);
+}
+
+.mcp-fields dt {
+  font-weight: 700;
+}
+
+.mcp-fields dd {
+  margin-inline-start: 0;
+}
+
+.mcp-extra {
+  padding-inline: var(--space-5);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.mcp-extra-content {
+  display: grid;
+  gap: var(--space-4);
+  padding-block: var(--space-3) var(--space-5);
+}
+
+.mcp-extra-content h2 {
+  margin: 0;
+  font-size: var(--text-lg, 1.125rem);
+}
+
+.mcp-connection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+@media (max-width: 40rem) {
+  .mcp-connect {
+    padding: var(--space-4);
+  }
+
+  .mcp-steps > li {
+    gap: var(--space-2);
+  }
+
+  .mcp-address-control {
+    flex-direction: column;
+  }
+
+  .mcp-open-chatgpt {
+    justify-self: stretch;
+  }
+
+  .mcp-extra {
+    padding-inline: var(--space-3);
+  }
+}

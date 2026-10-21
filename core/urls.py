@@ -10,6 +10,7 @@ from apps.common.sitemaps import sitemaps
 from apps.common.views import robots
 
 urlpatterns = [
+    path("", include("apps.integrations.urls")),
     path("admin/", admin.site.urls),
     path("accounts/", include("apps.accounts.urls")),
     path("orders/", include("apps.orders.urls")),

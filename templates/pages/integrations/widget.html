@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ذخیره طرح در پنل</title>
+<style>
+@font-face{font-family:Vazirmatn;src:url(data:font/woff2;base64,FONT_DATA) format("woff2");font-weight:100 900;font-display:swap}
+:root{color-scheme:light dark;font-family:Vazirmatn,Tahoma,system-ui,sans-serif;line-height:1.8;background:var(--color-background-primary,Canvas);color:var(--color-text-primary,CanvasText)}
+body{margin:0;padding:1rem}main,form{display:grid;gap:1rem}h1{font-size:1.3rem;margin:0}p{margin:0}input,button{font:inherit;box-sizing:border-box;max-inline-size:100%;padding:.7rem;border:1px solid var(--color-border-primary,GrayText);border-radius:.75rem}button{cursor:pointer;background:var(--color-background-secondary,ButtonFace);color:inherit;min-block-size:44px}input{inline-size:100%;background:transparent;color:inherit}img{max-inline-size:100%;max-block-size:20rem;object-fit:contain}small{display:block}button:focus-visible,input:focus-visible{outline:2px solid Highlight;outline-offset:3px}[hidden]{display:none}
+</style></head><body><main>
+<h1>ذخیره تصویر در پنل شما</h1>
+<p>تصویر انتخاب‌شده ابتدا به‌صورت خصوصی و با عنوان طرح مفهومی ذخیره می‌شود.</p>
+<form id="save-form">
+<label for="title">عنوان طرح<input id="title" name="title" required maxlength="200" placeholder="مثلاً نمای شب فروشگاه"></label>
+<button type="button" id="choose">انتخاب تصویر از فایل‌های ChatGPT</button>
+<label for="upload">یا پیوست تصویر<input id="upload" type="file" accept="image/png,image/jpeg,image/webp"></label>
+<label for="order">شماره پروژه، اختیاری<input id="order" type="number" min="1" inputmode="numeric"></label>
+<button id="save" type="submit" disabled>ذخیره خصوصی در سایت</button>
+</form>
+<p id="status" role="status" aria-live="polite">برای شروع، تصویر را انتخاب کنید.</p>
+<img id="preview" alt="پیش‌نمایش طرح ذخیره‌شده" hidden>
+</main><script>
+(() => {
+ const host = window.openai;
+ const status = document.querySelector('#status');
+ const save = document.querySelector('#save');
+ let selected;
+ const report = (message) => { status.textContent = message; };
+ if (!host?.callTool || !host?.getFileDownloadUrl) {
+   report('انتخاب فایل در این محیط در دسترس نیست. تصویر را در گفتگو پیوست کنید و درخواست ذخیره بدهید.');
+   document.querySelectorAll('button,input').forEach(el => {el.disabled = true;});
+   return;
+ }
+ const accept = (file) => { selected = file; save.disabled = false; report('تصویر انتخاب شد؛ عنوان را وارد و ذخیره کنید.'); };
+ const choose = document.querySelector('#choose');
+ if (!host.selectFiles) choose.hidden = true;
+ choose.addEventListener('click', async () => {
+   try { const files = await host.selectFiles(); if(files?.length) accept(files[0]); }
+   catch { report('انتخاب تصویر انجام نشد؛ دوباره تلاش کنید.'); }
+ });
+ document.querySelector('#upload').addEventListener('change', async event => {
+   const file = event.target.files[0]; if(!file) return;
+   save.disabled = true;
+   try { report('در حال آماده‌سازی تصویر…'); const result = await host.uploadFile(file); accept({...result, fileName:file.name, mimeType:file.type}); }
+   catch { report('پیوست تصویر انجام نشد؛ دوباره تلاش کنید.'); }
+ });
+ document.querySelector('#save-form').addEventListener('submit', async event => {
+   event.preventDefault(); if(!selected) return;
+   save.disabled = true; report('در حال ذخیره تصویر در سایت…');
+   try {
+     const {downloadUrl} = await host.getFileDownloadUrl({fileId:selected.fileId});
+     const args = {file:{download_url:downloadUrl,file_id:selected.fileId,mime_type:selected.mimeType,file_name:selected.fileName},title:document.querySelector('#title').value};
+     const order = document.querySelector('#order').value; if(order) args.order_id = Number(order);
+     const result = await host.callTool('save_design', args);
+     if(result.isError) throw new Error();
+     const data = result.structuredContent || JSON.parse(result.content.find(item => item.type === 'text').text);
+     report('تصویر با موفقیت در طرح‌های خصوصی شما ذخیره شد.');
+     const image = await host.callTool('view_design', {asset_id:data.asset_id});
+     const content = image.content?.find(item => item.type === 'image');
+     if(content) {const preview = document.querySelector('#preview');preview.src='data:'+content.mimeType+';base64,'+content.data;preview.hidden=false;}
+     selected = null;
+   } catch { report('ذخیره یا نمایش نتیجه کامل نشد؛ فهرست طرح‌ها را بررسی کنید و در صورت نیاز دوباره تصویر را انتخاب کنید.'); save.disabled = false; }
+ });
+})();
+</script></body></html>

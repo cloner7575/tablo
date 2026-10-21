@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load persian static %}
+{% block title %}اتصال به ChatGPT | {{ SITE_NAME }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/integrations.css' %}">{% endblock %}
+{% block body_class %}page-vendor-panel{% endblock %}
+{% block content %}
+<div class="vp-workspace mcp-panel">
+  <section class="vp-shell">
+    {% include "partials/_vendor_panel_nav.html" %}
+    <div class="vp-main">
+      <section class="vp-card mcp-connect" aria-labelledby="mcp-title">
+        <header class="mcp-intro">
+          <h1 id="mcp-title">پنلت را به ChatGPT وصل کن</h1>
+          <p class="muted">طرح بساز، پیام‌ها را جواب بده و کارهایت را پیگیری کن.</p>
+        </header>
+
+        <ol class="mcp-steps">
+          <li>
+            <span class="mcp-step-number" aria-hidden="true">۱</span>
+            <div class="mcp-step-content">
+              <h2>این آدرس را کپی کن</h2>
+              <label class="visually-hidden" for="mcp-address">آدرس اتصال MCP</label>
+              <div class="mcp-address-control">
+                <input id="mcp-address" type="url" dir="ltr" readonly value="{{ mcp_url }}" spellcheck="false" autocomplete="off">
+                <button type="button" class="btn btn--ghost-outline" data-mcp-copy>کپی آدرس</button>
+              </div>
+              <p data-copy-status class="mcp-copy-status" role="status" aria-live="polite"></p>
+              {% if not mcp_ready %}<p class="mcp-note">اتصال در نسخه آزمایشی هنوز فعال نیست. بعد از راه‌اندازی سایت می‌توانی از همین بخش متصل شوی.</p>{% endif %}
+            </div>
+          </li>
+          <li>
+            <span class="mcp-step-number" aria-hidden="true">۲</span>
+            <div class="mcp-step-content">
+              <h2>آن را در ChatGPT اضافه کن</h2>
+              <p>در بخش <bdi>Plugins</bdi> روی <bdi>+</bdi> بزن و <bdi>Add custom MCP server</bdi> را انتخاب کن.</p>
+              <a class="btn btn--primary mcp-open-chatgpt" href="https://chatgpt.com/plugins" target="_blank" rel="noopener noreferrer">رفتن به ChatGPT {% include "components/_icon.html" with name="external-link" size="sm" %}<span class="visually-hidden">، در پنجره جدید</span></a>
+              <details class="mcp-form-help">
+                <summary>داخل فرم چی بنویسم؟</summary>
+                <dl class="mcp-fields">
+                  <div><dt>نام <bdi>Name</bdi></dt><dd>دستیار تابلوسازی من</dd></div>
+                  <div><dt>توضیح <bdi>Description</bdi></dt><dd>طراحی تابلو و مدیریت کارهای من</dd></div>
+                  <div><dt>آدرس <bdi>Server URL</bdi></dt><dd>همان آدرسی که کپی کردی.</dd></div>
+                  <div><dt>روش ورود <bdi>Authentication</bdi></dt><dd><bdi>OAuth</bdi> را انتخاب کن.</dd></div>
+                </dl>
+                <p>توضیح دسترسی‌ها را بخوان. اگر موافق بودی، تأیید کن و <bdi>Create as a plugin</bdi> را بزن.</p>
+              </details>
+            </div>
+          </li>
+          <li>
+            <span class="mcp-step-number" aria-hidden="true">۳</span>
+            <div class="mcp-step-content">
+              <h2>وارد حساب خودت شو</h2>
+              <p>وقتی صفحه ورود سایت باز شد، وارد همین حساب شو و اتصال را تأیید کن. بعد در گفتگوی ChatGPT با <bdi>@</bdi> دستیار تابلوسازی‌ات را انتخاب کن.</p>
+            </div>
+          </li>
+        </ol>
+        <div class="mcp-first-message"><span>برای شروع بگو:</span><strong>«درخواست‌های جدیدم را نشان بده»</strong></div>
+        <p class="mcp-reassurance">فقط پنل خودت متصل می‌شود؛ هر وقت خواستی می‌توانی اتصال را قطع کنی.</p>
+      </section>
+
+      <details class="mcp-extra">
+        <summary>اتصال‌های من</summary>
+        <div class="mcp-extra-content">
+          {% for connection in connections %}
+          <article class="mcp-connection">
+            <div><strong><bdi>{{ connection.client.name }}</bdi></strong>
+              <p class="muted">{% if connection.revoked_at %}قطع شده{% elif connection.last_used_at %}آخرین استفاده: {{ connection.last_used_at|jalali }}{% else %}متصل؛ هنوز استفاده نشده{% endif %}</p>
+            </div>
+            {% if not connection.revoked_at %}<form method="post">{% csrf_token %}<input type="hidden" name="connection" value="{{ connection.pk }}"><button class="btn btn--ghost-outline" type="submit">قطع اتصال</button></form>{% endif %}
+          </article>
+          {% empty %}<p class="muted">هنوز متصل نشده‌ای. از سه قدم بالا شروع کن.</p>{% endfor %}
+        </div>
+      </details>
+      <details class="mcp-extra">
+        <summary>طرح‌ها و فعالیت‌های من</summary>
+        <div class="mcp-extra-content">
+          {% if assets %}<h2>طرح‌های خصوصی</h2>{% for asset in assets %}<p><a href="{% url 'integrations:asset' pk=asset.pk %}">{{ asset.title }}</a> <small class="muted">طرح مفهومی هوش مصنوعی</small></p>{% endfor %}{% endif %}
+          {% if events %}<h2>فعالیت‌های اخیر</h2>{% for event in events %}<p>{{ event.get_action_label }} <span class="muted">{{ event.created_at|jalali }}</span></p>{% endfor %}{% endif %}
+          {% if not assets and not events %}<p class="muted">طرح‌ها و کارهایی که با دستیار انجام می‌دهی اینجا می‌مانند.</p>{% endif %}
+        </div>
+      </details>
+      <details class="mcp-extra">
+        <summary>برای اتصال کمک می‌خواهم</summary>
+        <div class="mcp-extra-content">
+          <p>اگر گزینه افزودن پلاگین را نمی‌بینی، ممکن است حساب ChatGPT یا مدیر فضای کاری‌ات اجازه اتصال سفارشی نداده باشد.</p>
+          <p>تصویر را در ChatGPT بساز و بگو «این طرح را در پنلم ذخیره کن». اگر لازم شد، تصویر را همان‌جا پیوست کن. ارسال پیام، قیمت و طرح برای مشتری با تأیید خودت انجام می‌شود.</p>
+          <a href="https://developers.openai.com/plugins/deploy/connect-chatgpt" target="_blank" rel="noopener noreferrer">راهنمای رسمی ChatGPT</a>
+        </div>
+      </details>
+    </div>
+  </section>
+</div>
+<script src="{% static 'js/integrations.js' %}" defer></script>
+{% endblock %}

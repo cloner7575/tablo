@@ -14,3 +14,6 @@ daphne>=4
 # Optional per product — install only when the feature is actually used:
 #   celery[redis]>=5.4    background jobs   (skill: celery-patterns)
 #   django-extensions>=3  dev introspection (skill: django-extensions)
+
+# Remote MCP transport and typed tool schemas
+mcp==1.30.0

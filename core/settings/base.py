@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "apps.common.apps.CommonConfig",
     "apps.locations.apps.LocationsConfig",
     "apps.catalog.apps.CatalogConfig",
+    "apps.integrations.apps.IntegrationsConfig",
     "apps.vendors.apps.VendorsConfig",
     "apps.requests.apps.RequestsConfig",
     "apps.quotes.apps.QuotesConfig",
@@ -351,3 +352,6 @@ LOGGING = {
         },
     },
 }
+
+# Private assets must never be mounted by the public media server.
+PRIVATE_MEDIA_ROOT = BASE_DIR / "private-media"

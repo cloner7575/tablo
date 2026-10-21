@@ -50,6 +50,9 @@ class PortfolioItem(TimeStampedModel):
         null=True,
         blank=True,
     )
+    is_ai_concept = models.BooleanField(
+        _("طرح مفهومی هوش مصنوعی"), default=False, editable=False
+    )
     title = models.CharField(_("عنوان"), max_length=200)
     slug = models.SlugField(_("اسلاگ"), max_length=220, unique=True, allow_unicode=True)
     description = models.TextField(_("توضیحات"), blank=True)

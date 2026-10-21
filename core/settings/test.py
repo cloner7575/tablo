@@ -56,3 +56,5 @@ REST_FRAMEWORK = {
     **REST_FRAMEWORK,  # noqa: F405
     "DEFAULT_THROTTLE_CLASSES": [],
 }
+
+PRIVATE_MEDIA_ROOT = tempfile.mkdtemp(prefix="core-test-private-")

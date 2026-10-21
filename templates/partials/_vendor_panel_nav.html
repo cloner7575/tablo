@@ -46,6 +46,10 @@
       {% include "components/_icon.html" with name="user" size="sm" %}
       <span>مشخصات مجموعه</span>
     </a>
+    <a href="{% url 'integrations:panel' %}" {% if panel_active == 'integrations' %}aria-current="page"{% endif %}>
+      {% include "components/_icon.html" with name="link" size="sm" %}
+      <span>اتصال به ChatGPT</span>
+    </a>
   </nav>
 
   <div class="vp-nav__footer">

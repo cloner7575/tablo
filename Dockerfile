@@ -15,8 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=appuser:appuser . .
 RUN chmod +x docker/entrypoint.sh \
-    && mkdir -p public/static public/media \
-    && chown -R appuser:appuser public
+    && mkdir -p public/static public/media private-media \
+    && chown -R appuser:appuser public private-media
 
 # Entrypoint starts as root to chown volume mounts, then drops to appuser.
 ENTRYPOINT ["docker/entrypoint.sh"]

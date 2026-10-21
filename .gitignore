@@ -48,3 +48,5 @@ design-system/
 # Cursor local
 .cursor/tasks/
 .cursor/*.local.*
+
+/private-media/

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}اجازه اتصال به ChatGPT | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="container section">
+  <div class="auth-card stack">
+    <p class="section__eyebrow">اتصال امن به حساب شما</p>
+    <h1>اجازه اتصال می‌دهید؟</h1>
+    <p><bdi>{{ client_name }}</bdi> می‌خواهد به پنل «{{ vendor.business_name }}» دسترسی داشته باشد.</p>
+    <ul>
+      <li>مشاهده درخواست‌های مجاز، پیشنهادها، پروژه‌ها، پیام‌ها و تصاویر خصوصی شما</li>
+      {% if can_write %}<li>ذخیره تصویر و آماده‌سازی تغییرات پروفایل، نمونه‌کار، قیمت و طرح</li><li>ارسال پیام، قیمت و طرح یا انتشار نمونه‌کار با تأیید شما در گفتگو</li>{% endif %}
+      <li>دسترسی فقط به حساب شما؛ قطع اتصال در هر زمان از پنل</li>
+    </ul>
+    <p class="muted">اطلاعاتی که ابزار در اختیار ChatGPT می‌گذارد در گفتگوی شما پردازش می‌شود. نام برنامه را خود برنامه اعلام کرده است.</p>
+    <form method="post" class="stack-form">
+      {% csrf_token %}
+      <input type="hidden" name="request" value="{{ signed_request }}">
+      <button class="btn btn--primary" name="decision" value="approve">اجازه اتصال به پنل من</button>
+      <button class="btn btn--ghost-outline" name="decision" value="deny">انصراف</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

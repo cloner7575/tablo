@@ -10,10 +10,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings.production")
 django_asgi_app = get_asgi_application()
 
 from apps.chat.routing import websocket_urlpatterns  # noqa: E402
+from apps.integrations.asgi import MCPRouter  # noqa: E402
 
 application = ProtocolTypeRouter(
     {
-        "http": django_asgi_app,
+        "http": MCPRouter(django_asgi_app),
         "websocket": AllowedHostsOriginValidator(
             AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
         ),
