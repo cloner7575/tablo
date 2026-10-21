@@ -21,6 +21,7 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from apps.integrations.auth import (
     SCOPES,
     authenticate,
+    configuration_error,
     digest,
     exchange_code,
     origin,
@@ -58,7 +59,7 @@ def discovery(request: HttpRequest) -> JsonResponse:
     try:
         base = origin()
     except ValidationError:
-        return JsonResponse({'error': 'mcp_not_configured'}, status=503)
+        return JsonResponse(configuration_error(), status=503)
     return JsonResponse(
         {
             'issuer': base,
@@ -77,10 +78,14 @@ def discovery(request: HttpRequest) -> JsonResponse:
 
 @require_GET
 def resource_metadata(request: HttpRequest) -> JsonResponse:
+    try:
+        base = origin()
+    except ValidationError:
+        return JsonResponse(configuration_error(), status=503)
     return JsonResponse(
         {
-            'resource': origin() + '/mcp/',
-            'authorization_servers': [origin()],
+            'resource': base + '/mcp/',
+            'authorization_servers': [base],
             'scopes_supported': sorted(SCOPES),
             'bearer_methods_supported': ['header'],
         }
@@ -324,6 +329,10 @@ def private_image(request: HttpRequest, pk: str) -> HttpResponse:
 
 @csrf_exempt
 def mcp_wsgi_unavailable(request: HttpRequest) -> HttpResponse:
+    try:
+        base = origin()
+    except ValidationError:
+        return JsonResponse(configuration_error(), status=503)
     response = JsonResponse(
         {'error': 'MCP requires the ASGI deployment (core.asgi:application).'},
         status=503,
@@ -331,7 +340,6 @@ def mcp_wsgi_unavailable(request: HttpRequest) -> HttpResponse:
     if not request.headers.get('Authorization'):
         response.status_code = 401
         response['WWW-Authenticate'] = (
-            'Bearer resource_metadata="'
-            f'{origin()}/.well-known/oauth-protected-resource"'
+            f'Bearer resource_metadata="{base}/.well-known/oauth-protected-resource"'
         )
     return response

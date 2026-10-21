@@ -8,27 +8,21 @@ from urllib.parse import urlparse
 
 from django.conf.locale import LANG_INFO
 
-from core.settings.env import build_mailer, get_bool, get_int, get_list, load_dotenv
+from core.settings.env import (
+    build_mailer,
+    get_bool,
+    get_int,
+    get_list,
+    get_site_url,
+    load_dotenv,
+)
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 load_dotenv(BASE_DIR / ".env")
 
 SITE_NAME = os.getenv("DJANGO_SITE_NAME", "خانه تابلو سازان")
-PUBLIC_SITE_URL = os.getenv("DJANGO_SITE_URL", "").strip().rstrip("/")
-if PUBLIC_SITE_URL:
-    public_parts = urlparse(PUBLIC_SITE_URL)
-    if (
-        public_parts.scheme not in {"http", "https"}
-        or not public_parts.netloc
-        or public_parts.path
-        or public_parts.query
-        or public_parts.fragment
-        or public_parts.username
-    ):
-        raise ValueError(
-            "DJANGO_SITE_URL must be an absolute site origin, such as https://example.com"
-        )
+PUBLIC_SITE_URL = get_site_url()
 
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",

@@ -767,3 +767,20 @@ def test_connection_guide_always_shows_address(client, connection, settings):
     assert 'Add custom MCP server' in content
     assert 'OAuth' in content
     assert 'Plugins' in content
+
+
+@pytest.mark.parametrize(
+    'path',
+    [
+        '/.well-known/oauth-authorization-server',
+        '/.well-known/oauth-protected-resource',
+        '/.well-known/oauth-protected-resource/mcp/',
+        '/mcp/',
+    ],
+)
+def test_unconfigured_oauth_returns_actionable_json(client, settings, path):
+    settings.PUBLIC_SITE_URL = ''
+    response = client.get(path)
+    assert response.status_code == 503
+    assert response.json()['error'] == 'mcp_not_configured'
+    assert 'DJANGO_SITE_URL' in response.json()['error_description']

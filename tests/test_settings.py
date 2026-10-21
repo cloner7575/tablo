@@ -124,3 +124,35 @@ def test_production_passes_the_deploy_check_when_configured() -> None:
         DJANGO_ALLOWED_HOSTS="example.com",
     )
     assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize(
+    ('site_url', 'mcp_url', 'expected'),
+    [
+        ('', 'https://tablosazanhome.ir', 'https://tablosazanhome.ir'),
+        ('  ', ' https://tablosazanhome.ir/ ', 'https://tablosazanhome.ir'),
+        (
+            'https://canonical.example',
+            'https://other.example',
+            'https://canonical.example',
+        ),
+        ('', '', ''),
+    ],
+)
+def test_site_origin_supports_existing_mcp_environment(
+    monkeypatch, site_url, mcp_url, expected
+):
+    from core.settings.env import get_site_url
+
+    monkeypatch.setenv('DJANGO_SITE_URL', site_url)
+    monkeypatch.setenv('MCP_PUBLIC_BASE_URL', mcp_url)
+    assert get_site_url() == expected
+
+
+def test_mcp_origin_alias_rejects_endpoint_paths(monkeypatch):
+    from core.settings.env import get_site_url
+
+    monkeypatch.setenv('DJANGO_SITE_URL', '')
+    monkeypatch.setenv('MCP_PUBLIC_BASE_URL', 'https://tablosazanhome.ir/mcp/')
+    with pytest.raises(ValueError, match='MCP_PUBLIC_BASE_URL'):
+        get_site_url()

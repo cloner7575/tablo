@@ -8,7 +8,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from apps.integrations.auth import authenticate, origin
+from apps.integrations.auth import authenticate, configuration_error, origin
 from apps.integrations.tools import read, widget, write
 from apps.integrations.tools.context import bearer
 
@@ -45,7 +45,7 @@ class MCPRouter:
         try:
             base = origin()
         except ValidationError:
-            await JSONResponse({'error': 'mcp_not_configured'}, status_code=503)(
+            await JSONResponse(configuration_error(), status_code=503)(
                 scope, receive, send
             )
             return

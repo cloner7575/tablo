@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from urllib.parse import urlsplit
 
 
 def load_dotenv(path: Path) -> None:
@@ -66,3 +67,28 @@ def get_list(key: str, default: list[str] | None = None) -> list[str]:
     if not raw:
         return list(default or [])
     return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def get_site_url() -> str:
+    """Resolve one canonical origin, including the existing MCP deployment alias."""
+    value = (
+        os.getenv('DJANGO_SITE_URL', '').strip()
+        or os.getenv('MCP_PUBLIC_BASE_URL', '').strip()
+    ).rstrip('/')
+    if not value:
+        return ''
+    parsed = urlsplit(value)
+    if (
+        parsed.scheme not in {'http', 'https'}
+        or not parsed.hostname
+        or parsed.path
+        or parsed.query
+        or parsed.fragment
+        or parsed.username is not None
+        or parsed.password is not None
+    ):
+        raise ValueError(
+            'DJANGO_SITE_URL (or MCP_PUBLIC_BASE_URL) must be an absolute site '
+            'origin, such as https://example.com, without an endpoint path.'
+        )
+    return value

@@ -4,7 +4,7 @@
 
 - وابستگی SDK: `mcp==1.30.0`؛ نصب با `pip install -r requirements.txt`.
 - اجرای migrationهای integrations و portfolio با `python manage.py migrate`.
-- `PUBLIC_SITE_URL` در تنظیمات از `DJANGO_SITE_URL` خوانده می‌شود؛ آن را روی origin عمومی HTTPS، بدون مسیر و اسلش پایانی تنظیم کنید.
+- `PUBLIC_SITE_URL` در تنظیمات از `DJANGO_SITE_URL` خوانده می‌شود؛ اگر خالی باشد، `MCP_PUBLIC_BASE_URL` استفاده می‌شود. آن را روی origin عمومی HTTPS، بدون مسیر و اسلش پایانی تنظیم کنید.
 - اجرا با `daphne -b 0.0.0.0 -p 8000 core.asgi:application`؛ WSGI ابزارهای MCP را اجرا نمی‌کند. Django و Channels همچنان از همان ASGI application استفاده می‌کنند.
 - endpoint ثابت: `/mcp/`. پراکسی باید Authorization و Host اصلی را حفظ کند، HTTP POST و پاسخ JSON را عبور دهد و Origin جعلی تزریق نکند. نشست‌ها stateless هستند و به sticky session نیاز ندارند.
 - discovery در `/.well-known/oauth-authorization-server` و `/.well-known/oauth-protected-resource` ارائه می‌شود. OAuth از ثبت پویای کلاینت عمومی (DCR)، authorization code، PKCE S256 و resource binding استفاده می‌کند؛ کلاینت CIMD یا PAT در این نسخه ارائه نمی‌شود.
@@ -52,3 +52,33 @@
 5. اتصال را از پنل قطع کنید؛ access و refresh قبلی و تصویر خصوصی با آن دسترسی قابل استفاده نباشد.
 
 انتشار عمومی plugin، دسترسی به حساب ChatGPT واقعی، تنظیم دامنه و استقرار بیرونی بخشی از آزمون محلی نیست و به‌طور خودکار انجام نمی‌شود.
+
+## خطای پیدا نشدن OAuth در ChatGPT
+
+دامنه این محصول `https://tablosazanhome.ir` است. اگر ChatGPT پیام
+`Couldn't discover OAuth settings` نشان می‌دهد، در Environment Variables سرویس وب قرار دهید:
+
+```text
+DJANGO_SITE_URL=https://tablosazanhome.ir
+DJANGO_SETTINGS_MODULE=core.settings.production
+```
+
+متغیر اول origin سایت است؛ `/mcp/` را به آن اضافه نکنید. آدرس داخل ChatGPT همچنان
+`https://tablosazanhome.ir/mcp/` است. پس از تغییر، سرویس ASGI را restart/redeploy کنید.
+تنظیمات production به SECRET_KEY معتبر و ALLOWED_HOSTS و تنظیمات HTTPS پراکسی نیاز دارند؛
+این‌ها را مطابق بخش استقرار کامل کنید. صفحه خطای debug نباید روی دامنه عمومی فعال باشد.
+
+این دو آدرس باید بدون ورود، پاسخ JSON با وضعیت ۲۰۰ بدهند:
+
+- `https://tablosazanhome.ir/.well-known/oauth-authorization-server`
+- `https://tablosazanhome.ir/.well-known/oauth-protected-resource`
+
+مقدار issuer و authorization_servers باید هر دو `https://tablosazanhome.ir` باشند.
+درخواست بدون توکن به `/mcp/` باید ۴۰۱ با هدر `WWW-Authenticate` برگرداند.
+پاسخ ۵۰۳، صفحه Loading پراکسی، یا HTML خطای Django به‌معنای آماده‌نبودن اتصال است؛
+ورود دستی تنظیمات OAuth در ChatGPT این مشکل سرور را حل نمی‌کند.
+
+
+تنظیم موجود `MCP_PUBLIC_BASE_URL=https://tablosazanhome.ir` نیز پشتیبانی می‌شود؛
+لازم نیست متغیر را تغییر نام بدهید. اگر هر دو تنظیم وجود داشته باشند، `DJANGO_SITE_URL`
+اولویت دارد. پس از اضافه شدن این پشتیبانی به کد، نسخه جدید باید روی سرویس وب دیپلوی شود.

@@ -35,6 +35,16 @@ def origin() -> str:
     return value
 
 
+def configuration_error() -> dict[str, str]:
+    return {
+        'error': 'mcp_not_configured',
+        'error_description': (
+            'Set DJANGO_SITE_URL or MCP_PUBLIC_BASE_URL to the public HTTPS origin '
+            'without /mcp/ and restart the ASGI service.'
+        ),
+    }
+
+
 def digest(value: str) -> str:
     return hashlib.sha256(value.encode()).hexdigest()
 
